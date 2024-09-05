@@ -1,0 +1,258 @@
+﻿@model MoreForYou.Services.Models.API.BenefitAPIModel
+
+@{
+    ViewData["Title"] = "UserProfile";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+    string key = "";
+
+}
+
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+<script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Done !",
+                text: message,
+                icon: "success",
+            });
+            //}).then(function () {
+            //    window.location.href = "https://localhost:44362";
+            //});
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Failed Process!",
+                text: error,
+                icon: "Error",
+            });
+            //}).then(function () {
+            //    window.location.href = "https://localhost:44362/more4u/Benefit/ShowBenefits";
+            //});
+        }
+    }
+
+    function previewFile(input) {
+        var file = $("input[type=file]").get(0).files[0];
+
+        if (file) {
+            var reader = new FileReader();
+
+            reader.onload = function () {
+                $("#newProfile").attr("src", reader.result);
+            }
+
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+@if (TempData["Message"] != null)
+{
+    <input type="hidden" id="message" value="@TempData["Message"]" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (TempData["Error"] != null)
+{
+    <input type="hidden" id="error" value="@TempData["Error"]" />
+    <script>
+        showAlert("Error");
+    </script>
+}
+<div class="pagetitle">
+    <h1>Profile</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Benefit Details</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section profile">
+    <div class="row">
+        <div class="col-xl-4">
+
+            <div class="card">
+                <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+                    <img src="~/images/BenefitCards/@Model.BenefitCard" alt="Profile" class="rounded-circle mb-1" width="250" height="100">
+                    <h6 style="text-align:center">@Model.Name</h6>
+                    <div class="row" style="text-align:center; margin-top:20px">
+                        <!-- Read more button -->
+                        @if (Model.UserCanRedeem == true)
+                        {
+
+                            <a class="btn btn-primary" value="@Model.Id" asp-action="Redeem" asp-route-id="@Model.Id">Redeem</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-primary disabled" value="@Model.Id" asp-action="Redeem" asp-route-id="@Model.Id">Redeem</a>
+
+                        }
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-xl-8">
+
+            <div class="card">
+                <div class="card-body pt-3">
+                    <!-- Bordered Tabs -->
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                        </li>
+
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                        </li>
+
+
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                        </li>
+
+                    </ul>
+                    <div class="tab-content pt-2">
+                        <div class="tab-pane fade show active profile-overview" id="profile-overview">
+
+                            @foreach (var text in Model.BenefitDecriptionList)
+                            {
+                                <p>@text</p>
+                            }
+                        </div>
+
+                        <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+
+                            <!-- Profile Edit Form -->
+                            <div class="containerTimeline">
+
+                                @if (Model.BenefitWorkflows.Count != 0)
+                                {
+                                    @*<div> This benefit must be approved from =></div>*@
+                                    @for (int index2 = 1; index2 <= Model.BenefitWorkflows.Count; index2++)
+                                    {
+                                       @* <div class="timeline-block timeline-block-right">
+                                            <div class="marker active">@index2 &nbsp</div>
+                                            <div class="timeline-content">
+                                                <b>@Model.BenefitWorkflows[index2 - 1]</b>
+                                            </div>
+                                        </div>*@
+                                        <div class="activity-item d-flex">
+                                            <div class="activite-label">@index2- &nbsp</div>
+                                            @*<i class='bi bi-circle-fill activity-badge text-success align-self-start'></i>*@
+                                            <div class="activity-content">
+                                              <b> @Model.BenefitWorkflows[index2 - 1] </b><a href="#" class="fw-bold text-dark"></a>
+                                            </div>
+                                        </div>
+                                       
+
+                                        <!-- End activity item-->
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    <div> No Approval Needed</div>
+                                }
+
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane fade pt-3" id="profile-change-password">
+                            <!-- Change Password Form -->
+                            <table class="table col-lg-8" style="width:80%;">
+
+                                @foreach (var condition in Model.BenefitConditions)
+                                {
+                                    key = condition.Key;
+                                    <tr class="col-lg-8">
+                                        @if (condition.Key == "Type")
+                                        {
+                                            <td>@condition.Value <i class="bi bi-person-fill" style="margin-left: 5px; margin-right: 5px; float: left"></i></td>
+                                        }
+                                        else if (condition.Key == "WorkDuration")
+                                        {
+                                            <td>@condition.Value <i class="bi bi-bar-chart-line-fill" style="margin-left: 5px; margin-right: 5px; float: left"></i></td>
+                                        }
+                                        else if (condition.Key == "DateToMatch")
+                                        {
+                                            <td>@condition.Value <i class="bi bi-calendar-check" style="margin-left: 5px; margin-right: 5px; float: left"></i></td>
+                                        }
+                                        else if (condition.Key == "Age")
+                                        {
+                                            <td>@condition.Value<i class="bi bi-clock-history" style="margin-left: 5px; margin-right: 5px; float: left"></i></td>
+                                        }
+                                        else if (condition.Key == "Gender")
+                                        {
+                                            <td><i class="bi bi-gender-ambiguous" style="margin-left: 5px; margin-right: 5px; float: left"></i>@condition.Value</td>
+                                        }
+                                        else if (condition.Key == "MaritalStatus")
+                                        {
+                                            <td><i class="bi bi-heart" style="margin-left: 5px; margin-right: 5px; float: left"></i> @condition.Value</td>
+                                        }
+                                        else if (condition.Key == "PayrollArea")
+                                        {
+                                            <td><i class="bx bx-id-card" style="margin-left: 5px; margin-right: 5px; float: left"></i> @condition.Value</td>
+                                        }
+                                        else if (condition.Key == "MaxParticipant")
+                                        {
+                                            <td> <i class="bi bi-door-closed-fill" style="margin-left: 5px; margin-right: 5px; float: left"></i>Max Participants:- @condition.Value</td>
+                                        }
+                                        else if (condition.Key == "MinParticipant")
+                                        {
+                                            <td> <i class="bi bi-door-open-fill" style="margin-left: 5px; margin-right: 5px; float: left"></i>Min Participants:- @condition.Value</td>
+                                        }
+                                        else if (condition.Key == "RequiredDocuments")
+                                        {
+                                            <td> <i class="bi bi-images" style="margin-left: 5px; margin-right: 5px; float: left"></i> @condition.Value</td>
+                                        }
+
+                                        <td>
+                                            @if (key != "RequiredDocuments")
+                                            {
+                                                @if (Model.BenefitApplicable[key] == true)
+                                                {
+                                                    <i class="bi bi-check-lg" style="float: right; margin-right: 5px; color:forestgreen; font-size:x-large"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-x" style="float: right; margin-right: 5px; color: red; font-size: x-large"></i>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-file-earmark-arrow-up" style="float: right; margin-right: 5px; color: dodgerblue; font-size: x-large"></i>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+
+                        </div>
+
+                    </div><!-- End Bordered Tabs -->
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

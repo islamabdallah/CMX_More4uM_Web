@@ -1,0 +1,62 @@
+﻿@inject UserManager<AspNetUser> userManager
+@inject SignInManager<AspNetUser> SignInManager
+@{
+    var user = await userManager.GetUserAsync(User);
+    var displayName = user.UserName;
+    var roles = await userManager.GetRolesAsync(user);
+}
+@if (SignInManager.IsSignedIn(User))
+{
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <link href="~/css/BDStyleSheet.css" rel="stylesheet"/>
+        <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+
+    </head>
+
+    <body class="container">
+
+        @RenderBody()
+
+
+        <script>
+        <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_5hufvwkz.json" background="transparent" speed="1" class="lottie-firework" loop autoplay></lottie-player>
+        @*<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>*@
+    const bdayYear = document.querySelector(".year");
+
+bdayYear.textContent = 2002;
+
+var yearPlus = 2002;
+
+const giveYear = () => {
+  if (yearPlus != 2022) {
+    yearPlus += 1;
+    bdayYear.textContent = yearPlus;
+  } else {
+    bdayYear.textContent = 2022;
+  }
+};
+
+setTimeout(() => {
+  setInterval(giveYear, 100);
+}, 4000);
+
+const celeb = document.querySelector(".celeb");
+
+setTimeout(() => {
+  celeb.removeAttribute("loop", "");
+}, 4120);
+
+        </script>
+
+
+    </body>
+
+    @RenderSection("Scripts", required: false)
+
+</html>
+
+
+}

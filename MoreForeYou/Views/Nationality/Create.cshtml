@@ -1,0 +1,84 @@
+﻿@model MoreForYou.Services.Models.MaterModels.NationalityModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+
+}
+
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/DataTable/jquery-3.6.0.min.js"></script>
+<link href="~/dT/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="~/dT/jquery.dataTables.min.js" defer></script>
+<script src="~/js/sweetalert.min.js"></script>
+
+<script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Good job!",
+                text: message,
+                icon: "success",
+            }).then(function () {
+             //   window.location.href = "http://20.86.97.165/more4u/more4u/Nationality";
+            });
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Failed Process!",
+                text: error,
+                icon: "Error",
+            });
+        }
+    }
+</script>
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (ViewBag.Error != null)
+{
+    <input type="hidden" id="error" value="@ViewBag.Error" />
+    <script>
+        showAlert("Error");
+    </script>
+}
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
+<div class="container-fluid mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 mt-10 mb-10">
+            <div class="card" style="box-shadow:10px 20px 20px rgba(0, 0, 0, 0.5)">
+                <div class="card-body">
+                    <h4 class="card-title">Add Nationality</h4>
+                    <div class="form-validation" style="">
+                        <form asp-action="Create">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="Name" class="control-label">Name <span style="color:red">*</span></label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            </br>
+                            <div class="form-group">
+                                <input type="submit" value="Create" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

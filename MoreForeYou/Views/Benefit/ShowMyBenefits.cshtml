@@ -1,0 +1,671 @@
+﻿@model MoreForYou.Services.Models.API.MyBenefitsViewModel
+
+@{
+    ViewData["Title"] = "Home";
+    ViewData["SubTitle"] = "My Benefits";
+    ViewData["activ"] = "lmBenefits";
+    Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
+
+}
+<link href="~/css/newStyleSheet.css" rel="stylesheet" />
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+
+<script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Done !",
+                text: message,
+                icon: "success",
+            });
+        }
+       
+    }
+</script>
+
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (ViewBag.Error != null)
+{
+    <input type="hidden" id="error" value="@ViewBag.Error" />
+    <script>
+        showAlert("Error");
+    </script>
+}
+
+<div class="modal modal-blur fade" id="Benefit-Detailes" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder2-open" viewBox="0 0 16 16">
+                        <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14V3.5zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5V6zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7H1.633z" />
+                    </svg> Benefit Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+            </div>
+
+            <div class="modal-body">
+                @* <h3 class="card-title">Qty</h3>*@
+                @*  <img src="~/images/BenefitCards/CemexAssiutPaternityLeave.png" id="img_lm" width="250" height="100" class="align-center" />*@
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                                <input name="id" id="idlm" hidden />
+                                <img src="~/images/BenefitCards/CemexAssiutPaternityLeave.png" alt="" class="rounded-circle mb-1 img-fluid" width="250" height="100" id="imlm">
+                                <h6 style="text-align:center" id="hlm"></h6>
+                                <div class="row" style="text-align:center; margin-top:20px" id="dlm">
+                                    <!-- Read more button -->
+
+                                    <a class="btn btn-primary" value="Redeem" onclick="Redem()" id="alm">Redeem</a>
+
+                                </div>
+                                <div class="row" style="text-align:center; margin-top:20px" id="dlmm">
+                                    <!-- Read more button -->
+                                    @* <a class="btn btn-primary disabled" value="Redeem" asp-action="Redeem" asp-route-id="$id" id="almm">Redeem</a>*@
+                                    <a class="btn btn-primary disabled" value="Redeem" id="almm">Redeem</a>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-xl-12">
+
+                        <div class="card">
+                            <div class="card-body pt-3">
+                                <!-- Bordered Tabs -->
+                                <ul class="nav nav-tabs nav-tabs-bordered">
+
+                                    <li class="nav-item">
+
+                                        <button class="nav-link active" data-bs-toggle="tab" href="#profile-overview">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-view-stacked" viewBox="0 0 16 16">
+                                                <path d="M3 0h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm0 8h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z" />
+                                            </svg>
+                                            Overview
+                                        </button>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <button class="nav-link" data-bs-toggle="tab" href="#profile-edit">
+                                            <svg width="16" height="18" class="text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.109 17H1v-2a4 4 0 0 1 4-4h.87M10 4.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Zm7.95 2.55a2 2 0 0 1 0 2.829l-6.364 6.364-3.536.707.707-3.536 6.364-6.364a2 2 0 0 1 2.829 0Z" />
+                                            </svg>
+                                            Edit Profile
+                                        </button>
+                                    </li>
+
+
+                                    <li class="nav-item">
+                                        <button class="nav-link" data-bs-toggle="tab" href="#profile-change-password">
+                                            <svg width="16" height="18" class="text-gray-800 dark:text-white" aria-hidden="true" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M6.5 8C5.80777 8 5.13108 7.79473 4.55551 7.41015C3.97993 7.02556 3.53133 6.47893 3.26642 5.83939C3.00152 5.19985 2.9322 4.49612 3.06725 3.81719C3.2023 3.13825 3.53564 2.51461 4.02513 2.02513C4.51461 1.53564 5.13825 1.2023 5.81719 1.06725C6.49612 0.932205 7.19985 1.00152 7.83939 1.26642C8.47893 1.53133 9.02556 1.97993 9.41015 2.55551C9.79473 3.13108 10 3.80777 10 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M6.5 17H1V15C1 13.9391 1.42143 12.9217 2.17157 12.1716C2.92172 11.4214 3.93913 11 5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M19.5 11H18.38C18.2672 10.5081 18.0714 10.0391 17.801 9.613L18.601 8.818C18.6947 8.72424 18.7474 8.59708 18.7474 8.4645C18.7474 8.33192 18.6947 8.20476 18.601 8.111L17.894 7.404C17.8002 7.31026 17.6731 7.25761 17.5405 7.25761C17.4079 7.25761 17.2808 7.31026 17.187 7.404L16.392 8.204C15.9647 7.93136 15.4939 7.73384 15 7.62V6.5C15 6.36739 14.9473 6.24021 14.8536 6.14645C14.7598 6.05268 14.6326 6 14.5 6H13.5C13.3674 6 13.2402 6.05268 13.1464 6.14645C13.0527 6.24021 13 6.36739 13 6.5V7.62C12.5081 7.73283 12.0391 7.92863 11.613 8.199L10.818 7.404C10.7242 7.31026 10.5971 7.25761 10.4645 7.25761C10.3319 7.25761 10.2048 7.31026 10.111 7.404L9.404 8.111C9.31026 8.20476 9.25761 8.33192 9.25761 8.4645C9.25761 8.59708 9.31026 8.72424 9.404 8.818L10.204 9.618C9.9324 10.0422 9.73492 10.5096 9.62 11H8.5C8.36739 11 8.24021 11.0527 8.14645 11.1464C8.05268 11.2402 8 11.3674 8 11.5V12.5C8 12.6326 8.05268 12.7598 8.14645 12.8536C8.24021 12.9473 8.36739 13 8.5 13H9.62C9.73283 13.4919 9.92863 13.9609 10.199 14.387L9.404 15.182C9.31026 15.2758 9.25761 15.4029 9.25761 15.5355C9.25761 15.6681 9.31026 15.7952 9.404 15.889L10.111 16.596C10.2048 16.6897 10.3319 16.7424 10.4645 16.7424C10.5971 16.7424 10.7242 16.6897 10.818 16.596L11.618 15.796C12.0422 16.0676 12.5096 16.2651 13 16.38V17.5C13 17.6326 13.0527 17.7598 13.1464 17.8536C13.2402 17.9473 13.3674 18 13.5 18H14.5C14.6326 18 14.7598 17.9473 14.8536 17.8536C14.9473 17.7598 15 17.6326 15 17.5V16.38C15.4919 16.2672 15.9609 16.0714 16.387 15.801L17.182 16.601C17.2758 16.6947 17.4029 16.7474 17.5355 16.7474C17.6681 16.7474 17.7952 16.6947 17.889 16.601L18.596 15.894C18.6897 15.8002 18.7424 15.6731 18.7424 15.5405C18.7424 15.4079 18.6897 15.2808 18.596 15.187L17.796 14.392C18.0686 13.9647 18.2662 13.4939 18.38 13H19.5C19.6326 13 19.7598 12.9473 19.8536 12.8536C19.9473 12.7598 20 12.6326 20 12.5V11.5C20 11.3674 19.9473 11.2402 19.8536 11.1464C19.7598 11.0527 19.6326 11 19.5 11ZM14 14.5C13.5055 14.5 13.0222 14.3534 12.6111 14.0787C12.2 13.804 11.8795 13.4135 11.6903 12.9567C11.5011 12.4999 11.4516 11.9972 11.548 11.5123C11.6445 11.0273 11.8826 10.5819 12.2322 10.2322C12.5819 9.8826 13.0273 9.6445 13.5123 9.54804C13.9972 9.45157 14.4999 9.50108 14.9567 9.6903C15.4135 9.87952 15.804 10.2 16.0787 10.6111C16.3534 11.0222 16.5 11.5055 16.5 12C16.5 12.663 16.2366 13.2989 15.7678 13.7678C15.2989 14.2366 14.663 14.5 14 14.5Z" fill="currentColor" />
+                                            </svg>
+
+                                            Change Password
+                                        </button>
+                                    </li>
+
+                                </ul>
+                                <div class="tab-content pt-2">
+                                    <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                                        @*<p>test</p>
+                                        <p>test</p>
+                                        <p>test</p>*@
+                                    </div>
+
+                                    <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+
+                                        <!-- Profile Edit Form -->
+                                        <div class="containerTimeline" id="profile-lm">
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="tab-pane fade pt-3" id="profile-change-password">
+                                        <!-- Change Password Form -->
+                                        <table class="table col-lg-8" style="width:80%;" id="td-lm">
+                                        </table>
+
+                                    </div>
+
+                                </div><!-- End Bordered Tabs -->
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal">
+                    Close
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" id="requestDetailss">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imtitle">Request Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+            </div>
+            <div class="modal-body">
+               
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal">
+                    Close
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="requestDetails" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="modal-title-default">
+                    Request Details
+                </h6>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+       
+                <div class="modal-body">
+                <div class="col-12 col-xl-12">
+                    <div class="card h-100">
+                        <div class="card-body p-3">
+                            <div class="col-lg-12 ms-auto text-center mt-5 mt-lg-0 align-items-center">
+                                <div class="bg-gradient-primary border-radius-lg h-100">
+                                    <div class="position-relative d-flex align-items-center justify-content-center h-100">
+                                        <img id="benefitImage" class="w-100 position-relative z-index-2 p-1" src="" alt="image">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="my-2">
+                                <strong class="text-dark" id="requestBenefitName"></strong>
+                            </div>
+                            <hr class="horizontal gray-light my-2">
+                            <div class="row my-2">
+                                <div class="col-lg-6">
+                                    <ul class="list-group">
+                                        <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Name:</strong> &nbsp;<span id="requestEmployeeName"></span> </li>
+                                        <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">From:</strong> &nbsp; <span id="requestFrom"></span></li>
+                                        <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Status:</strong> &nbsp; <span id="requestStatus"></span></li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-6">
+                                    <ul class="list-group">
+                                        <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Type:</strong> &nbsp;<span id="requestBenefitType"></span> </li>
+                                        <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">To:</strong> &nbsp; <span id="requestTo"></span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <div class="col-lg-12">
+                                    <div class="timeline timeline-one-side" id="requestWorkflowTimeline">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="modal-footer">
+                    @*<button type="submit" class="btn bg-gradient-primary">Create</button>*@
+                <button type="submit" class="btn bg-gradient-primary  ml-auto" data-bs-dismiss="modal">Close</button>
+                </div>
+     
+        </div>
+    </div>
+</div>
+
+
+@if (Model != null)
+{
+    <div class="row">
+        <div class="col-lg-6" id="myBenefits"> @* style="height: 800px; overflow-y:scroll" *@
+            <div class="col-xl-12" >@*  style="max-height: 35rem; overflow-y: auto; background-attachment: local, local, scroll, scroll;"> *@
+                @if (Model.myBenefits.Count > 0)
+                {
+                    <select class="form-select" id="RequestNumber"
+                    asp-items="@(new SelectList(ViewBag.giftt,"Name","Name"," "))" onchange="myFunction(this.value,@JsonSerializer.Serialize(Model.myBenefits))">
+                        <option value="">Select Benefit</option>
+                    </select>
+                    foreach (var benefit in Model.myBenefits)
+                    {
+                        <div class="col-lg-12 mb-lg-0 mb-4 mt-3" id="@benefit.Id">
+                            <div class="card">
+                                <div class="card-body p-3">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="d-flex flex-column h-100">
+                                                <p class="mb-1 pt-2 text-bold">Benefit Request</p>
+                                                <h5 class="font-weight-bolder text-gradient text-primary">@benefit.Name</h5>
+                                                <hr class="horizontal dark my-sm-4">
+                                                 <p class="mb-5">
+                                                        Total Requests : @benefit.totalRequestsCount
+                                                        <br />Approved Requests : @benefit.TimesUserReceiveThisBenefit
+                                                          <br />Last Request Status: 
+                                                      @if (benefit.LastStatus == "Pending")
+                                                            {
+                                                                <span class="badge badge-sm bg-gradient-info pr-5">@benefit.LastStatus</span>
+                                                            }
+                                                            else if (benefit.LastStatus == "Approved")
+                                                            {
+                                                                <span class="badge badge-sm bg-gradient-success pr-5">@benefit.LastStatus</span>
+                                                            }
+                                                            else if (benefit.LastStatus == "Rejected")
+                                                            {
+                                                                <span class="badge badge-sm bg-gradient-danger pr-5">@benefit.LastStatus</span>
+                                                            }
+                                                            else if (benefit.LastStatus == "Cancelled")
+                                                            {
+                                                                <span class="badge badge-sm bg-gradient-secondary pr-5">@benefit.LastStatus</span>
+                                                            }
+                                                            else if (benefit.LastStatus == "InProgress")
+                                                            {
+                                                                <span class="badge badge-sm bg-gradient-warning pr-5">@benefit.LastStatus</span>
+                                                            }
+                                                      </p>
+@* 
+                                                <div class="d-flex flex-column mt-1">
+                                                    <ul class="list-group">
+@*                                                         <li class="list-group-item border-0 ps-0 pt-0 text-sm">
+                                                            <strong class="text-dark">Total Requests :- </strong>
+                                                            <span class="pr-5">@benefit.totalRequestsCount</span>
+                                                        </li> *@
+@*                                                         <li class="list-group-item border-0 ps-0 text-sm">
+                                                            <strong class="text-dark">Approved Requests :- </strong>
+                                                            <span class="pr-5">@benefit.TimesUserReceiveThisBenefit</span>
+                                                        </li> *@
+                               @*                          <li class="list-group-item border-0 ps-0 text-sm">
+                                                            <strong class="text-dark">Last Status :- </strong>
+                                                            @if (benefit.LastStatus == "Pending")
+                                                            {
+                                                                <span class="badge badge-sm bg-gradient-info pr-5">@benefit.LastStatus</span>
+                                                            }
+                                                            else if (benefit.LastStatus == "Approved")
+                                                            {
+                                                                <span class="badge badge-sm bg-gradient-success pr-5">@benefit.LastStatus</span>
+                                                            }
+                                                            else if (benefit.LastStatus == "Rejected")
+                                                            {
+                                                                <span class="badge badge-sm bg-gradient-danger pr-5">@benefit.LastStatus</span>
+                                                            }
+                                                            else if (benefit.LastStatus == "Cancelled")
+                                                            {
+                                                                <span class="badge badge-sm bg-gradient-secondary pr-5">@benefit.LastStatus</span>
+                                                            }
+                                                            else if (benefit.LastStatus == "InProgress")
+                                                            {
+                                                                <span class="badge badge-sm bg-gradient-warning pr-5">@benefit.LastStatus</span>
+                                                            }
+                                                        </li>
+                                                    </ul>
+                                                </div> *@
+                                                <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;" onclick="getBenefitRequests(@benefit.Id, -1)">
+                                                    Details
+                                                    <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 ms-auto text-center mt-5 mt-lg-0">
+                                            <div class="bg-gradient-primary border-radius-lg h-100">
+                                                @*                                                 <img src="@benefit.BenefitCardAPI" class="position-absolute h-100 w-50 top-0 d-lg-block d-none" alt="waves">
+                                    *@         <div class="position-relative d-flex h-100">
+                                                    <img class="w-100 position-relative z-index-2 border-radius-lg p-1" src="@benefit.BenefitCardAPI" alt="rocket">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                }
+            </div>
+        </div>
+        <div class="col-lg-6 mt-3">
+            <div class="card mb-4" style="height:fit-content">
+                <div class="card-header pb-0 px-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="mb-0" id="title">Benefits Request History</h6>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-end align-items-center">
+                            <i class="fa fa-repeat me-2"></i>
+                            <small id="RequestsCount"></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header pb-0 px-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="font-weight-bolder text-gradient text-primary" id="lmtitle"></h5>
+                            <hr class="horizontal dark my-sm-4">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body pt-4 p-3" id="requestsCard">
+
+                     <div class="row">
+           <div class="card p-3">
+            <div class="col-lg-8 my-auto">
+                                @* <h5>please select one of the benefits from the left side to check the request history details </h5> *@
+                                <p class="lead"><span class="font-weight-normal text-gradient text-primary">Please select one of the benefits from the left side to check the request history details</span></p>
+                 <a type="button" class="btn bg-gradient-dark mt-4" asp-controller="Benefit" asp-action="ShowBenefits">Go to Dashboard</a>
+            </div>
+
+   </div>
+     </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+                        <div class="card p-4">
+                <div class="card-body p-3">
+   <div class="row">
+           <div class="card p-3">
+            <div class="col-lg-8 my-auto">
+                        <h5>You have no Benefits Requests  </h5>
+                        <p class="lead"><span class="font-weight-normal text-gradient text-primary">
+                                My Benefits contains all the benefits requests/ history that you have made. Following request details /status (acceptance, rejection, and comments).
+                            </span>
+                        </p>
+                 <a type="button" class="btn bg-gradient-dark mt-4" asp-controller="Benefit" asp-action="ShowBenefits">Go to Dashboard</a>
+            </div>
+@*         <div class="col-lg-6 my-auto position-relative">
+            <img class="w-100 position-relative" src="~/softui/assets/img/illustrations/error-404.png" alt="404-error">
+        </div> *@
+   </div>
+     </div>
+       </div>
+     </div>
+}
+<script src="~/js/mybenefitsjs.js"></script>
+<script src="~/SoftUI/assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="~/SoftUI/assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script>
+    function getBenefitDetails(id) {
+        $(".TimeInfo").remove();
+        var tboby = $('#carss');// tbody'
+        tboby.empty(); //clear the data
+        var url = '@Url.Content("~/")' + "more4u/Benefit/getBenefitDetails";
+        $.getJSON(url, { id: id }, function (result) {
+            if (result != null) {
+
+                document.getElementById("hlm").innerHTML = result.Name;
+
+                var urlPart = result.BenefitCard;
+                var rId = result.Id;
+                document.getElementById("idlm").value = rId;
+                var url2 = '@Url.Content("~/")' + "images/BenefitCards/";
+                document.getElementById("imlm").src = url2 + result["BenefitCard"];
+                //document.getElementById("imlm").src = "~/images/BenefitCards/" + result["BenefitCard"];
+                //document.getElementById('imlm').src = "D:/More4U/More4UAzure/MoreForeYou/wwwroot/images/BenefitCards/CemexAssiutPaternityLeave.png";// + result["BenefitCard"];
+                if (result.UserCanRedeem == true) {
+                    document.getElementById("dlmm").hidden = true;
+                    document.getElementById("dlm").hidden = false;
+                }
+                else {
+                    document.getElementById("dlm").hidden = true;// <a class="btn btn-primary disabled" value = "@TempData asp - action="Redeem" asp - route - id="@TempData" > Redeem < /a>
+                    document.getElementById("dlmm").hidden = false;
+                }
+                // $('#profile-overview').e;
+                var divv = document.getElementById("profile-overview");
+                divv.innerHTML = "";
+
+
+                for (let i = 0; i < result.BenefitDecriptionList.length; i++) {
+                    //console.log(result.BenefitDecriptionList[i]);
+                    var p = document.createElement("p"); //create the paragraph tag
+                    p.innerHTML = result.BenefitDecriptionList[i]; // add html text or make another element if needed.
+
+                    // divv.innerHTML=p;
+                    divv.appendChild(p);
+                }
+                //  document.getElementById("profile-overview").innerHTML = content;
+
+                var divv2 = document.getElementById("profile-lm");
+                divv2.innerHTML = "";
+                if (result.BenefitWorkflows.length != 0) {
+
+                    for (let index2 = 1; index2 <= result.BenefitWorkflows.length; index2++) {
+                        //console.log(result.BenefitWorkflows[index2 - 1]);
+    @* var p2=`<div class="timeline-block timeline-block-right">
+                            <div class="marker active">index2</div>
+                            <div class="timeline-content">
+                            <h3>${result.BenefitWorkflows[index2 - 1]}</h3>
+                            </div>
+                            </div>`;*@
+
+                        var label = document.createElement("div");
+                        // label.innerHTML = 'Hello World';
+                        label.className += "timeline-block timeline-block-right";
+
+                        var label2 = document.createElement("div");
+                        label2.innerHTML = index2;
+                        label2.className += "marker active";
+
+
+                        var label3 = document.createElement("div");
+                        //label3.innerHTML = index2;
+                        label3.className += "timeline-content";
+
+
+                        var label4 = document.createElement("h3");
+                        label4.innerHTML = result.BenefitWorkflows[index2 - 1];
+                        // label4.style.textAlign = "center";
+                        label3.append(label4);
+                        label.appendChild(label2);
+                        label.appendChild(label3);
+                        divv2.appendChild(label);
+                        //divv2.appendChild(p2);
+
+                    }
+
+                }
+                else {
+                    var label5 = document.createElement("div");
+                    //label5.innerHTML = "No APProval Needeed";
+                    label5.innerHTML = "No Approval Needed";
+                    label5.style.textAlign = "center";
+
+                    divv2.appendChild(label5);
+                }
+
+
+
+    @* foreach (var condition in result.BenefitConditions)
+                    {*@
+                    $('#td-lm').empty();
+
+                var tr = "";
+    @* for (var key in result.BenefitConditions)
+                    {
+                    console.log(result.BenefitConditions[key]);
+                    console.log(result.BenefitApplicable[key]);
+
+                    }*@
+                    $.each(result.BenefitConditions, function (index, condition) {
+                        // console.log(condition);
+                        var key = index;
+                        console.log(key);
+                        console.log(result.BenefitApplicable[key]);
+                        tr = document.createElement("tr");
+                        var td = "";
+                        var td2 = "";
+
+                        tr.className += "col-lg-8";
+                        if (key == "Type") {
+                            td = document.createElement("td");
+                            td.innerHTML = '<span><i class="bi bi-person-fill" style="margin-left: 5px; margin-left: 5px; margin-top: 0px; float: left"></i></span>' + condition;
+                        }
+                        else if (key == "WorkDuration") {
+                            td = document.createElement("td");
+                            td.innerHTML = '<span><i class="bi bi-bar-chart-line-fill" style="margin-left: 5px; margin-right: 5px; float: left"></i></span>' + condition;
+                        }
+                        else if (key == "DateToMatch") {
+                            td = document.createElement("td");
+                            td.innerHTML = '<span><i class="bi bi-calendar-check" style="margin-left: 5px; margin-right: 5px; float: left"></i></span>' + condition;
+                        }
+                        else if (key == "Age") {
+                            td = document.createElement("td");
+                            td.innerHTML = '<span><i class="bi bi-clock-history" style="margin-left: 5px; margin-right: 5px; float: left"></i></span>' + condition;
+                        }
+                        else if (key == "Gender") {
+                            td = document.createElement("td");
+                            td.innerHTML = '<span><i class="bi bi-gender-ambiguous" style="margin-left: 5px; margin-right: 5px; float: left"></i></span>' + condition;
+                        }
+                        else if (key == "MaritalStatus") {
+                            td = document.createElement("td");
+                            td.innerHTML = '<span><i class="bi bi-heart" style="margin-left: 5px; margin-right: 5px; float: left"></i></span>' + condition;
+                        }
+                        else if (key == "PayrollArea") {
+                            td = document.createElement("td");
+                            td.innerHTML = '<span><i class="bx bx-id-card" style="margin-left: 5px; margin-right: 5px; float: left"></i></span>' + condition;
+                        }
+                        else if (key == "MaxParticipant") {
+                            td = document.createElement("td");
+                            td.innerHTML = '<span><i class="bi bi-door-closed-fill" style="margin-left: 5px; margin-right: 5px; float: left"></i></span>' + 'Max Participants:-' + condition;
+                        }
+                        else if (key == "MinParticipant") {
+                            td = document.createElement("td");
+                            td.innerHTML = '<span><i class="bi bi-door-open-fill" style="margin-left: 5px; margin-right: 5px; float: left"></i></span>' + 'Min Participants:-' + condition;
+                        }
+                        else if (key == "RequiredDocuments") {
+                            td = document.createElement("td");
+                            td.innerHTML = '<span><i class="bi bi-images" style="margin-left: 5px; margin-right: 5px; float: left"></i></span>' + condition;
+                        }
+                        tr.append(td);
+                        //$('#td-lm').append(tr);
+
+                        td2 = document.createElement("td");
+                        //td.innerHTML=condition +'<i class="bi bi-person-fill" style="margin-left: 5px; margin-right: 5px; float: left"></i>';
+
+
+                        if (key != "RequiredDocuments") {
+                            if (result.BenefitApplicable[key] == true) {
+                                td2.innerHTML = '<i class="bi bi-check-lg" style="float: right; margin-right: 5px; color:forestgreen; font-size:x-large"></i>';
+                            }
+                            else {
+                                td2.innerHTML = '<i class="bi bi-x" style="float: right; margin-right: 5px; color: red; font-size: x-large"></i>';
+                            }
+                        }
+                        else {
+                            td2.innerHTML = '<i class="bi bi-file-earmark-arrow-up" style="float: right; margin-right: 5px; color: dodgerblue; font-size: x-large"></i>';
+                        }
+
+                        tr.append(td2);
+                        $('#td-lm').append(tr);
+                    });
+
+
+                $('#Benefit-Detailes').modal('show');
+
+            }
+
+        });
+
+
+    }
+
+</script>
+
+<script>
+
+    function disp(id) {
+        var url2 = '@Url.Content("~/")' + "images/BenefitCards/";
+        console.log(this.src);
+        var r = document.getElementById("lmimg+" + id).src;
+        var n = document.getElementById("nam+" + id).value;
+        console.log(r);
+        console.log(n);
+        document.getElementById("imtitle").innerHTML = n;
+        document.getElementById("myimg").src = r;//url2 + id;
+        $('#display').modal('show');
+    }
+
+</script>
+
+<script>
+
+    function hideimg() {
+
+        console.log("done");
+        $('#display').modal('hide');
+    }
+
+</script>
+
+<script>
+
+    function Redem() {
+        var id = document.getElementById("idlm").value;
+        $('#Benefit-Detailes').modal('toggle');
+        var url = '@Url.Content("~/")' + "more4u/Benefit/Redeemm";
+        $.getJSON(url, { id: id }, function (result) {
+
+            window.location.href = "@Url.RouteUrl(new { Controller = "Benefit", Action = "Redeem" })/?id=" + id
+        });
+    }
+
+</script>
+<script>
+    function myFunction(value, items) {
+        var val = value;
+        console.log(val);
+        for (let i = 0; i < items.length; i++) {
+            console.log(items.length);
+            console.log(items[3].UserName);
+            if (items[i].Name == val || val == "") {
+                console.log("done");
+                document.getElementById(items[i].Id).hidden = false;
+                //document.getElementById("lm+" + items[i].RequestNumber).hidden = false;
+            }
+            else {
+                document.getElementById(items[i].Id).hidden = true;
+               // document.getElementById("lm+" + items[i].RequestNumber).hidden = true;
+            }
+        }
+
+    }
+
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

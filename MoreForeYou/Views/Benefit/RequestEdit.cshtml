@@ -1,0 +1,60 @@
+﻿@model MoreForYou.Services.Models.MasterModels.BenefitRequestModel
+
+@{
+    ViewData["Title"] = "RequestEdit";
+    Layout = "~/Views/Shared/_More4ULayout2.cshtml";
+
+}
+
+<div class="col-md-10 offset-md-1 col-lg-9 offset-lg-0" style="margin:auto">
+    <!-- Edit Profile Welcome Text -->
+    <div class="widget welcome-message">
+        <h2>@Model.Benefit.Name</h2>
+        <p>@Model.Benefit.Description</p>
+    </div>
+    <!-- Edit Personal Info -->
+    <form asp-action="RequestEdit" method="post">
+        <input type="hidden" asp-for="@Model.Benefit.Id" />
+        <input type="hidden" asp-for="@Model.Benefit.HasWorkflow" />
+        <input type="hidden" asp-for="@Model.Benefit.BenefitTypeId" />
+        <input type="hidden" asp-for="@Model.Id" />
+
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
+                <div class="widget personal-info">
+                    <h3 class="widget-header user">Edit Request</h3>
+                    <!-- First Name -->
+                    <div class="form-group">
+                        <label>From</label>
+                        <input type="date" class="form-control" id="ExpectedDateFrom" asp-for="ExpectedDateFrom">
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea class="form-control" id="Message" asp-for="Message"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <!-- Change Password -->
+                <div class="widget change-password">
+                    @*<h3 class="widget-header user">Edit Password</h3>*@
+                    <!-- Current Password -->
+                    <div class="form-group">
+                        <label for="current-password">To</label>
+                        <input type="date" class="form-control" id="ExpectedDateTo" asp-for="ExpectedDateTo">
+                    </div>
+                    <!-- File chooser -->
+                    <div class="form-group choose-file d-inline-flex">
+                        <i class="fa fa-file text-center px-3"></i>
+                        <input type="file" class="form-control-file mt-2 pt-1" id="input-file">
+                    </div>
+
+                    <input type="submit" class="btn btn-transparent" value="Update Request">
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

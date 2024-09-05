@@ -1,0 +1,121 @@
+﻿<!--<html>
+<head>
+    <title></title>
+    <link href="D:\Work\MoreForYou\Project_26_12_2022 (2)\Project\MoreForeYou\wwwroot\NiceAdmin\assets\vendor\bootstrap\css\bootstrap.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="row">
+        <img width="200" height="50" src="D:\Work\MoreForYou\Project_26_12_2022 (2)\Project\MoreForeYou\wwwroot\images\cemexLogog.png" />
+        <br />
+        <div style="border-top: 3px solid #22BCE5">  &nbsp; </div>
+        <div class="col-lg-8" style="margin: auto">
+            <div class="card-body" style="box-shadow: 12px 12px 12px 12px rgba(0, 0, 0, .2)">
+                <div class="active-member">-->
+<!-- Article 01 -->
+<!--<div class="pt--10 pl--10">
+    <h1 class="mb-3 mt-3" style="color: #22BCE5; font-family: Arial;  text-align:center">{Title}</h1>
+    <b style="color: black; font-family: Arial; font-size: 10pt; text-align:left"> You are kindly requested to proceed with the attached card. </b>
+    <br />
+    <div style="margin-top: 10px">
+        <div style="margin-left: 20px;">
+            <p style="color: black; font-family: Arial; font-size: 10pt; text-align:left">-->
+<!--<b><u>Date</u></b><br /></br>-->
+<!--<b><u>From:- </u></b>{DateFrom}<br />
+                                    <b><u>To:- </u></b>{DateTo}
+                                    <br />
+                                    <br />
+                                    <b><u>Group member Information</u></b>
+                                    <br />
+                                    <br />
+                                    <table style="text-align:center">
+                                        <tr>
+                                            <th>Employee Number</th>
+                                            <th>Employee Name</th>
+                                        </tr>
+                                        {employeeData}
+                                    </table>
+
+                                </p>
+                            </div>
+                            <br />
+                        </div>
+                        <br />
+                        <img width="500" height="250" src="{imgSrc}" alt="Card image cap" style="margin:auto" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <b>Thanks</b><br />
+        <b>Cemex Team</b>
+    </div>
+</body>
+</html>-->
+
+
+<html>
+<head>
+    <title></title>
+    <link href="bootstrap.min.css" rel="stylesheet" />
+    <style>
+        th {
+            padding-right: 20px;
+        }
+
+        div {
+            font-family: Cambria;
+        }
+    </style>
+</head>
+<body style="margin: 20px">
+    <!--<img width="20%" height="20%" src="D:\Work\MoreForYou\Project_26_12_2022 (2)\Project\MoreForeYou\wwwroot\images\cemexLogog.png" />-->
+    <div class="row p-3">
+
+        <div class="col-lg-8">
+            <div class="active-member">
+                <!-- Article 01 -->
+                <div class="pt--10 pl--10" style="color: black; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 10pt; text-align:left">
+                    <!--<h1 class="mb-3 mt-3" style="color: #22BCE5; font-family: Arial; text-align:left">Thank you</h1>-->
+                    <p> Dears, You are kindly requested to approve <b>{benefitName}</b> request.</p>
+                    <div style='padding-bottom:3px;'>
+                        <b style="padding-right: 3px; font-size: small">Benefit Name : </b>
+                        <span>{benefitName}</span>
+                    </div>
+                    <div style='padding-bottom: 3px; margin-top: 10px'>
+                        <b style="padding-right: 3px;">From : </b>
+                        <span>{DateFrom}</span>
+                    </div>
+                    <div style='padding-bottom: 3px; margin-top: 10px'>
+                        <b style="padding-right: 3px;">To : </b>
+                        <span>{DateTo}</span>
+                    </div>
+                    <div style='padding-bottom: 10px; padding-top: 10px; margin-top: 10px; margin-bottom: 10px'>
+                        <b style="padding-right: 3px;">Employees Info :</b>
+                    </div>
+                    <div>
+                        <table style="margin-left: 50px; margin-top: 10px; text-align:center">
+                            <tr>
+                                <td style="font-weight:bold; font-size: small;">Employee Name</td>
+                                <td style="font-weight:bold; font-size: small;">Employee Number</td>
+                            </tr>
+                            {employeeData}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:20px">
+            <div>
+                <img height="70" src="D:\_cemex\_projects\_AzureMore4U\More4UAzure\MoreForYou.Services\MailTemplate\M4ULogo.jpg" />
+            </div>
+            <div style="margin-top:15px">
+                <b>Thanks</b><br />
+                <b><i>Cemex Team</i></b>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,409 @@
+﻿@model MoreForYou.Services.Models.MasterModels.FilterModel
+
+@{
+    ViewData["Title"] = "Employee";
+    ViewData["SubTitle"] = "Edit";
+    ViewData["activ"] = "Employee";
+    Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
+    string EmployeeNumberIndex = "";
+    string NameIndex = "";
+    string AddressIndex = "";
+    string SapNumberIndex = "";
+    string IdIndex = "";
+    string BithdateIndex = "";
+    string GenderIndex = "";
+    string MartialStatusIndex = "";
+    string DepartmentIndex = "";
+    string PositionIndex = "";
+    string CompanyIndex = "";
+    string CollarIndex = "";
+    string NationalityIndex = "";
+    string IsDeptManagerIndex = "";
+    string PhoneNumber = "";
+    string JoiningdateIndex = "";
+    string DirectEmployeeIndex = "";
+
+}
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/DataTable/jquery-3.6.0.min.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+
+<script>
+    function SaveRow(index) {
+        var employeeModel =
+                {
+                    EmployeeNumber: document.getElementById("EmployeeNumber" + index).value,
+                    FullName: document.getElementById("Name" + index).value,
+                    Address: document.getElementById("Address" + index).value,
+                    SapNumber: document.getElementById("SapNumber" + index).value,
+                    Id: document.getElementById("Id" + index).value,
+                    BirthDate: document.getElementById("Birthdate" + index).value,
+                    JoinDate: document.getElementById("Joiningdate" + index).value,
+                    Gender: document.getElementById("Gender" + index).value,
+                    MaritalStatus: document.getElementById("MaritalStatus" + index).value,
+                    CompanyId: document.getElementById("Company" + index).value,
+                    DepartmentId: document.getElementById("Department" + index).value,
+                    PositionId: document.getElementById("Position" + index).value,
+                    Collar: document.getElementById("Collar" + index).value,
+                    IsDeptManager: document.getElementById("IsDeptManager" + index).value,
+                    DirectEmployee: document.getElementById("DirectEmployee" + index).value,
+                    NationalityId: document.getElementById("Nationality" + index).value,
+                    PhoneNumber: document.getElementById("PhoneNumber"+index).value
+                }
+                        $.ajax({
+                            url: '@Url.Content("~/")' + "more4u/Employee/EditEmployee",
+                            data: employeeModel,
+                            type: "POST",
+                            async: false,
+                            data: employeeModel,
+                            //processData: false,
+                            //contentType: false
+                            success: function (data) {
+                                if (data == true)
+                                {
+                                   // alert("sucess");
+                                    swal({
+                                        title: "Good job!",
+                                        text: "Success Process",
+                                        icon: "success",
+                                    });
+                                }
+                                else {
+                                    swal({
+                                        title: "Failed Process!",
+                                        text: "Error while Updating employee Data",
+                                        icon: "error",
+                                    });
+
+                                }
+                            }
+
+                });
+            }
+
+</script>
+<style>
+
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border: 5px solid #ddd;
+    }
+
+    th, td {
+        text-align: center;
+        width: 200px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2
+    }
+
+    th {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#example').DataTable({
+            //scrollX: true,
+        });
+    });
+</script>
+
+<div class="row my-4">
+    <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="row">
+                    <div class="col-lg-6 col-7">
+                        <h6>Employees</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1">Searching</span> Criteria
+                        </p>
+                    </div>
+                    <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                            </a>
+                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive">
+                    <div class="card-body p-3">
+
+                        <!-- No Labels Form -->
+                        <form class="row g-3" asp-action="Search" method="post">
+                            <div class="col-md-4">
+                                <label class="form-label">EmployeeName</label>
+                                <input type="text" class="form-control" id="EmployeeName" placeholder="Employee Name" asp-for="EmployeeName">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">EmployeeNumber</label>
+                                <input type="number" class="form-control" id="EmployeeNumber" placeholder="Employee Number" asp-for="EmployeeNumber">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">SapNumber</label>
+                                <input type="number" class="form-control" id="SapNumber" placeholder="sap Number" asp-for="SapNumber">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Department</label>
+                                <select class="form-select" asp-for="SelectedDepartmentId"
+                                        id="SelectedDepartmentId" asp-items="@(new SelectList(Model.DepartmentModels,"Id","Name"))">
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Position</label>
+                                <select class="form-select" id="SelectedPositionId" asp-for="SelectedPositionId"
+                                        asp-items="@(new SelectList(Model.PositionModels,"Id","Name"))">
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Nationality</label>
+                                <select class="form-select" id="SelectedNationalityId" asp-for="SelectedNationalityId"
+                                        asp-items="@(new SelectList(Model.NationalityModels,"Id","Name"))">
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">BirthDate</label>
+                                <input type="Date" class="form-control" id="BirthDate" placeholder="BirthDate" asp-for="BirthDate">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">JoinDate</label>
+                                <input type="Date" class="form-control" id="BirthDate" placeholder="JoinDate" asp-for="JoinDate">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Gender</label>
+                                <select class="form-select" id="SelectedGenderId" asp-for="SelectedGenderId"
+                                        asp-items="@(new SelectList(Model.genderModels,"Id","Name"))">
+                                </select>
+                            </div>
+                            <div class="col-md-4 form-check">
+                                <label class="col-lg-3 form-label text-nowrap">
+                                    Direct Employee
+                                    <input class="form-check-input" asp-for="DirectEmployee" />
+                                </label>
+                            </div>
+                           
+                            @*<div class="form-group col-md-4">
+                            <input type="text" class="form-control my-2 my-lg-1" id="Id" placeholder="ID" asp-for="Id">
+                            </div>*@
+                            <div class="text-left">
+                                <button type="submit" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                                    </svg>
+                                    Search
+                                </button>
+                            </div>
+                        </form>
+                        <!-- End No Labels Form -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+</div>
+
+<div class="row my-4">
+    <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="row">
+                    <div class="col-lg-6 col-7">
+                        <h6>Employees</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1">Searching</span> Results
+                        </p>
+                    </div>
+                    <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                            </a>
+                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive">
+                    <div class="card-body p-3">
+                        <form class="CreateForm" asp-controller="Employee" method="post" asp-action="Edit">
+
+                                <table class="table datatable" id="example">
+                                    @*<table class="table table-striped" id="example">*@
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Employee Number
+                                            </th>
+                                            <th>
+                                                FullName
+                                            </th>
+                                            <th>
+                                                Address
+                                            </th>
+                                            <th>
+                                                Sap Number
+                                            </th>
+                                            <th>
+                                                ID
+                                            </th>
+                                            <th>PhoneNumber</th>
+                                            <th>
+                                                BirthDate
+                                            </th>
+                                            <th>
+                                                JoinDate
+                                            </th>
+                                            <th>
+                                                Gender
+                                            </th>
+                                            <th>
+                                                MaritalStatus
+                                            </th>
+                                            <th>
+                                                Nationality
+                                            </th>
+                                            <th>
+                                                Company
+                                            </th>
+                                            <th>
+                                                Department
+                                            </th>
+                                            <th>
+                                                Position
+                                            </th>
+                                            <th>
+                                                Collar
+                                            </th>
+                                            <th>
+                                                IsDeptManager
+                                            </th>
+                                            <th>
+                                                Direct Employee
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.EmployeeModels != null)
+                                        {
+                                        @for (int index = 0; index < Model.EmployeeModels.Count; index++)
+                                            {
+                                                EmployeeNumberIndex = "EmployeeNumber" + index;
+                                                NameIndex = "Name" + index;
+                                                AddressIndex = "Address" + index;
+                                                SapNumberIndex = "SapNumber" + index;
+                                                IdIndex = "Id" + index;
+                                                PhoneNumber = "PhoneNumber" + index;
+                                                BithdateIndex = "Birthdate" + index;
+                                                GenderIndex = "Gender" + index;
+                                                MartialStatusIndex = "MaritalStatus" + index;
+                                                DepartmentIndex = "Department" + index;
+                                                PositionIndex = "Position" + index;
+                                                CompanyIndex = "Company" + index;
+                                                CollarIndex = "Collar" + index;
+                                                NationalityIndex = "Nationality" + index;
+                                                IsDeptManagerIndex = "IsDeptManager" + index;
+                                                JoiningdateIndex = "Joiningdate" + index;
+                                                DirectEmployeeIndex = "DirectEmployee" + index;
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(model => model.EmployeeModels[index].EmployeeNumber)
+                                                    <input class="form-control" id="@EmployeeNumberIndex" asp-for="EmployeeModels[index].EmployeeNumber" type="hidden" />
+                                            </td>
+                                            <td>
+                                                    <input class="form-control" id="@NameIndex" asp-for="EmployeeModels[index].FullName" type="text" />
+                                            </td>
+                                            <td>
+                                                    <input class="form-control" id="@AddressIndex" asp-for="EmployeeModels[index].Address" type="text" />
+                                            </td>
+                                            <td>
+                                                    <input class="form-control" id="@SapNumberIndex" asp-for="EmployeeModels[index].SapNumber" type="number" />
+                                            </td>
+                                            <td>
+                                                    <input class="form-control" id="@IdIndex" asp-for="EmployeeModels[index].Id" type="text" />
+                                            </td>
+                                            <td>
+                                                    <input class="form-control" id="@PhoneNumber" asp-for="EmployeeModels[index].PhoneNumber" type="text" />
+                                            </td>
+                                            <td>
+                                                    <input class="form-control" id="@BithdateIndex" asp-for="EmployeeModels[index].BirthDate" type="Date" />
+                                            </td>
+                                            <td>
+                                                    <input class="form-control" id="@JoiningdateIndex" asp-for="EmployeeModels[index].JoiningDate" type="Date" />
+                                            </td>
+                                            <td>
+                                                    <select class="form-select" id="@GenderIndex" name="EmployeeModels[@index].genderModels" asp-for="EmployeeModels[index].Gender" asp-items="@(new SelectList(Model.genderModels, "Id","Name"))"></select>
+                                            </td>
+                                            <td>
+                                                    <select class="form-select" id="@MartialStatusIndex" name="EmployeeModels[@index].MaritalStatus" asp-for="EmployeeModels[index].MaritalStatus" asp-items="@(new SelectList(Model.MartialStatusModels, "Id","Name"))"></select>
+                                            </td>
+                                            <td>
+                                                    <select class="form-select" id="@NationalityIndex" name="EmployeeModels[@index].MaritalStatus" asp-for="EmployeeModels[index].NationalityId" asp-items="@(new SelectList(Model.NationalityModels, "Id","Name"))"></select>
+                                            </td>
+                                            <td>
+                                                    <select class="form-select" id="@CompanyIndex" name="EmployeeModels[@index].DepartmentId" asp-for="EmployeeModels[index].CompanyId" asp-items="@(new SelectList(Model.CompanyModels, "Id","Code"))"></select>
+                                            </td>
+                                            <td>
+                                                    <select class="form-select" id="@DepartmentIndex" name="EmployeeModels[@index].DepartmentId" asp-for="EmployeeModels[index].DepartmentId" asp-items="@(new SelectList(Model.DepartmentModels, "Id","Name"))"></select>
+                                            </td>
+                                            <td>
+                                                    <select class="form-select" id="@PositionIndex" asp-for="EmployeeModels[index].PositionId" asp-items="@(new SelectList(Model.PositionModels, "Id","Name"))"></select>
+                                            </td>
+                                            <td>
+                                                    <select class="form-select" id="@CollarIndex" asp-for="EmployeeModels[index].Collar" asp-items="@(new SelectList(Model.collars, "Id","Name"))"></select>
+                                            </td>
+                                            <td>
+                                                    <input class="form-control" id="@IsDeptManagerIndex" asp-for="EmployeeModels[index].isDeptManager" type="checkbox" />
+                                            </td>
+                                            <td>
+                                                    <input class="form-control" id="@DirectEmployeeIndex" asp-for="EmployeeModels[index].IsDirectEmployee" type="checkbox" />
+                                            </td>
+                                            <td><input type="button" class="btn btn-primary" value="save" onclick="SaveRow(@index)" /></td>
+                                          
+                                            <td>
+                                               
+                                            </td>
+                                        </tr>
+                                            }
+
+                                        }
+                                    </tbody>
+                                </table>
+                            </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

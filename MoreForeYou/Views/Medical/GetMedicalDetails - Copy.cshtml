@@ -1,0 +1,78 @@
+﻿@model IEnumerable<MoreForYou.Services.Models.Medical.MedicalDetailsModel>
+
+@{
+    ViewData["Title"] = "ShowDetails";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+}
+<link href="~/css/newStyleSheet.css" rel="stylesheet" />
+<link href="~/css/ribbons.css" rel="stylesheet" />
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+<div class="pagetitle">
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="ShowBenefits" asp-controller="Benefit">Home</a></li>
+            <li class="breadcrumb-item active">Medical Details</li>
+        </ol>
+    </nav>
+    <h1 class="ribbon12 mb-5">
+        <strong class="ribbon12-content">Medical Details </strong>
+    </h1>
+</div>
+<div style="margin:auto">
+@if (Model.Any())
+    {
+    foreach (var MedicalDetails in Model)
+    {
+    <div class="col-lg-6 mx-auto" dir="rtl">
+        <!-- product card -->
+        <div class="card">
+            <div class="card-body p-2">
+                <div class="row" style="text-align:center">
+                    @*<img src="~/images/MedicalWeb/MedicalDetails/@MedicalDetails.Image" style="height:200px; float:right" alt="Card image cap">*@
+                    <div style="font-size:large; direction:rtl; font-weight:bold">@MedicalDetails.Name_AR</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-3" style="float:left">
+                        <div style="font-size:medium; direction:rtl ; color:blue">العنوان</div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div style="font-size:medium; direction:rtl">@MedicalDetails.Address_AR</div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-lg-3" style="float:left">
+                        <div style="font-size:medium; direction:rtl ; color:blue">رقم الهاتف /الموبايل</div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div style="font-size:medium; direction:rtl">@MedicalDetails.Mobile</div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-lg-3" style="float:left">
+                        <div style="font-size:medium; direction:rtl ; color:blue">مواعيد العمل</div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div style="font-size:medium; direction:rtl">@MedicalDetails.WorkingHours_AR</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    }
+    }
+    else
+    {
+    <h3 style="margin:auto; text-align:center"> No details added yet</h3>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

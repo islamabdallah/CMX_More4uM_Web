@@ -1,0 +1,112 @@
+﻿@model MoreForYou.Services.Models.MasterModels.RequestWokflowModel
+
+@{
+    ViewData["Title"] = "RequestResponse";
+    Layout = "~/Views/Shared/_More4ULayout2.cshtml";
+
+}
+
+<hr />
+<section class="featured-job-area  pt-120 pb-120">
+    <div class="container">
+        <!-- Section Tittle -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-tittle text-center">
+                    <h2>Add Response</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-xl-10">
+
+                <form asp-action="RequestResponse">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="BenefitRequestId" />
+                    <input type="hidden" asp-for="EmployeeId" />
+                    <div class="form-group">
+                        <label asp-for="BenefitRequest.Employee.FullName" class="control-label"></label>
+                        <label>
+                            @Model.BenefitRequest.Employee.FullName
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="BenefitRequest.Benefit.Name" class="control-label"></label>
+                        <label>
+                            @Model.BenefitRequest.Benefit.Name
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="BenefitRequest.RequestDate" class="control-label"></label>
+                        <label>
+                            @Model.BenefitRequest.RequestDate
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">From: </label>
+                        <label>
+                            @Model.BenefitRequest.ExpectedDateFromString
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">To: </label>
+                        <label>
+                            @Model.BenefitRequest.ExpectedDateFromString
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Message</label>
+                        <textarea disabled class="form-control">@Model.BenefitRequest.Message</textarea>
+
+                    </div>
+                    @if (Model.canResponse)
+                    {
+
+                        <div class="form-group">
+                            <label asp-for="Notes" class="control-label"></label>
+                            <input asp-for="Notes" class="form-control" />
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Status" class="control-label"></label>
+                            <select id="RequestStatusSelectedId" name="RequestStatusSelectedId" asp-for="RequestStatusSelectedId"
+                                    class="form-select form-select-lg mb-3"
+                                    asp-items="@(new SelectList(Model.ResonseStatuses, "Id", "Name"))"></select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <label asp-for="Notes" class="control-label"></label>
+                            <input asp-for="Notes" class="form-control" disabled />
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Status" class="control-label"></label>
+                            <select id="RequestStatusSelectedId" name="RequestStatusSelectedId" asp-for="RequestStatusSelectedId"
+                                    class="form-select form-select-lg mb-3"
+                                    asp-items="@(new SelectList(Model.ResonseStatuses, "Id", "Name"))" disabled></select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                        </div>
+                    }
+
+                </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+                <div>
+                    <a asp-action="Index">Back to List</a>
+                </div>
+
+                @section Scripts {
+                    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+                }

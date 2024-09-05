@@ -1,0 +1,363 @@
+﻿@model IEnumerable<MoreForYou.Services.Models.MaterModels.DepartmentModel>
+
+@{
+    ViewData["Title"] = "Department";
+    ViewData["SubTitle"] = "Index";
+    ViewData["activ"] = "Department";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+
+}
+
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+
+<script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Done !",
+                text: message,
+                icon: "success",
+            });
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Fail !",
+                text: error,
+                icon: "error",
+            });
+        }
+    }
+</script>
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (ViewBag.Error != null)
+{
+    <input type="hidden" id="error" value="@ViewBag.Error" />
+    <script>
+        showAlert("Error");
+    </script>
+}
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
+
+
+<div class="modal modal-blur fade" id="addDepp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<h5 class="modal-title">
+                <svg viewBox="0 -398 1820 1820" class="icon" width="24" height="24" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier"><path d="M845.937778 285.866667c-160.237037 0-291.271111 131.034074-291.271111 291.271111s131.034074 291.271111 291.271111 291.271111 291.271111-131.034074 291.271111-291.271111-131.034074-291.271111-291.271111-291.271111z m-16.213334 35.65037v110.08c-30.72-1.611852-58.216296-8.059259-84.10074-16.213333 21.048889-50.157037 50.157037-84.195556 84.10074-93.866667z m-1.611851 142.411852v97.09037H716.515556c1.611852-42.097778 8.059259-82.488889 17.825185-116.527407 29.108148 11.282963 59.828148 17.825185 93.771852 19.437037z m-71.205926-129.517037c-14.601481 17.825185-27.496296 40.485926-38.874074 66.37037-12.98963-6.447407-24.272593-14.601481-35.555556-24.272592 22.660741-17.825185 46.933333-32.331852 74.42963-42.097778zM658.204444 399.17037c12.98963 12.98963 29.108148 22.660741 46.933334 32.331852-12.98963 38.874074-19.437037 82.488889-21.048889 129.422222H586.998519c4.93037-63.051852 30.814815-119.656296 71.205925-161.754074z m-69.594074 194.180741h97.090371c1.611852 46.933333 9.671111 90.642963 21.048889 129.422222-17.825185 9.671111-33.943704 19.437037-46.933334 32.331852-42.002963-42.002963-67.887407-98.607407-71.205926-161.754074z m93.866667 184.50963c9.671111-8.059259 22.660741-16.213333 35.555556-24.272593 11.282963 25.884444 24.272593 48.545185 38.874074 66.370371-27.496296-9.765926-51.768889-24.367407-74.42963-42.097778z m147.247407 54.992592c-33.943704-8.059259-63.146667-43.70963-84.10074-93.866666 25.884444-9.671111 53.380741-14.601481 84.10074-16.213334v110.08z m1.611852-142.411852h-1.611852c-33.943704 1.611852-66.37037 8.059259-93.866666 19.437038-9.671111-33.943704-16.213333-74.42963-17.825185-116.527408h113.303703v97.09037z m178.062223-313.931851c-9.671111 8.059259-22.660741 16.213333-35.555556 24.272592-11.282963-25.884444-24.272593-48.545185-38.874074-66.37037 27.496296 9.765926 51.768889 24.272593 74.42963 42.097778z m-34.038519 216.841481c-1.611852 42.097778-8.059259 82.488889-17.825185 116.527408-29.108148-11.282963-59.828148-17.825185-93.866667-19.437038V593.351111h111.691852zM862.151111 321.517037c33.943704 8.059259 63.146667 43.70963 84.100741 93.866667-25.884444 9.671111-53.380741 14.601481-84.100741 16.213333V321.517037z m-1.611852 142.411852h1.611852c33.943704-1.611852 66.37037-8.059259 93.866667-19.437037 9.671111 33.943704 16.213333 74.42963 17.825185 116.527407H860.539259V463.928889z m1.611852 368.924444V722.773333c30.72 1.611852 58.216296 8.059259 84.100741 16.213334-21.048889 51.768889-50.157037 85.807407-84.100741 93.866666z m72.817778-12.989629c14.601481-17.825185 27.496296-40.485926 38.874074-66.370371 12.98963 6.447407 24.272593 14.601481 35.555556 24.272593-22.660741 17.825185-46.933333 32.426667-74.42963 42.097778z m98.702222-64.663704c-12.98963-12.98963-29.108148-22.660741-46.933333-32.331852 12.98963-38.874074 19.437037-82.488889 21.048889-129.422222h97.09037c-4.93037 63.051852-30.814815 119.656296-71.205926 161.754074z m-25.884444-194.180741c-1.611852-46.933333-9.671111-90.642963-21.048889-129.422222 17.825185-9.671111 33.943704-19.437037 46.933333-32.331852 40.485926 42.097778 67.982222 98.702222 71.205926 161.848889h-97.09037z" fill="#FFA28D"></path><path d="M975.36 156.444444c-93.866667 0-176.355556 43.70963-229.736296 113.303704 24.272593-8.059259 50.157037-12.98963 76.041481-14.601481-3.223704-1.611852-6.447407-4.835556-9.671111-6.447408 22.660741-17.825185 46.933333-32.331852 74.42963-42.097778-11.282963 12.98963-21.048889 30.72-30.72 48.545186 11.282963 0 22.660741 1.611852 33.943703 3.223703 19.437037-35.555556 43.70963-58.216296 71.205926-64.758518v82.488889c11.282963 4.835556 22.660741 8.059259 32.331852 14.601481V193.706667c33.943704 8.059259 63.146667 43.70963 84.100741 93.866666-19.437037 8.059259-40.485926 12.98963-63.146667 14.601482 12.98963 8.059259 25.884444 16.213333 37.262222 25.884444 12.98963-3.223704 25.884444-6.447407 37.262223-11.282963 6.447407 19.437037 9.671111 40.485926 12.989629 61.534815 19.437037 24.272593 35.555556 53.380741 46.933334 85.807408h84.10074c-3.223704 61.534815-29.108148 114.915556-67.982222 156.918518-3.223704 19.437037-6.447407 38.874074-12.989629 56.604444 69.594074-53.380741 113.303704-135.964444 113.303703-229.736296 1.611852-160.426667-129.422222-291.460741-289.659259-291.460741z m89.031111 48.545186c27.496296 9.671111 51.768889 24.272593 74.42963 42.097777-9.671111 8.059259-22.660741 16.213333-35.555556 24.272593-9.765926-25.884444-22.660741-48.545185-38.874074-66.37037z m72.817778 226.512592c-1.611852-46.933333-9.671111-90.642963-21.048889-129.422222 17.825185-9.671111 33.943704-19.437037 46.933333-32.331852 40.485926 42.097778 67.982222 98.702222 71.205926 161.848889h-97.09037z" fill="#5FFFBA">
+                </path></g>
+                </svg>
+                Edit Administrator </h5>*@
+                <h5 class="modal-title"><i class="bi bi-globe"></i>Add Department</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12 mt-10 mb-10">
+                        <div class="form-validation" style="">
+                            <form asp-action="Createe">
+                                <div class="form-group">
+                                    <label class="control-label">Name <span style="color:red">*</span></label>
+                                    <input Name="DepName" id="DepNamen" required class="form-control" />
+                                </div>
+                                </br>
+                                <div class="form-group">
+                                    <input type="submit" value="Create" class="btn btn-primary" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div> 
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addDep" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="modal-title-default">
+                    <svg viewBox="0 -398 1820 1820" class="icon" width="24" height="24" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <path d="M845.937778 285.866667c-160.237037 0-291.271111 131.034074-291.271111 291.271111s131.034074 291.271111 291.271111 291.271111 291.271111-131.034074 291.271111-291.271111-131.034074-291.271111-291.271111-291.271111z m-16.213334 35.65037v110.08c-30.72-1.611852-58.216296-8.059259-84.10074-16.213333 21.048889-50.157037 50.157037-84.195556 84.10074-93.866667z m-1.611851 142.411852v97.09037H716.515556c1.611852-42.097778 8.059259-82.488889 17.825185-116.527407 29.108148 11.282963 59.828148 17.825185 93.771852 19.437037z m-71.205926-129.517037c-14.601481 17.825185-27.496296 40.485926-38.874074 66.37037-12.98963-6.447407-24.272593-14.601481-35.555556-24.272592 22.660741-17.825185 46.933333-32.331852 74.42963-42.097778zM658.204444 399.17037c12.98963 12.98963 29.108148 22.660741 46.933334 32.331852-12.98963 38.874074-19.437037 82.488889-21.048889 129.422222H586.998519c4.93037-63.051852 30.814815-119.656296 71.205925-161.754074z m-69.594074 194.180741h97.090371c1.611852 46.933333 9.671111 90.642963 21.048889 129.422222-17.825185 9.671111-33.943704 19.437037-46.933334 32.331852-42.002963-42.002963-67.887407-98.607407-71.205926-161.754074z m93.866667 184.50963c9.671111-8.059259 22.660741-16.213333 35.555556-24.272593 11.282963 25.884444 24.272593 48.545185 38.874074 66.370371-27.496296-9.765926-51.768889-24.367407-74.42963-42.097778z m147.247407 54.992592c-33.943704-8.059259-63.146667-43.70963-84.10074-93.866666 25.884444-9.671111 53.380741-14.601481 84.10074-16.213334v110.08z m1.611852-142.411852h-1.611852c-33.943704 1.611852-66.37037 8.059259-93.866666 19.437038-9.671111-33.943704-16.213333-74.42963-17.825185-116.527408h113.303703v97.09037z m178.062223-313.931851c-9.671111 8.059259-22.660741 16.213333-35.555556 24.272592-11.282963-25.884444-24.272593-48.545185-38.874074-66.37037 27.496296 9.765926 51.768889 24.272593 74.42963 42.097778z m-34.038519 216.841481c-1.611852 42.097778-8.059259 82.488889-17.825185 116.527408-29.108148-11.282963-59.828148-17.825185-93.866667-19.437038V593.351111h111.691852zM862.151111 321.517037c33.943704 8.059259 63.146667 43.70963 84.100741 93.866667-25.884444 9.671111-53.380741 14.601481-84.100741 16.213333V321.517037z m-1.611852 142.411852h1.611852c33.943704-1.611852 66.37037-8.059259 93.866667-19.437037 9.671111 33.943704 16.213333 74.42963 17.825185 116.527407H860.539259V463.928889z m1.611852 368.924444V722.773333c30.72 1.611852 58.216296 8.059259 84.100741 16.213334-21.048889 51.768889-50.157037 85.807407-84.100741 93.866666z m72.817778-12.989629c14.601481-17.825185 27.496296-40.485926 38.874074-66.370371 12.98963 6.447407 24.272593 14.601481 35.555556 24.272593-22.660741 17.825185-46.933333 32.426667-74.42963 42.097778z m98.702222-64.663704c-12.98963-12.98963-29.108148-22.660741-46.933333-32.331852 12.98963-38.874074 19.437037-82.488889 21.048889-129.422222h97.09037c-4.93037 63.051852-30.814815 119.656296-71.205926 161.754074z m-25.884444-194.180741c-1.611852-46.933333-9.671111-90.642963-21.048889-129.422222 17.825185-9.671111 33.943704-19.437037 46.933333-32.331852 40.485926 42.097778 67.982222 98.702222 71.205926 161.848889h-97.09037z" fill="#FFA28D"></path><path d="M975.36 156.444444c-93.866667 0-176.355556 43.70963-229.736296 113.303704 24.272593-8.059259 50.157037-12.98963 76.041481-14.601481-3.223704-1.611852-6.447407-4.835556-9.671111-6.447408 22.660741-17.825185 46.933333-32.331852 74.42963-42.097778-11.282963 12.98963-21.048889 30.72-30.72 48.545186 11.282963 0 22.660741 1.611852 33.943703 3.223703 19.437037-35.555556 43.70963-58.216296 71.205926-64.758518v82.488889c11.282963 4.835556 22.660741 8.059259 32.331852 14.601481V193.706667c33.943704 8.059259 63.146667 43.70963 84.100741 93.866666-19.437037 8.059259-40.485926 12.98963-63.146667 14.601482 12.98963 8.059259 25.884444 16.213333 37.262222 25.884444 12.98963-3.223704 25.884444-6.447407 37.262223-11.282963 6.447407 19.437037 9.671111 40.485926 12.989629 61.534815 19.437037 24.272593 35.555556 53.380741 46.933334 85.807408h84.10074c-3.223704 61.534815-29.108148 114.915556-67.982222 156.918518-3.223704 19.437037-6.447407 38.874074-12.989629 56.604444 69.594074-53.380741 113.303704-135.964444 113.303703-229.736296 1.611852-160.426667-129.422222-291.460741-289.659259-291.460741z m89.031111 48.545186c27.496296 9.671111 51.768889 24.272593 74.42963 42.097777-9.671111 8.059259-22.660741 16.213333-35.555556 24.272593-9.765926-25.884444-22.660741-48.545185-38.874074-66.37037z m72.817778 226.512592c-1.611852-46.933333-9.671111-90.642963-21.048889-129.422222 17.825185-9.671111 33.943704-19.437037 46.933333-32.331852 40.485926 42.097778 67.982222 98.702222 71.205926 161.848889h-97.09037z" fill="#5FFFBA">
+                            </path>
+                        </g>
+                    </svg>
+                    Add Department</h6>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form asp-action="Createe">
+            <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label">Name <span style="color:red">*</span></label>
+                        <input Name="DepName" id="DepName" required class="form-control" />
+                    </div>
+                </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn bg-gradient-primary">Create</button>
+               @* <button type="submit" class="btn btn-link  ml-auto" data-bs-dismiss="modal">Create</button>*@
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-blur fade" id="editDepp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-globe"></i>Edit Department</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Editt">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12 mt-10 mb-10">
+                           
+                            <div class="form-validation" style="">
+                               
+                                <div class="form-group">
+                                    <label class="control-label">Name <span style="color:red">*</span></label>
+                                    <input Name="Name" id="NNn" required class="form-control" />
+                                </div>
+                                <input type="hidden" Name="id" id="Nidn" />
+                                <div class="form-group form-check">
+                                    <br />
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="form-check-input" Name="IsVisible" id="vbn" value="true">
+                                        <span class="form-check-label">Active</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn me-auto" data-bs-dismiss="modal">Cancel</button>
+                    <input type="submit" value="Update" class="btn btn-success" data-bs-dismiss="modal"></input>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editDep" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="modal-title-default">Edit Department</h6>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+             <form asp-action="Editt">
+            <div class="modal-body">
+                 
+                                                   
+                                <div class="form-group">
+                                    <label class="control-label">Name <span style="color:red">*</span></label>
+                                    <input Name="Name" id="NN" required class="form-control" />
+                                </div>
+                                <input type="hidden" Name="id" id="Nid" />
+                                <div class="form-group form-check">
+                                    <br />
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="form-check-input" Name="IsVisible" id="vb" value="true">
+                                        <span class="form-check-label">Active</span>
+                                    </label>
+                                </div>                           
+                     
+                    
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn bg-gradient-primary">Save changes</button>
+                <button type="button" class="btn btn-link  ml-auto" data-bs-dismiss="modal">Close</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="row my-4">
+    <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="row">
+                    <div class="col-lg-6 col-7">
+                        <h6>Departments</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1"></span>Details
+                        </p>
+                    </div>
+                    <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                            </a>
+                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive">
+                    <div class="card-body p-3">
+                    <table class="table datatable align-items-center mb-0" id="example">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Active</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created Date</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Updated Date</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           
+
+                            @if (Model != null)
+                            {
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div>
+                                                    <img src="~/softui/assets/img/small-logos/logo-xd.svg" class="avatar avatar-sm me-3" alt="xd">
+                                                </div>
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm">@Html.DisplayFor(modelItem => item.Name)</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="avatar-group mt-2">
+                                                @Html.DisplayFor(modelItem => item.IsVisible)
+                                               @* <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
+                                                    <img src="~/softui/assets/img/team-1.jpg" alt="team1">
+                                                </a>
+                                                <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
+                                                    <img src="~/softui/assets/img/team-2.jpg" alt="team2">
+                                                </a>
+                                                <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alexander Smith">
+                                                    <img src="~/softui/assets/img/team-3.jpg" alt="team3">
+                                                </a>
+                                                <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
+                                                    <img src="~/softui/assets/img/team-4.jpg" alt="team4">
+                                                </a>*@
+                                            </div>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-xs font-weight-bold"> @Html.DisplayFor(modelItem => item.CreatedDate) </span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-xs font-weight-bold"> @Html.DisplayFor(modelItem => item.CreatedDate) </span>
+                                        </td>
+                                       @* <td class="align-middle">
+                                            <div class="progress-wrapper w-75 mx-auto">
+                                                <div class="progress-info">
+                                                    <div class="progress-percentage">
+                                                        <span class="text-xs font-weight-bold">@Html.DisplayFor(modelItem => item.UpdatedDate)</span>
+                                                    </div>
+                                                </div>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-gradient-info w-60" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>*@
+                                        <td></td>
+                                        <td>
+                                            <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" onclick="javascript:showEdit(@JsonSerializer.Serialize(item))">
+                                                Edit
+                                                <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                   
+                                }
+                            }
+                           
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="card">
+            <div class="card-header pb-0">
+                <h6>Departments</h6>
+                <p class="text-sm">
+                    <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
+
+                    <span class="font-weight-bold"></span>Actions
+                </p>
+            </div>
+            <div class="card-body p-3">
+                <div class="timeline timeline-one-side">
+                    <div class="timeline-block">
+                        <span class="timeline-step">
+                            <i class="ni ni-money-coins text-dark text-gradient"></i>
+                        </span>
+                        <div class="timeline-content">
+                            <div style="text-align: center;">
+                                <a class="btn bg-gradient-primary mb-0" data-bs-toggle="modal" data-bs-target="#addDep"><i class="fas fa-plus"></i>&nbsp;&nbsp;Add Department</a>
+                                <a class="btn bg-gradient-info mb-0" href="javascript:;"><i class="fas fa-plus"></i>&nbsp;&nbsp;Export to Excel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function showEdit(data) {
+        // var x = document.getElementById("Name+" + id).innerHTML;
+        document.getElementById("vb").checked = data.IsVisible;
+        document.getElementById("Nid").value = data.Id;
+
+        document.getElementById("NN").value = data.Name;
+        $('#editDep').modal('show');
+    }
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

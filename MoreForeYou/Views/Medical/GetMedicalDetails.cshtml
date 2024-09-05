@@ -1,0 +1,160 @@
+﻿@model MoreForYou.Services.Models.Medical.MedicalDetailsViewModel
+
+@{
+    ViewData["Title"] = "ShowDetails";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+    Double d = (Model.MedicalDetailsModels.Count / 2.0);
+    var rowsNumber = Math.Round(d,0, MidpointRounding.AwayFromZero);
+    int end = 0;
+    int start = 0;
+    string name = string.Empty;
+}
+<link href="~/css/newStyleSheet.css" rel="stylesheet" />
+<link href="~/css/ribbons.css" rel="stylesheet" />
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+
+@if (Model != null)
+{
+    for (int rowIndex = 0; rowIndex < rowsNumber; rowIndex++)
+    {
+        end = ((rowIndex + 1) * 2) - 1;
+        start = rowIndex * 2;
+        if (rowIndex == 0)
+        {
+            <div class="row">
+                @for (int index = start; index <= end && index <Model.MedicalDetailsModels.Count; index++)
+                {
+
+                    var splittedAddress = Model.MedicalDetailsModels[index].Address_AR.Split(";");
+                    var splittedPhone = Model.MedicalDetailsModels[index].Mobile.Split(";");
+                    var splittedDates = Model.MedicalDetailsModels[index].WorkingHours_AR.Split(";");
+
+                    <div class="col-md-5 mt-4">
+                        <div class="card h-100 mb-4">
+                            <div class="card-header pb-0 px-3">
+                                <div class="row">
+                                    <div class="pt-1 d-flex flex-column align-items-center">
+                                        <img src="~/images/HBD.jpg" alt="Profile" class="rounded-circle mb-1" width="100" height="90">
+                                        <h6 class="text-center; mt-1" id="medicalDetailsName">@Model.MedicalDetailsModels[index].Name_AR</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body pt-4 p-3">
+                                <div class="row">
+                                    @* @*                             </div> *@
+                                    @* <div class="card-body pt-4 p-3"> *@
+                                    <ul class="list-group" id="medicalDetaildList">
+                                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-1 border-radius-lg">
+                                            <div class="d-flex align-items-center text-sm">
+                                                $180
+                                            </div>
+                                            <div class="d-flex flex-column">
+                                                @* <h6 class="mb-1 text-dark font-weight-bold text-sm">March, 01, 2020</h6> *@
+                                                <span class="text-xs text-right" style="display:block" id="AddressDetails">
+
+                                                    @foreach (var address in splittedAddress)
+                                                    {
+                                                        <span class="d-block; p-2">@address <i class="fas fa-location text-xs text-right text-primary text-gradient"></i></span>
+                                                    }
+                                                </span>
+                                                <span class="text-xs text-right" style="display:block" id="phoneDetails">
+
+                                                    @foreach (var phone in splittedPhone)
+                                                    {
+                                                        <span class="d-block; p-2">@phone <i class="fas fa-phone text-xs text-right text-primary text-gradient"></i></span>
+                                                    }
+                                                </span>
+                                                <span class="text-xs text-right" style="display:block" id="DatesDetails">
+
+                                                    @foreach (var date in splittedDates)
+                                                    {
+                                                        <span class="d-block; p-2">@date <i class="fas fa-clock text-xs text-right text-primary text-gradient"></i></span>
+                                                    }
+                                                </span>
+
+                                            </div>
+
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="row mt-2">
+                @for (int index = start; index <= end && index < Model.MedicalDetailsModels.Count; index++)
+                {
+                    var splittedAddress = Model.MedicalDetailsModels[index].Address_AR.Split(";");
+                    var splittedPhone = Model.MedicalDetailsModels[index].Mobile.Split(";");
+                    var splittedDates = Model.MedicalDetailsModels[index].WorkingHours_AR.Split(";");
+                    <div class="col-md-5 mt-4">
+                        <div class="card h-100 mb-4">
+                            <div class="card-header pb-0 px-3">
+                                <div class="row">
+                                    <div class="pt-1 d-flex flex-column align-items-center">
+                                        <img src="~/images/HBD.jpg" alt="Profile" class="rounded-circle mb-1" width="100" height="90">
+                                        <h6 class="text-center; mt-1" id="medicalDetailsName">@Model.MedicalDetailsModels[index].Name_AR</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body pt-4 p-3">
+                                <div class="row">
+                                    @* @*                             </div> *@
+                                    @* <div class="card-body pt-4 p-3"> *@
+                                    <ul class="list-group" id="medicalDetaildList">
+                                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-1 border-radius-lg">
+                                            <div class="d-flex align-items-center text-sm">
+                                                $180
+                                            </div>
+                                            <div class="d-flex flex-column">
+                                                @* <h6 class="mb-1 text-dark font-weight-bold text-sm">March, 01, 2020</h6> *@
+                                                <div class="text-xs text-right" style="display:block" id="AddressDetails">
+
+                                                    @foreach (var address in splittedAddress)
+                                                    {
+                                                        <div>@address <i class="fas fa-home text-xs text-right text-primary text-gradient"></i></div>
+                                                    }
+                                                </div>
+                                                <div class="text-xs text-right" id="phoneDetails">
+
+                                                    @foreach (var phone in splittedPhone)
+                                                    {
+                                                        <div>@phone <i class="fas fa-mobile text-xs text-right text-primary text-gradient"></i></div>
+                                                    }
+                                                </div>
+                                                <div class="text-xs text-right" id="DatesDetails">
+
+                                                    @foreach (var date in splittedDates)
+                                                    {
+                                                        <div>@date <i class="fas fa-clock text-xs text-right text-primary text-gradient"></i></div>
+                                                    }
+                                                </div>
+
+                                            </div>
+
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        }
+
+
+    }
+}
+
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

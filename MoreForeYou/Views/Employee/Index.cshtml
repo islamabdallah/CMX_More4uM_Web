@@ -1,0 +1,404 @@
+﻿@model MoreForYou.Services.Models.MasterModels.FilterModel
+
+@{
+    ViewData["Title"] = "Employee";
+    ViewData["SubTitle"] = "Index";
+    ViewData["activ"] = "Employee";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+}
+
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable(
+            {
+               
+            });
+
+    });
+
+    function showEmployeeDetails(item) {
+        //for (var x in item) {
+        //    alert(item[x]);
+        document.getElementById("employeeNameee").innerText = item["FullName"];
+        document.getElementById("employeeEmail").innerText = item['Email'];
+        document.getElementById("employeeDepartment").innerText = item["Department"]["Name"];
+        document.getElementById("employeePosition").innerText = item["Position"]["Name"];
+        document.getElementById("employeeSapNumber").innerText = item["SapNumber"];
+        document.getElementById("employeeEmployeeNumber").innerText = item["EmployeeNumber"];
+        document.getElementById("employeeCompanyCode").innerText = item["Company"]["Code"];
+        document.getElementById("employeeAddress").innerText = item['Address'];
+        document.getElementById("employeePhone").innerText = item["PhoneNumber"];
+        document.getElementById("employeeGender").innerText = item["GenderString"];
+        document.getElementById("employeeMartialStatus").innerText = item["MaritalStatusString"];
+        document.getElementById("employeeBirthDate").innerText = item["BirthDateString"];
+        document.getElementById("employeeJoinDate").innerText = item["JoiningDateString"];
+        document.getElementById("employeeCollar").innerText = item["CollarString"];
+        document.getElementById("employeeSupervisorName").innerText = item["Supervisor"]["FullName"];
+        document.getElementById("employeePhoto").src = "http://20.86.97.165/more4u/images/userProfile/" + item["ProfilePicture"];
+
+        $('#scrollingModal').modal('show');
+
+    }
+</script>
+
+<div class="row my-4">
+    <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="row">
+                    <div class="col-lg-6 col-7">
+                        <h6>Employees</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1">Searching</span> Criteria
+                        </p>
+                    </div>
+                    <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                            </a>
+                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive">
+                    <div class="card-body p-3">
+
+                        <!-- No Labels Form -->
+                        <form class="row g-3" asp-action="Index" method="post">
+                            <div class="col-md-4">
+                                <label class="form-label">EmployeeName</label>
+                                <input type="text" class="form-control" id="EmployeeName" placeholder="Employee Name" asp-for="EmployeeName">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">EmployeeNumber</label>
+                                <input type="number" class="form-control" id="EmployeeNumber" placeholder="Employee Number" asp-for="EmployeeNumber">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">SapNumber</label>
+                                <input type="number" class="form-control" id="SapNumber" placeholder="sap Number" asp-for="SapNumber">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Department</label>
+                                <select class="form-select" asp-for="SelectedDepartmentId"
+                                        id="SelectedDepartmentId" asp-items="@(new SelectList(Model.DepartmentModels,"Id","Name"," "))">
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Position</label>
+                                <select class="form-select" id="SelectedPositionId" asp-for="SelectedPositionId"
+                                        asp-items="@(new SelectList(Model.PositionModels,"Id","Name"))">
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Nationality</label>
+                                <select class="form-select" id="SelectedNationalityId" asp-for="SelectedNationalityId"
+                                        asp-items="@(new SelectList(Model.NationalityModels,"Id","Name"))">
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">BirthDate</label>
+                                <input type="Date" class="form-control" id="BirthDate" placeholder="BirthDate" asp-for="BirthDate">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">JoinDate</label>
+                                <input type="Date" class="form-control" id="BirthDate" placeholder="JoinDate" asp-for="JoinDate">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Gender</label>
+                                <select class="form-select" id="SelectedGenderId" asp-for="SelectedGenderId"
+                                        asp-items="@(new SelectList(Model.genderModels,"Id","Name"))">
+                                </select>
+                            </div>
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    Direct Employee
+                                </label>
+                                <input class="form-check-input" type="checkbox" value="" id="fcustomCheck1" checked="">
+                            </div>
+                            <div class="text-left">
+                                <button type="submit" class="btn btn-primary">
+                                    Search
+                                </button>
+                            </div>
+                        </form><!-- End No Labels Form -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="card">
+            <div class="card-header pb-0">
+                <h6>Employee</h6>
+                <p class="text-sm">
+                    <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
+
+                    <span class="font-weight-bold"></span>Actions
+                </p>
+            </div>
+            <div class="card-body p-3">
+                <div class="timeline timeline-one-side">
+                    <div class="timeline-block">
+                        <span class="timeline-step">
+                            <i class="ni ni-money-coins text-dark text-gradient"></i>
+                        </span>
+                        <div class="timeline-content">
+                            <div style="text-align: center;">
+                                <a class="btn bg-gradient-primary mb-0" asp-action="Create"><i class="fas fa-plus"></i>&nbsp;&nbsp;New Employee</a>
+                                <a class="btn bg-gradient-info mb-0" href="javascript:;"><i class="fas fa-plus"></i>&nbsp;&nbsp;Export to Excel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <div class="row my-4">
+        <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+          <div class="card">
+            <div class="card-header pb-0">
+              <div class="row">
+                <div class="col-lg-6 col-7">
+                  <h6>Employees</h6>
+                  <p class="text-sm mb-0">
+                    <i class="fa fa-check text-info" aria-hidden="true"></i>
+                    <span class="font-weight-bold ms-1">Searching</span> Results
+                  </p>
+                </div>
+                <div class="col-lg-6 col-5 my-auto text-end">
+                  <div class="dropdown float-lg-end pe-4">
+                    <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fa fa-ellipsis-v text-secondary"></i>
+                    </a>
+                    <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive">
+                <div class="card-body p-3">
+                <table id="example" class="table data-table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Number</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Sap Number</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Address</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Phone Number</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                       @if (Model.EmployeeModels != null)
+                            {
+                                @foreach (var item in Model.EmployeeModels)
+                                {
+                                    var employee = JsonSerializer.Serialize(item);
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div>
+                                                    <img src="~/softui/assets/img/small-logos/logo-xd.svg" class="avatar avatar-sm me-3" alt="xd">
+                                                </div>
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm">
+                                                        @Html.DisplayFor(modelItem => item.FullName)
+                                                        </h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="avatar-group mt-2">
+                                                @Html.DisplayFor(modelItem => item.EmployeeNumber)
+                                            </div>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-xs font-weight-bold">
+                                                @Html.DisplayFor(modelItem => item.SapNumber)
+                                                </span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="progress-wrapper w-75 mx-auto">
+                                                <div class="progress-info">
+                                                    <div class="progress-percentage">
+                                                        <span class="text-xs font-weight-bold"> 
+                                                            @Html.DisplayFor(modelItem => item.Address)</span>
+                                                    </div>
+                                                </div>
+                                               
+                                            </div>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-xs font-weight-bold">
+                                                @Html.DisplayFor(modelItem => item.PhoneNumber)
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" onclick="showEmployeeDetails(@employee)">
+                                                Details
+                                                <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                                            </a>
+                                            &nbsp;|&nbsp;
+                                            <form method="post" asp-action="EditFromIndex">
+                                                <input type="hidden" id="id" asp-for="EmployeeNumber" value="@item.EmployeeNumber" />
+                                                <button class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto " type="submit">
+                                                    Edit
+                                                    <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                                                </button>
+                                            </form>
+                                            
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+<div class="modal fade" id="scrollingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalMessageTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Employee Details</h5>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close" onclick="clearElements()">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
+                        <a href="javascript:;" class="d-block">
+                            @*<img id="" src="~/softui/assets/img/CemexAssiutBabyOnBoard.png" class="img-fluid border-radius-lg">*@
+                            <img id="employeePhoto" src="~/images/userProfile/userProfile1.png" class="img-fluid border-radius-lg">
+                        </a>
+                    </div>
+                    <div class="row">
+                        <div class="col col-lg-12 mb-2 mb-lg-0">
+                            
+                           
+                            <div class="row mt-5">
+                                <div class="col-md-12 col-lg-12">
+                                    <div class="card-body pl-2" id="cardBody">
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>Name</h6>
+                                                <p class="text-muted" id="employeeNameee">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>Email</h6>
+                                                <p class="text-muted" id="employeeEmail">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>Department</h6>
+                                                <p class="text-muted" id="employeeDepartment">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-6 mb-1">
+                                                <h6>Position</h6>
+                                                <p class="text-muted" id="employeePosition">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>Sap Naumber</h6>
+                                                <p class="text-muted" id="employeeSapNumber">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-6 mb-1">
+                                                <h6>Employee Number</h6>
+                                                <p class="text-muted" id="employeeEmployeeNumber">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6">
+                                                <h6>Company</h6>
+                                                <p class="text-muted" id="employeeCompanyCode">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <h6>Payroll Area</h6>
+                                                <p class="text-muted" id="employeeCollar">Lorem ipsum</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6">
+                                                <h6>Address</h6>
+                                                <p class="text-muted" id="employeeAddress">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-6">
+                                                <h6>Phone</h6>
+                                                <p class="text-muted" id="employeePhone">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6">
+                                                <h6>Gender</h6>
+                                                <p class="text-muted" id="employeeGender">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-6">
+                                                <h6>Martial Status</h6>
+                                                <p class="text-muted" id="employeeMartialStatus">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-6">
+                                                <h6>Birth Date</h6>
+                                                <p class="text-muted" id="employeeBirthDate">Dolor sit amet</p>
+                                            </div>
+                                            <div class="col-6">
+                                                <h6>Join Date</h6>
+                                                <p class="text-muted" id="employeeJoinDate">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-12">
+                                                <h6>Supervisor</h6>
+                                                <p class="text-muted" id="employeeSupervisorName">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal" onclick="clearElements()">Close</button>
+                @*<button type="button" class="btn bg-gradient-primary">Redeem</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

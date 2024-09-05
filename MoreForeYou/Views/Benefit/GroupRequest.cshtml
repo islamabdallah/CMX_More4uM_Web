@@ -1,0 +1,322 @@
+﻿@model MoreForYou.Services.Models.API.WebRequest
+
+
+@{
+    ViewData["Title"] = "Benefit";
+    ViewData["SubTitle"] = "GroupRequest";
+    ViewData["active"] = "lmDashboard";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+    string optionId = "";
+}
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+
+<script src="~/searchableDD/jquery.dropdown.js"></script>
+<script src="~/searchableDD/jquery.dropdown.min.js"></script>
+<script src="~/searchableDD/select2.js"></script>
+<link rel="stylesheet" href="~/searchableDD/jquery.dropdown.css" />
+<link rel="stylesheet" href="~/searchableDD/jquery.dropdown.min.css" />
+<link rel="stylesheet" href="~/searchableDD/select2.css" />
+<script src="~/js/sweetalert.min.js"></script>
+
+
+<script>
+    function setToDateValue(e) {
+        var from = new Date(document.getElementById("From").value);
+
+        var numberOfDays = parseInt(document.getElementById('numberOfDays').value);
+        from.setDate(from.getDate() + numberOfDays - 1);
+        var ToDate = formatDate(from);
+        var nextYear = parseInt(document.getElementById("year").value) + 1;
+        alert(nextYear);
+        var ToMaxDate = formatDate(new Date(nextYear, "00", "31"));
+        alert(ToDate);
+        alert(ToMaxDate);
+        if (ToDate > ToMaxDate) {
+            alert("invalid date");
+        }
+        else {
+            var fromDefaultValue = new Date(document.getElementById("defaultExpectedFrom").value);
+            var selectedDate = formatDate(from);
+            var defaultDate = formatDate(fromDefaultValue);
+            var benefitDateToMatch = document.getElementById("benefitDateToMatch").value;
+            if (defaultDate != selectedDate && benefitDateToMatch != "Any") {
+                alert("you must add Message to explain your request");
+                document.getElementById("Message").setAttribute('required', '');
+            }
+            else {
+                document.getElementById("Message").removeAttribute('required');
+            }
+            document.getElementById("To").value = formatDate(from);
+            document.getElementById("ToInfo").innerText = "you are selected from " + document.getElementById("From").value + " To "
+                + document.getElementById("To").value;
+        }
+    }
+
+    function padTo2Digits(num) {
+        return num.toString().padStart(2, '0');
+    }
+
+    function formatDate(date) {
+        return (
+            [
+                date.getFullYear(),
+                padTo2Digits(date.getMonth() + 1),
+                padTo2Digits(date.getDate()),
+            ].join('-'));
+    }
+
+    function setYear(year) {
+        document.getElementById('From').setAttribute("min", year + "-01-01");
+        document.getElementById('From').setAttribute("max", year + "-12-31");
+        var nextYear = year + 1;
+        document.getElementById('To').setAttribute("max", nextYear + "-01-31");
+    }
+</script>
+
+<script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Done !",
+                text: message,
+                icon: "success",
+            }).then(function () {
+                window.location.href = "http://20.86.97.165/more4u/more4u/ShowMyBenefitRequests?BenefitId=" + @Model.benefitId+"&requestNumber=-1";
+            });
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Failed process!",
+                text: error,
+                icon: "error",
+            });
+        }
+    }
+
+
+    function hideOptions() {
+        var ele = document.getElementsByClassName("select2-results__option");
+        ele[0].hidden = true;
+    }
+</script>
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (ViewBag.Error != null)
+{
+    <input type="hidden" id="error" value="@ViewBag.Error" />
+    <script>
+        showAlert("Error");
+    </script>
+}
+
+<div class="row mt-4">
+    <div class="col-lg-9 mb-lg-0 mb-4">
+        <div class="card">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="d-flex flex-column h-100">
+                            <p class="mb-1 pt-2 text-bold">Built by developers</p>
+                            <h5 class="font-weight-bolder text-gradient text-primary">@Model.BenefitName</h5>
+                            <p class="mb-5">From colors, cards, typography to complex elements, you will find the full documentation.</p>
+                            <form asp-action="ConfirmRequest" method="post" enctype="multipart/form-data">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <input type="hidden" asp-for="@Model.benefitId" />
+                                <input type="hidden" id="numberOfDays" asp-for="@Model.numberOfDays" />
+                                <input id="maxParticipant" type="hidden" asp-for="@Model.MaxParticipant" />
+                                <input id="minParticipant" type="hidden" asp-for="@Model.MinParticipant" />
+                                <div class="row" style="margin:auto">
+                                    <div class="col-lg-12">
+                                        <div class="form-group" style="margin-bottom:15px">
+                                            @if (Model.MinParticipant == 1)
+                                            {
+                                                <label class="control-label">Participants <span style="color:red"></span></label>
+
+                                                <br />
+                                            }
+                                            else
+                                            {
+                                                <label class="control-label">Participants <span style="color:red">*</span></label>
+                                                <br />
+
+                                            }
+                                            <select style="display:none; width:100%" class="dropdown-mul-1 col-lg-8" name="" id="id_select2_example"
+                                                    multiple onchange="test(this)"
+                                                    asp-items="@( new SelectList(Model.ParticipantsData,"UserNumber","FullName"))">
+                                                @for (int index = 0; index < Model.ParticipantsData.Count; index++)
+                                                {
+                                                    optionId = "optionId" + index;
+                                                    <option value="@Model.ParticipantsData[index].UserNumber"
+                                                            data-value="@Model.ParticipantsData[index].UserNumber"
+                                                            data-img_src="/~/images/userProfile/userProfile1.png" id="@optionId">
+                                                        @Model.ParticipantsData[index].FullName
+                                                    </option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="form-group" style="margin-bottom:15px">
+                                            <label class="control-label"> From <span style="color:red">*</span></label>
+                                            @*<input type="date" class="form-control" id="From" asp-for="From1" onchange="setToDateValue(this)" onclick="setYear(@Model.Year)">*@
+                                            <input type="date" class="form-control" id="From" asp-for="From" onchange="setToDateValue(this)">
+
+                                            <span asp-validation-for="From" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            @*<span id="ToInfo" style="color:red; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">
+                                            you are selected from @Model.From To  @Model.To
+                                            </span>*@
+                                            <input class="form-control" id="To" type="hidden" asp-for="To">
+                                        </div>
+                                        @*<div class="form-group mb-2">
+                                        <label class="control-label">Message <span style="color:red">*</span></label>
+                                        <textarea asp-for="Message" class="form-control"></textarea>
+                                        <span asp-validation-for="Message" class="text-danger"></span>
+                                        </div>*@
+                                        <input type="hidden" asp-for="SelectedEmployeeNumbers" id="SelectedEmployeeNumbers" value="" />
+                                        <div class="form-group" style="margin-bottom:15px">
+                                            @if (Model.MinParticipant == 1)
+                                            {
+                                                <input type="submit" value="Send Request" class="btn btn-primary" id="submitbtn" />
+                                            }
+                                            else
+                                            {
+                                                <input type="submit" value="Send Request" class="btn btn-primary" id="submitbtn" disabled />
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
+                        <div class="bg-gradient-primary border-radius-lg">
+                            <img src="~/softui/assets/img/shapes/waves-white.svg" class="position-absolute h-100 w-50 top-0 d-lg-block d-none" alt="waves">
+                            <div class="position-relative d-flex align-items-center justify-content-center h-100">
+                                <img class="w-100 position-relative z-index-2 p-1" src="~/images/BenefitCards/@Model.BenefitCard" alt="Card image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card p-3">
+            <div class="overflow-hidden position-relative border-radius-lg bg-cover" style="background-image: url('../assets/img/ivancik.jpg');">
+                <span class="mask bg-gradient-dark"></span>
+                <div class="card-body position-relative z-index-1 d-flex flex-column p-3">
+                    <h5 class="text-white font-weight-bolder mb-4 pt-2">@Model.BenefitName</h5>
+                    <p class="text-white">
+                        @Model.Title
+                        <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
+                            Read More
+                            <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                        </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var counter = 1;
+    var maxNumber = document.getElementById("maxParticipant").value;
+    var minNumber = document.getElementById("minParticipant").value;
+
+    $('.dropdown-mul-1').dropdown({
+        //data: json1.data,
+        limitCount: 40,
+        multipleMode: 'label',
+        choice: function () {
+
+            console.log("test");
+        }
+    });
+    function custom_template(obj) {
+        counter++;
+        var data = $(obj.element).data();
+        var text = $(obj.element).text();
+        if (data && data['img_src']) {
+            img_src = data['img_src'];
+            value = data['value'];
+            template = $("<div style=\" width:auto; height:20px;   display: flex; padding:0px\" id=" + value + "><span style=\"font-weight: 100;font-size:10pt;text-align:center; padding:5px\">" + text + "</span><span style=\"font-weight: 200;font-size:13pt;text-align:center; padding:5px\">" + value + "</span></div>");
+            return template;
+        }
+    }
+    //function matchStart(params, data) {
+    //    // If there are no search terms, return all of the data
+    //    if ($.trim(params.term) === '') {
+    //        return null;
+    //    }
+    //    // Return `null` if the term should not be displayed
+    //    return null;
+    //}
+    var options =
+    {
+        'templateSelection': custom_template,
+        'templateResult': custom_template,
+        'minimumInputLength': 3,
+        'maximumSelectionLength': maxNumber - 1,
+        'maximumInputLength': 20,// only allow terms up to 20 characters long
+        'placeholder': 'Select a participant',
+        'maximumResultsForSearch': 2,
+        //    'matcher': matchStart,
+    }
+    $('#id_select2_example').select2(options);
+    $('.select2-container--default .select2-selection--single').css({ 'height': '100px' });
+    $('.select2-container--default .select2-selection--single').css({ 'width': '200px' });
+    function test(e) {
+        var optionSelected = $("option:selected", e);
+        var valueSelected = e.value;
+        console.log(optionSelected);
+        console.log(valueSelected);
+        var selectedIds = [];
+        var liEle = document.getElementsByClassName("select2-selection__choice");
+        if (liEle.length >= minNumber - 1) {
+            $('#submitbtn').prop('disabled', false);
+        }
+        else {
+            $('#submitbtn').prop('disabled', true);
+
+        }
+        if (liEle.length <= maxNumber - 1) {
+            document.getElementById("SelectedEmployeeNumbers").value = "";
+            for (var i = 0; i < liEle.length; i++) {
+                var iid = liEle[i].children[1].getAttribute("id");
+                selectedIds.push(iid);
+                document.getElementById("SelectedEmployeeNumbers").value = document.getElementById("SelectedEmployeeNumbers").value + iid + ";";
+            }
+        }
+        else {
+            alert("you can not add new members, you reach the maximum number of participants");
+        }
+
+
+    }
+
+
+</script>
+
+
+<script language="javascript">
+    var today = new Date();
+    var dd = String(today.getDate() + 1).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+
+    today = yyyy + '-' + mm + '-' + dd;
+    $('#From').attr('min', today);
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,173 @@
+﻿@model MoreForYou.Services.Models.API.ManageRequest
+
+@{
+    ViewData["Title"] = "ShowAdminRequests";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+}
+
+@*<link href="~/DataTable/css/jquery.dataTables.css" rel="stylesheet" />
+    <link href="~/DataTable/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/DataTable/css/responsive.bootstrap.min.css" rel="stylesheet" />
+    <link href="~/DataTable/css/responsive.jqueryui.min.css" rel="stylesheet" />*@
+
+@*<script src="~/srtdash/assets/js/vendor/jquery-2.2.4.min.js"></script>
+    <script src="~/DataTable/js/jquery.dataTables.min.js"></script>
+    <script src="~/DataTable/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/DataTable/js/dataTables.responsive.min.js"></script>
+    <script src="~/DataTable/js/responsive.bootstrap.min.js"></script>*@
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Requests Search</h5>
+
+        <!-- No Labels Form -->
+        <form class="row g-3" method="post" asp-action="ShowAdminRequests">
+            <div class="col-md-1">
+                <input type="checkbox" asp-for="SelectedAll" name="SelectedAll" />
+                <label>All</label>
+            </div>
+            <input type="hidden" class="form-control" id="inputtext4" asp-for="SelectedDepartmentId" name="RequestNumberSearch" value="-1" placeholder="Employee Number">
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="inputtext4" asp-for="employeeNumberSearch" name="RequestNumberSearch" placeholder="Employee Number">
+            </div>
+            <div class="col-md-6">
+                <label class="col-sm-2 col-form-label">From</label><input class="form-control" type="date" asp-for="SearchDateFrom" name="SearchDateFrom" />
+            </div>
+            <div class="col-md-6">
+                <label class="col-sm-2 col-form-label">To</label><input class="form-control" type="date" asp-for="SearchDateTo" name="SearchDateTo" />
+            </div>
+            <div class="col-md-6">
+                <select class="w-100 form-select mt-lg-1 mt-md-2" asp-items="@(new SelectList(Model.RequestStatusModels,"Id","Name"))" asp-for="SelectedRequestStatus" name="SelectedRequestStatus">
+                </select>
+            </div>
+            <div class="col-md-6">
+                <select id="inputState" class="form-select" asp-items="@(new SelectList(Model.BenefitTypeModels,"Id","Name"))" asp-for="SelectedBenefitType" name="SelectedBenefitType">
+                </select>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form><!-- End No Labels Form -->
+
+    </div>
+</div>
+
+@*<div class="main-content-inner">
+    <div class="row">*@
+<div class="container-fluid">
+    @*<div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card" style="box-shadow:10px 10px 10px rgba(0, 0, 0, 0.5)">
+                    <div class="card-body">
+                        <h4 class="card-title">Requests Search</h4>
+                        <div class="advance-search">
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-12 col-md-12 align-content-center">
+                                        <form asp-controller="Benefit" asp-action="ShowAdminRequests">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-4">
+                                                    <label>From</label> <input type="Date" class="form-control" id="SearchDateFrom" asp-for="SearchDateFrom">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label>To</label> <input type="Date" class="form-control my-2 my-lg-1" id="SearchDateTo" asp-for="SearchDateTo">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label>EmployeeNumber</label><input type="text" class="form-control my-2 my-lg-1" id="EmployeeNumber" placeholder="Employee Number" asp-for="employeeNumberSearch">
+                                                </div>
+                                                <div class="form-group col-md-3">
+                                                    <label>Department</label><select class="w-100 form-control mt-lg-1 mt-md-2"
+                                                                                     id="SelectedDepartmentId" asp-for="SelectedDepartmentId" asp-items="@(new SelectList(Model.DepartmentModels,"Id", "Name"))">
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-md-3">
+                                                    <label>Type</label><select class="w-100 form-control mt-lg-1 mt-md-2"
+                                                                               id="SelectedBenefitType" asp-for="SelectedBenefitType" asp-items="@(new SelectList(Model.BenefitTypeModels,"Id", "Name"))">
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-md-3">
+                                                    <label>Status</label> <select class="w-100 form-control mt-lg-1 mt-md-2"
+                                                                                  id="SelectedRequestStatus" asp-for="SelectedRequestStatus" asp-items="@(new SelectList(Model.RequestStatusModels,"Id", "Name"))">
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-md-2">
+                                                    <label>Select All</label>
+                                                    <input type="checkbox" id="SelectedAll" class="form-control" asp-for="SelectedAll" style="width:30px; height:30px">
+                                                </div>
+                                                <div class="form-group col-md-2 align-self-center">
+                                                    <input type="submit" class="btn btn-primary" value="Search Now" />
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>*@
+</div>
+@if (Model.Requests != null)
+{
+    <!-- data table start -->
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 mt-5">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title">Data Table Default</h4>
+                        <div class="data-tables">
+                            <table id="dataTable" class="text-center">
+                                <thead class="bg-light text-capitalize">
+                                    <tr>
+                                        <th>EmployeeNumber</th>
+                                        <th>EmployeeName  </th>
+                                        <th>Department    </th>
+                                        <th>Position      </th>
+                                        <th>BenefitName   </th>
+                                        <th>BenefitType</th>
+                                        <th>RequestedAt</th>
+                                        <th>Status</th>
+                                        <th>RequiredFrom</th>
+                                        <th>RequiredTo</th>
+                                        <th>Message</th>
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int index = 0; index < Model.Requests.Count; index++)
+                                    {
+                                        <tr>
+                                            <td>@Model.Requests[index].CreatedBy.UserNumber</td>
+                                            <td>@Model.Requests[index].CreatedBy.UserName</td>
+                                            <td>@Model.Requests[index].CreatedBy.DepartmentName</td>
+                                            <td>@Model.Requests[index].CreatedBy.PositionName</td>
+                                            <td>@Model.Requests[index].BenefitName</td>
+                                            <td>@Model.Requests[index].BenefitType</td>
+                                            <td>@Model.Requests[index].Requestedat</td>
+                                            <td>@Model.Requests[index].status</td>
+                                            <td>@Model.Requests[index].From</td>
+                                            <td>@Model.Requests[index].To</td>
+                                            <td>@Model.Requests[index].Message</td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- data table end -->
+}
+
+@*</div>
+    </div>*@
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

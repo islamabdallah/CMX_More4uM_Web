@@ -1,0 +1,123 @@
+﻿@model IEnumerable<MoreForYou.Services.Models.MasterModels.GroupModel>
+
+@{
+    ViewData["Title"] = "ShowMyGroups";
+}
+
+<h1>ShowMyGroups</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Code)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RequestStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GroupStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExpectedDateFrom)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExpectedDateTo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Message)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConfirmedDateFrom)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConfirmedDateTo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Benefit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsDelted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsVisible)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdatedDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestStatus.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GroupStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ExpectedDateFrom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ExpectedDateTo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Message)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ConfirmedDateFrom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ConfirmedDateTo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Benefit.BenefitCard)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsDelted)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsVisible)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdatedDate)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

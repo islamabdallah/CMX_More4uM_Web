@@ -1,0 +1,53 @@
+﻿@model IEnumerable<MoreForYou.Models.Auth.RoleModel>
+
+@{ ViewData["Title"] = "Index"; }
+
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/DataTable/jquery-3.6.0.min.js"></script>
+<link href="~/dT/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="~/dT/jquery.dataTables.min.js" defer></script>
+
+<p>
+    <a asp-action="Create" data-toggle="tooltip" data-placement="bottom" title="Click To Add Role"><i class="fa fa-plus-square-o" style="font-size:70px;color:Blue;"></i></a>
+</p>
+
+<div class="row" style="margin:auto">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Roles</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered verticle-middle" id="example">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@item.Name" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil color-muted m-r-5"></i> </a>
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline-block">
+                                            <button value="Delete" class="btn btn-danger" type="submit" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-close color-muted m-r-5"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

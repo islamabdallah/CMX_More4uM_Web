@@ -1,0 +1,92 @@
+﻿@model MoreForYou.Services.Models.MasterModels.BenefitRequestModel
+
+@{
+    ViewData["Title"] = "Redeem";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+
+}
+<link href="~/css/ribbons.css" rel="stylesheet" />
+<div class="pagetitle">
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="ShowBenefits" asp-controller="Benefit">Home</a></li>
+            <li class="breadcrumb-item active">Benefit Request</li>
+        </ol>
+    </nav>
+    @* <h1 class="ribbon12 mb-5">
+        <strong class="ribbon12-content">Add Request </strong>
+    </h1> *@
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Redeem">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BenefitId" class="control-label"></label>
+                <select asp-for="BenefitId" class="form-control" asp-items="ViewBag.BenefitId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestDate" class="control-label"></label>
+                <input asp-for="RequestDate" class="form-control" />
+                <span asp-validation-for="RequestDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ExpectedDateFrom" class="control-label"></label>
+                <input asp-for="ExpectedDateFrom" class="form-control" />
+                <span asp-validation-for="ExpectedDateFrom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ExpectedDateTo" class="control-label"></label>
+                <input asp-for="ExpectedDateTo" class="form-control" />
+                <span asp-validation-for="ExpectedDateTo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Message" class="control-label"></label>
+                <input asp-for="Message" class="form-control" />
+                <span asp-validation-for="Message" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmedDateFrom" class="control-label"></label>
+                <input asp-for="ConfirmedDateFrom" class="form-control" />
+                <span asp-validation-for="ConfirmedDateFrom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmedDateTo" class="control-label"></label>
+                <input asp-for="ConfirmedDateTo" class="form-control" />
+                <span asp-validation-for="ConfirmedDateTo" class="text-danger"></span>
+            </div>
+
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsDelted" /> @Html.DisplayNameFor(model => model.IsDelted)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsVisible" /> @Html.DisplayNameFor(model => model.IsVisible)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreatedDate" class="control-label"></label>
+                <input asp-for="CreatedDate" class="form-control" />
+                <span asp-validation-for="CreatedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UpdatedDate" class="control-label"></label>
+                <input asp-for="UpdatedDate" class="form-control" />
+                <span asp-validation-for="UpdatedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

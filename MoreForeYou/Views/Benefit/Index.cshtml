@@ -1,0 +1,402 @@
+﻿@model IEnumerable<MoreForYou.Services.Models.MasterModels.BenefitModel>
+
+@{
+
+    //ViewData["Title"] = "Index";
+    //Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
+    ViewData["Title"] = "Benefits";
+    ViewData["SubTitle"] = "Index";
+    ViewData["activ"] = "TBenefits";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+
+
+}
+
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+
+
+<script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Done !",
+                text: message,
+                icon: "success",
+            });
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Fail !",
+                text: error,
+                icon: "error",
+            });
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable();
+
+    });
+
+    function showBenefitDetails(item) {
+         $("#workflow").remove();
+        document.getElementById("benefitName").innerText = item["Name"];
+        document.getElementById("arabicBenefitName").innerText = item["ArabicName"];
+        document.getElementById("benefitTitle").innerText = item["Title"];
+        document.getElementById("arabicBenefitTitle").innerText = item["ArabicTitle"];
+        document.getElementById("benefitDescription").innerText = item['Description'];
+        document.getElementById("arabicBenefitDescription").innerText = item["ArabicDescription"];
+        document.getElementById("benefitHasWorkflow").innerText = item["HasWorkflow"];
+        document.getElementById("benefitTimes").innerText = item["Times"];
+        document.getElementById("benefitnumberOfDays").innerText = item["numberOfDays"];
+        document.getElementById("benefitWorkDuration").innerText = item["WorkDuration"];
+        document.getElementById("benefitCollar").innerText = item["CollarText"];
+        document.getElementById("benefitCountry").innerText = item['Country'];
+        document.getElementById("benefitGender").innerText = item["GenderText"];
+        document.getElementById("benefitMaritalStatus").innerText = item["MaritalStatusText"];
+        document.getElementById("benefitType").innerText = item["BenefitType"]["Name"];
+        document.getElementById("benefitYear").innerText = item["Year"];
+        document.getElementById("benefitMin").innerText = item["MinParticipant"];
+        document.getElementById("benefitMax").innerText = item["MaxParticipant"];
+        document.getElementById("benefitAge").innerText = item["Age"];
+        document.getElementById("benefitCard").src = "http://20.86.97.165/more4u/images/BenefitCards/" + item["BenefitCard"];
+
+        if (item["BenefitWorkflowModels"] != null) {
+            var counter = 0;
+            var row = document.createElement("div");
+            
+            row.setAttribute("class", "row");
+            row.setAttribute("id", "workflow");
+            row.setAttribute("class", "mt-3");
+            row.innerHTML = "";
+            var title = document.createElement("h4");
+            title.textContent = "Benefit workflow";
+            var timeline = document.createElement("div");
+            timeline.setAttribute("class", "containerTimeline");
+            for (workflow in item["BenefitWorkflowModels"]) {
+                var div1 = document.createElement("div");
+                div1.setAttribute("class", "timeline-block timeline-block-right");
+                var orderDiv = document.createElement("div");
+                orderDiv.setAttribute("class", "marker active");
+                orderDiv.textContent = counter + 1;
+                var roleDiv = document.createElement("div");
+                roleDiv.setAttribute("class", "timeline-content");
+                var h5 = document.createElement("h5");
+                h5.textContent = item["BenefitWorkflowModels"][counter]["RoleName"];
+                roleDiv.append(h5);
+                div1.append(orderDiv);
+                div1.append(roleDiv);
+                counter = counter + 1;
+                timeline.append(div1);
+
+            }
+            row.appendChild(title);
+            row.appendChild(timeline);
+        }
+        else {
+            var h4 = document.createElement("h4");
+            h4.textContent = "No workflow";
+            row.append(h4);
+        }
+        document.getElementById("modalDetails").appendChild(row);
+
+        $('#scrollingModal').modal('show');
+    }
+
+
+    //function clearElements() {
+    //    $("#workflow").remove();
+    //}
+</script>
+
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (ViewBag.Error != null)
+{
+    <input type="hidden" id="error" value="@ViewBag.Error" />
+    <script>
+        showAlert("Error");
+    </script>
+}
+
+<div class="row my-4">
+    <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="row">
+                    <div class="col-lg-6 col-7">
+                        <h6>Benefits</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1"></span>  Details
+                        </p>
+                    </div>
+                    <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                            </a>
+                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive">
+                    <div class="card-body p-3">
+                    <table id="example" class="table dataTable align-items-center">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Type</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Gender</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">WorkDur.</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">M.Status</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+
+                            @if (Model != null)
+                            {
+                                @foreach (var item in Model)
+                                {
+                                    var benefit = JsonSerializer.Serialize(item);
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div>
+                                                    <img src="~/softui/assets/img/small-logos/logo-xd.svg" class="avatar avatar-sm me-3" alt="xd">
+                                                </div>
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm">@Html.DisplayFor(modelItem => item.Name)</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="avatar-group mt-2">
+                                                @Html.DisplayFor(modelItem => item.BenefitType.Name)
+                                                
+                                            </div>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-xs font-weight-bold"> @Html.DisplayFor(modelItem => item.GenderText) </span>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-xs font-weight-bold"> @Html.DisplayFor(modelItem => item.WorkDuration) </span>
+                                        </td>
+                                      <td class="align-middle text-center text-sm">
+                                            <span class="text-xs font-weight-bold"> @Html.DisplayFor(modelItem => item.MartialStatusText) </span>
+                                        </td>
+                                        <td>
+                                            <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" onclick="showBenefitDetails(@benefit)">
+                                                Details
+                                                <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                                            </a>
+                                            &nbsp;|&nbsp;
+                                            <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" asp-action="Edit" asp-route-id="@item.Id">
+                                                Edit
+                                                <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="card">
+            <div class="card-header pb-0">
+                <h6>Benefits</h6>
+                <p class="text-sm">
+                    <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
+
+                    <span class="font-weight-bold"></span> Actions
+                </p>
+            </div>
+            <div class="card-body p-3">
+                <div class="timeline timeline-one-side">
+                    <div class="timeline-block">
+                        <span class="timeline-step">
+                            <i class="ni ni-money-coins text-dark text-gradient"></i>
+                        </span>
+                        <div class="timeline-content">
+                            <div style="text-align: center;">
+                                <a class="btn bg-gradient-primary mb-0" asp-action="Create"><i class="fas fa-plus"></i>&nbsp;&nbsp;Add Benefit</a>
+                                <a class="btn bg-gradient-info mb-0" href="javascript:;"><i class="fas fa-plus"></i>&nbsp;&nbsp;Export to Excel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="scrollingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Benefit Details</h5>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="modalDetails">
+                    <div class="col col-lg-12 mb-2 mb-lg-0">
+                        <div class="row g-0">
+                            <div class="gradient-custom  text-white col-lg-8" style="margin:auto; padding:5px">
+                                <img id="benefitCard" src="~/images/BenefitCards/CemexAssiutFreeDrink.png"
+                                     alt="Avatar" class="img-fluid my-2" />
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row mt-5">
+                            <div class="col-md-12 col-lg-12">
+                                <div class="card-body pl-2" id="cardBody">
+                                    <div class="row pt-1">
+                                        <div class="col-lg-6 mb-1">
+                                            <h6>Name</h6>
+                                            <p class="text-muted" id="benefitName">Lorem ipsum</p>
+                                        </div>
+                                        <div class="col-lg-6 mb-1">
+                                            <h6>Arabic Name</h6>
+                                            <p class="text-muted" id="arabicBenefitName">Lorem ipsum</p>
+                                        </div>
+                                    </div>
+                                    <div class="row pt-1">
+                                        <div class="col-lg-6 mb-1">
+                                            <h6>Type</h6>
+                                            <p class="text-muted" id="benefitType">Dolor sit amet</p>
+                                        </div>
+                                    </div>
+                                    <div class="row pt-1">
+                                        <div class="col-lg-12">
+                                            <h6>Title</h6>
+                                            <p class="text-muted" id="benefitTitle">Lorem ipsum</p>
+                                        </div>
+                                    </div>
+                                    <div class="row pt-1">
+                                        <div class="col-lg-12">
+                                            <h6>Arabic Title</h6>
+                                            <p class="text-muted" id="arabicBenefitTitle">Lorem ipsum</p>
+                                        </div>
+                                    </div>
+                                    <div class="row pt-1">
+                                        <div class="col-lg-12">
+                                            <h6>Description</h6>
+                                            <p class="text-muted" id="benefitDescription">Lorem ipsum</p>
+                                        </div>
+
+                                    </div>
+                                    <div class="row pt-1">
+                                        <div class="col-lg-12">
+                                            <h6>Arabic Description</h6>
+                                            <p class="text-muted" id="arabicBenefitDescription">Lorem ipsum</p>
+                                        </div>
+
+                                    </div>
+                                    <div class="row pt-1">
+                                        <div class="col-lg-6 mb-1">
+                                            <h6>Year</h6>
+                                            <p class="text-muted" id="benefitYear">Lorem ipsum</p>
+                                        </div>
+                                        <div class="col-6 mb-1">
+                                            <h6>HasWorkflow</h6>
+                                            <p class="text-muted" id="benefitHasWorkflow">Dolor sit amet</p>
+                                        </div>
+                                    </div>
+                                    <div class="row pt-1">
+                                        <div class="col-lg-6 mb-1">
+                                            <h6>Min. Participant</h6>
+                                            <p class="text-muted" id="benefitMin">Lorem ipsum</p>
+                                        </div>
+                                        <div class="col-lg-6 mb-1">
+                                            <h6>Max. Participant</h6>
+                                            <p class="text-muted" id="benefitMax">Dolor sit amet</p>
+                                        </div>
+                                    </div>
+                                    <div class="row pt-1">
+                                        <div class="col-lg-6 mb-1">
+                                            <h6>Gender</h6>
+                                            <p class="text-muted" id="benefitGender">Lorem ipsum</p>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <h6>Marital Status</h6>
+                                            <p class="text-muted" id="benefitMaritalStatus">Lorem ipsum</p>
+                                        </div>
+
+                                    </div>
+                                    <div class="row pt-1">
+                                        <div class="col-lg-6">
+                                            <h6>Age</h6>
+                                            <p class="text-muted" id="benefitAge">Lorem ipsum</p>
+                                        </div>
+                                        <div class="col-6 mb-1">
+                                            <h6>Work Duration</h6>
+                                            <p class="text-muted" id="benefitWorkDuration">Dolor sit amet</p>
+                                        </div>
+                                    </div>
+                                    <div class="row pt-1">
+                                        <div class="col-lg-6">
+                                            <h6>Country</h6>
+                                            <p class="text-muted" id="benefitCountry">Lorem ipsum</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <h6>Times</h6>
+                                            <p class="text-muted" id="benefitTimes">Dolor sit amet</p>
+                                        </div>
+                                    </div>
+                                    <div class="row pt-1">
+                                        <div class="col-lg-6">
+                                            <h6>Payroll Area</h6>
+                                            <p class="text-muted" id="benefitCollar">Lorem ipsum</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <h6>number of Days</h6>
+                                            <p class="text-muted" id="benefitnumberOfDays">Dolor sit amet</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                @*<button type="button" class="btn bg-gradient-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

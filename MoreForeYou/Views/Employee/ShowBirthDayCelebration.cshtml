@@ -1,0 +1,54 @@
+﻿@model MoreForYou.Services.Models.MaterModels.EmployeeModel
+@*<i class="bx bxs-sun"></i>*@
+
+<lottie-player src="https://assets10.lottiefiles.com/packages/lf20_fJ7CVd.json" background="transparent" speed="1" class="tuturi" loop autoplay></lottie-player>
+<lottie-player src="https://assets10.lottiefiles.com/packages/lf20_fJ7CVd.json" background="transparent" speed="1" class="tuturi tuturi-2" loop autoplay></lottie-player>
+<div class="dates-container">
+    <lottie-player src="https://assets6.lottiefiles.com/private_files/lf30_9xgG23.json" background="transparent" speed=".5" class="day-one f-day" loop autoplay></lottie-player>
+    <div class="date-no day card ro">@Model.BirthDate.Day</div>
+    <lottie-player src="https://assets6.lottiefiles.com/private_files/lf30_9xgG23.json" background="transparent" speed=".5" class="day-two f-day" loop autoplay></lottie-player>
+    <div class="date-no mouth card ro">@Model.BirthDate.Month</div>
+    <div class="date-no year card ro">@DateTime.Today.Year</div>
+    <lottie-player src="https://assets6.lottiefiles.com/private_files/lf30_9xgG23.json" background="transparent" speed=".5" class="celeb" loop autoplay></lottie-player>
+</div>
+
+<i class='bx bxs-rocket rocket rocket-one'></i>
+<i class='bx bxs-rocket rocket-two'></i>
+<i class='bx bxs-rocket rocket-three'></i>
+
+<div class="smile">🥳😁😁🔥</div>
+
+<div class="day-description card" style="margin-top:-10px">
+    <div class="bday-names-container bday-desc-letters-container" style="color:black">
+        <h1 class="bday-name-letter">H</h1>
+        <h1 class="bday-name-letter">A</h1>
+        <h1 class="bday-name-letter">P</h1>
+        <h1 class="bday-name-letter">P</h1>
+        <h1 class="bday-name-letter">Y</h1>
+        <span class="divid"></span>
+        <h1 class="bday-name-letter">B</h1>
+        <h1 class="bday-name-letter">I</h1>
+        <h1 class="bday-name-letter">R</h1>
+        <h1 class="bday-name-letter">T</h1>
+        <h1 class="bday-name-letter">H</h1>
+        <h1 class="bday-name-letter">D</h1>
+        <h1 class="bday-name-letter">A</h1>
+        <h1 class="bday-name-letter">Y</h1>
+
+    </div>
+    <div class="birthday-titles-container bday-desc-letters-container" style="color:black">
+        @*<h2 class="bday-desc-letter">B</h2>
+            <h2 class="bday-desc-letter">I</h2>
+            <h2 class="bday-desc-letter">R</h2>
+            <h2 class="bday-desc-letter">T</h2>
+            <h2 class="bday-desc-letter">H</h2>
+            <h2 class="bday-desc-letter">D</h2>*@
+        <h2 class="bday-desc-letter">@Model.FullName</h2>
+    </div>
+</div>
+@*<img src="https://raw.githubusercontent.com/r-e-d-ant/mthierry-bday/887159adfedabd8d1c3b6cdf3ba20abb4d55197f/assets/images/mountain.svg" alt="mountain" class="mountain-wave">*@
+<img src="~/images//HBD2.jpg" alt="mountain" class="mountain-wave" width="700" height="500" />
+<script src="~/js/lottie-player.js"></script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

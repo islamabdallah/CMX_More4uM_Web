@@ -1,0 +1,472 @@
+﻿@model MoreForYou.Services.Models.MaterModels.EmployeeModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+
+}
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+<script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Goo!",
+                text: message,
+                icon: "success",
+            }).then(function () {
+                window.location.href = "http://20.86.97.165/more4u/more4u/Employee";
+            });
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Failed Process!",
+                text: error,
+                icon: "Error",
+            });
+        }
+    }
+</script>
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (ViewBag.Error != null)
+{
+    <input type="hidden" id="error" value="@ViewBag.Error" />
+    <script>
+        showAlert("Error");
+    </script>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#SupervisorId').change(function ()
+        {
+            var ddlsource = "#SupervisorId";
+                var url = '@Url.Content("~/")' + "more4u/Employee/DepartmentFilter";
+                $.getJSON(url, { id: $(ddlsource).val() }, function (data)
+                {
+                    if (data != null)
+                    {
+                        $('#SupervisorName').empty();
+                        document.getElementById('SupervisorName').value = data;
+                    }
+                    else
+                    {
+                        document.getElementById('SupervisorName').value = "";
+                        document.getElementById('SupervisorId').value = "";
+                        document.getElementById('SupervisorIdMessage').value = "Not Found";
+                    }
+
+                });
+        });
+
+
+        $('#SapNumber').change(function () {
+            var ddlsource = "#SapNumber";
+            var url = '@Url.Content("~/")' + "more4u/Employee/CheckUniqueSapNumber";
+                $.getJSON(url, { SapNumber: $(ddlsource).val() }, function (data)
+                {
+                    if (data == false) {
+                        document.getElementById('uniqueSapNumber').innerText = "This SAP Number is already registered before";
+                        document.getElementById('uniqueSapNumber').value = "";
+
+                    }
+                    else
+                    {
+                        document.getElementById('uniqueSapNumber').innerText = "";
+                    }
+
+                });
+        });
+
+        $('#EmployeeNumber').change(function () {
+             var ddlsource = "#EmployeeNumber";
+            var url = '@Url.Content("~/")' + "more4u/Employee/CheckUniqueEmployeeNumber";
+             $.getJSON(url, { EmployeeNumber: $(ddlsource).val() }, function (data)
+                {
+                    if (data == false) {
+                        document.getElementById('uniqueEmployeeNumber').innerText = "This Employee Number is already registered before";
+                        document.getElementById('uniqueEmployeeNumber').value = "";
+
+                    }
+                    else
+                    {
+                        document.getElementById('uniqueEmployeeNumber').innerText = "";
+                    }
+
+                });
+               });
+
+         $('#Id').change(function () {
+             var ddlsource = "#Id";
+             var url = '@Url.Content("~/")' + "more4u/Employee/CheckUniqueId";
+             $.getJSON(url, { Id: $(ddlsource).val() }, function (data)
+                {
+                    if (data == false) {
+                        document.getElementById('uniqueId').innerText = "This Employee ID is already registered before";
+                        document.getElementById('uniqueId').value = "";
+
+                    }
+                    else
+                    {
+                        document.getElementById('uniqueId').innerText = "";
+                    }
+
+                });
+               });
+
+
+        $('#Email').change(function () {
+            var ddlsource = "#Email";
+            var url = '@Url.Content("~/")' + "more4u/Employee/CheckUniqueEmail";
+                $.getJSON(url, { Email: $(ddlsource).val() }, function (data)
+                {
+                    if (data == false) {
+                        document.getElementById('uniqueEmail').innerText = "This email is already registered before";
+                    }
+                    else
+                    {
+                        document.getElementById('uniqueEmail').innerText = "";
+                    }
+
+                });
+        });
+
+
+        $('#PhoneNumber').change(function () {
+            var ddlsource = "#PhoneNumber";
+            var url = '@Url.Content("~/")' + "more4u/Employee/CheckUniquePhoneNumber";
+            $.getJSON(url, { PhoneNumber: $(ddlsource).val() }, function (data)
+                {
+                    if (data == false) {
+                        document.getElementById('uniquePhoneNumber').innerText = "This PhoneNumber is already registered before";
+                        document.getElementById('PhoneNumber').value = "";
+                    }
+                    else
+                    {
+                        document.getElementById('uniquePhoneNumber').innerText = "";
+                    }
+
+                });
+               });
+    });
+</script>
+
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card" style="box-shadow:10px 20px 20px rgba(0, 0, 0, 0.5)">
+                <div class="card-body">
+                    <h5 class="card-title">Add Employee</h5>
+                    <div class="form-validation" style="">
+                        <form asp-action="Create" asp-controller="Employee">
+                            <div class="form-group row">
+                                <label class="col-lg-4 col-form-label" for="val-username">
+                                    FullName <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6 mb-3">
+                                    <input type="text" class="form-control" asp-for="FullName" placeholder="Enter FullName..">
+                                    <span asp-validation-for="FullName" class="text-danger"></span>
+
+                                </div>
+
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Employee Number <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input type="Number" class="form-control" id="EmployeeNumber" asp-for="EmployeeNumber" data-toggle="tooltip" data-placement="bottom" title="Employee Number">
+                                    <label id="uniqueEmployeeNumber" style="color:red"></label>
+                                </div>
+                                <span asp-validation-for="EmployeeNumber" class="text-danger"></span>
+
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Sap Number <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input type="Number" class="form-control" id="SapNumber" asp-for="SapNumber" data-toggle="tooltip" data-placement="bottom" title="Sap Number">
+                                    <label id="uniqueSapNumber" style="color:red"></label>
+                                </div>
+                                <span asp-validation-for="SapNumber" class="text-danger"></span>
+
+                            </div>
+                            <div class="form-group row">
+
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    ID <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input class="form-control" asp-for="Id" id="Id" placeholder="Enter ID ..">
+                                    <label id="uniqueId" style="color:red"></label>
+                                </div>
+                                <span asp-validation-for="Id" class="text-danger"></span>
+
+                            </div>
+                            <div class="form-group row">
+
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Address <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6 mb-3">
+                                    <input class="form-control" asp-for="Address" placeholder="Enter Address ..">
+                                </div>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Country <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6 mb-3">
+                                    <input class="form-control" asp-for="Country" placeholder="Enter Address ..">
+                                </div>
+                                <span asp-validation-for="Country" class="text-danger"></span>
+
+                            </div>
+
+                            <div class="form-group row">
+
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Phone Number <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input class="form-control" type="number" id="PhoneNumber" asp-for="PhoneNumber" data-toggle="tooltip" data-placement="bottom" title="Phone Number">
+                                    <label id="uniquePhoneNumber" style="color:red"></label>
+
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+
+                            </div>
+
+                            <div class="form-group row mb-3">
+
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Joining Date <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input class="form-control" asp-for="JoiningDate" placeholder="Enter ID ..">
+                                </div>
+                                <span asp-validation-for="JoiningDate" class="text-danger"></span>
+
+                            </div>
+                            <div class="form-group row mb-3">
+
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Birth Date <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input class="form-control" asp-for="BirthDate" placeholder="Enter ID ..">
+                                </div>
+                                <span asp-validation-for="BirthDate" class="text-danger"></span>
+
+                            </div>
+
+                            <div class="form-group row mb-3">
+
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Gender <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <select asp-for="Gender" class="form-select" asp-items="@(new SelectList(Model.genderModels, "Id","Name"))"></select>
+                                </div>
+                                <span asp-validation-for="Gender" class="text-danger"></span>
+
+                            </div>
+
+                            <div class="form-group row mb-3">
+
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Marital Status <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <select asp-for="MaritalStatus" class="form-select">
+                                        <option value="-1">Select Marital status</option>
+                                        <option value="1">Single</option>
+                                        <option value="2">Married</option>
+                                        <option value="3">Divorced</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="MaritalStatus" class="text-danger"></span>
+
+                            </div>
+
+                            <div class="form-group row mb-4">
+                                <label class="col-lg-3">
+                                    @Html.DisplayNameFor(model => model.HasChilderen)
+                                </label>
+                                <div class="col-lg-6">
+                                    <input class="form-check-input" asp-for="HasChilderen" />
+                                </div>
+                                <span asp-validation-for="HasChilderen" class="text-danger"></span>
+
+                            </div>
+
+                            <div class="form-group row mb-3">
+
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Nationality <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <select asp-for="NationalityId" class="form-select" asp-items="@(new SelectList(Model.NationalityModels, "Id","Name"))"></select>
+
+                                </div>
+                                <span asp-validation-for="Nationality" class="text-danger"></span>
+
+                            </div>
+                            <div class="form-group row mb-3">
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Department <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <select asp-for="DepartmentId" id="DepartmentId" name="DepartmentId" class="form-select" asp-items="@(new SelectList(Model.DepartmentModels, "Id","Name"))"></select>
+                                </div>
+                                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+
+                            </div>
+                            <div class="form-group row mb-3">
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Position <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <select asp-for="PositionId" class="form-select" asp-items="@(new SelectList(Model.PositionModels, "Id","Name"))"></select>
+                                </div>
+                                <span asp-validation-for="PositionId" class="text-danger"></span>
+
+                            </div>
+
+                            <div class="form-group row mb-3">
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Payroll Area <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <select asp-for="Collar" class="form-select" asp-items="@(new SelectList(Model.Collars, "Id","Name"))"></select>
+                                </div>
+                                <span asp-validation-for="Collar" class="text-danger"></span>
+
+                            </div>
+
+                            <div class="form-group row mb-3">
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Company <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <select asp-for="CompanyId" class="form-select" asp-items="@(new SelectList(Model.Companies, "Id","Code"))"></select>
+                                </div>
+                                <span asp-validation-for="CompanyId" class="text-danger"></span>
+
+                            </div>
+
+                            <div class="form-group row mb-3">
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Supervisor Number<span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input asp-for="SupervisorId" id="SupervisorId" name="SupervisorId" class="form-control" />
+                                    <label id="SupervisorIdMessage" style="color:red"></label>
+                                </div>
+                                <span asp-validation-for="SupervisorId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group row mb-3">
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Supervisor Name<span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input asp-for="SupervisorName" disabled id="SupervisorName" name="SupervisorName" class="form-control" />
+                                </div>
+                                <span asp-validation-for="SupervisorName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group row mb-3">
+
+                                <label class="col-lg-4 col-form-label">
+                                    Is Department Manager <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input class="form-check-input" asp-for="isDeptManager" />
+                                </div>
+                            </div>
+                            <div class="form-group row mb-3">
+
+                                <label class="col-lg-4 col-form-label">
+                                    Direct Employee <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input class="form-check-input" asp-for="IsDirectEmployee" />
+                                </div>
+                            </div>
+                            <div class="form-group row mb-3">
+
+                                <label class="col-lg-4 col-form-label" for="val-email">
+                                    Email <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input class="form-control" asp-for="Email" id="Email" name="Email" placeholder="Enter Email ..">
+                                    <label id="uniqueEmail" style="color:red"></label>
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group row mb-3">
+                                <label class="col-lg-4 col-form-label" for="val-password">
+                                    Password <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input type="password" class="form-control" asp-for="Password" placeholder="Choose a safe one..">
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-3">
+                                <label class="col-lg-4 col-form-label" for="val-confirm-password">
+                                    Confirm Password <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="..and confirm it!">
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <label class="col-lg-4 col-form-label">Role</label>
+                            <div class="container">
+                                @foreach (var R in Model.RoleModels)
+                                {
+                                    <div class="form-group row mb-2">
+                                        <div class="col-lg-2">
+                                            <input class="form-check-input" type="checkbox" name="AsignedRolesNames" value="@R.Name" />
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <span style="margin-left:15px" class="form-check-label"> @R.Name</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <span asp-validation-for="RoleId" class="text-danger"></span>
+                            <div class="form-group row text-center">
+                                <div class="col-lg-8 ml-auto">
+                                    <button type="submit" class="btn btn-primary"> Save</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <a asp-action="Index" class="btn btn-primary">Back to List</a>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+

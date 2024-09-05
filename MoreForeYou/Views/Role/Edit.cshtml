@@ -1,0 +1,34 @@
+﻿@model MoreForYou.Models.Auth.RoleModel
+
+@{ ViewData["Title"] = "Edit"; }
+
+
+<div class="row" style="margin:auto">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Edit Role</h4>
+                <form asp-action="Create" class="CreateForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <input asp-for="Name" class="form-control" placeholder="Name" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="form-group">
+                        <button type="submit" value="Create" class="label gradient-9 btn-rounded">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <a asp-action="Index" class="btn btn-primary">Back to List</a>
+
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

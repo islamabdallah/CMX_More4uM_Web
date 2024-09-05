@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\More4UWebAPI.props" />
+</Project>

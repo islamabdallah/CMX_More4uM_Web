@@ -1,0 +1,83 @@
+﻿@model MoreForYou.Services.Models.MaterModels.NationalityModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+
+}
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+
+<script src="~/js/sweetalert.min.js"></script>
+
+<script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Done !",
+                text: message,
+                icon: "success",
+            }).then(function () {
+                window.location.href = "http://20.86.97.165/more4u/more4u/Nationality";
+            });
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Fail !",
+                text: error,
+                icon: "Error",
+            });
+        }
+    }
+</script>
+
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (ViewBag.Error != null)
+{
+    <input type="hidden" id="error" value="@ViewBag.Error" />
+    <script>
+        showAlert("Error");
+    </script>
+}
+<hr />
+<div class="container-fluid mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 mt-10">
+            <div class="card">
+                <div class="card-body" style="box-shadow:10px 10px 10px rgba(0, 0, 0, 0.5)">
+                    <h5 class="card-title">Edit Nationality</h5>
+                    <div class="form-validation">
+                        <form asp-action="Edit">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group mb-2">
+                                <label asp-for="Name" class="control-label">Name <span style="color:red">*</span></label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <input type="hidden" asp-for="Id" />
+                            <div class="form-group form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" asp-for="IsVisible" /> @Html.DisplayNameFor(model => model.IsVisible)
+                                </label>
+                            </div>
+                            </br>
+                            <div class="form-group">
+                                <input type="submit" value="Save" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

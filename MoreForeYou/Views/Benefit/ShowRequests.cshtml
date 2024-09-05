@@ -1,0 +1,1209 @@
+﻿@model MoreForYou.Services.Models.API.ManageRequest
+@inject UserManager<AspNetUser> userManager
+@inject SignInManager<AspNetUser> SignInManager
+
+
+@{
+    ViewData["Title"] = "Home";
+    ViewData["SubTitle"] = "Manage Requests";
+    ViewData["activ"] = "lmRequests";
+    Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
+    var user = await userManager.GetUserAsync(User);
+    var displayName = user.UserName;
+    var roles = await userManager.GetRolesAsync(user);
+    int index = 0;
+    string employeeName = "";
+    string employeeNumber = "";
+    string employeePhoto = "";
+    string employeePosition = "";
+    string employeeDepartment = "";
+    string groupName = "";
+    string members = "";
+    string createdBy = "";
+    string employeeEmail = "";
+    string employeeSapNumber = "";
+    string employeeEmployeeNumber = "";
+    string employeeCompanyCode = "";
+    string employeeCollar = "";
+    string employeeBirthDate = "";
+    string trId = "";
+    string requestMessage = "";
+    string To = "";
+    string From = "";
+    string requestBenefitType = "";
+    string requestStatus = "";
+    string employeeMartialStatus = "";
+    string employeeGender = "";
+    string actionArea = "";
+    string warningMessageId = "";
+    string filesCount = "";
+    string approvalText = "";
+    string MyAction = "";
+    string ReplayDate = "";
+    string ReplayMessage = "";
+    string ResponserAction = "";
+
+}
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+
+<script>
+    function displayRequestDetails(i, m, files) {
+       //  var benefitType = document.getElementById("requestBenefitType" + i).value;
+       // // var anchor = $(event.relatedTarget) // Button that triggered the modal
+       //  //var modal = $(this);
+       //  //var i = anchor.data('index');
+       //  //var m = anchor.data('members');
+       //  //var files = anchor.data('files');
+        var filesLength = "filesCount" + i;
+        var filesCount = parseInt(document.getElementById(filesLength).value);
+        var benefitType = document.getElementById("requestBenefitType" + i).value;
+        document.getElementById("employeeNameee").innerText = document.getElementById("employeeName" + i).value;
+        //alert(document.getElementById("employeeNameee").innerText);
+        document.getElementById("employeeDepartment").innerText = document.getElementById("employeeDepartment" + i).value;
+        document.getElementById("employeePosition").innerText = document.getElementById("employeePosition" + i).value;
+        document.getElementById("employeeEmail").innerText = document.getElementById("employeeEmail" + i).value;
+        document.getElementById("employeeSapNumber").innerText = document.getElementById("employeeSapNumber" + i).value;
+        document.getElementById("employeeEmployeeNumber").innerText = document.getElementById("employeeEmployeeNumber" + i).value;
+        document.getElementById("employeeCompanyCode").innerText = document.getElementById("employeeCompanyCode" + i).value;
+        //document.getElementById("employeeBirthDate").innerText = document.getElementById("employeeBirthDate" + i).value;
+        document.getElementById("employeePhoto").src = "http://20.86.97.165/more4u/images/userProfile/" + document.getElementById("employeephoto" + i).value;
+        document.getElementById("employeeGender").innerText = document.getElementById("employeeGender" + i).value;
+        document.getElementById("employeeMartialStatus").innerText = document.getElementById("employeeMartialStatus" + i).value;
+        document.getElementById("From").innerText = document.getElementById("From" + i).value;
+        document.getElementById("To").innerText = document.getElementById("To" + i).value;
+       // alert(filesCount);
+        if (filesCount > 0) {
+            var text = document.createElement("h4");
+            text.setAttribute("class", "displayDocuments");
+            text.textContent = "Uploaded Documents";
+            var card = document.getElementById("cardBody");
+            card.innerHTML="";
+            card.appendChild(text);
+            for (var fileIndex = 0; fileIndex < filesCount; fileIndex++) {
+                var fileId = "document" + i + "number" + fileIndex;
+                var doc = document.getElementById(fileId);
+                var row = document.createElement("div");
+                row.setAttribute("class", "row pt-2 displayDocuments");
+                var img = document.createElement("img");
+                var filePath = doc.value;
+                //img.setAttribute("src", "http://20.86.97.165/more4u/BenefitRequestFiles/" + filePath);
+                img.setAttribute("src",filePath);
+
+                img.setAttribute("style", "width:400px;height:250px");
+                img.setAttribute("class", "m-2");
+                var hr = document.createElement("hr");
+                row.appendChild(hr);
+                row.appendChild(img);
+                card.appendChild(row);
+            }
+        }
+        var actionId = "MyAction" + i;
+        var myAction = document.getElementById(actionId);
+        if (myAction != null) {
+            var divApproval = document.createElement("div");
+            divApproval.setAttribute("id", "divApprovalId");
+            divApproval.setAttribute("style", "padding:40px;font-size:14px");
+            var approvedNameId = "ResponserAction" + i;
+            var ReplayDateId = "ReplayDate" + i;
+            var ReplayMessageId = "ReplayMessage" + i;
+            var lblName = document.createElement("label");
+            var lblReplayDate = document.createElement("label");
+            if (myAction.value == "Approved") {
+                lblName.setAttribute("style", "text-align:center; display:block; color:green; margin-bottom:10px");
+            }
+            else {
+                lblName.setAttribute("style", "text-align:center; display:block; color:red; margin-bottom:10px");
+
+            }
+            lblName.textContent = document.getElementById(approvedNameId).value + " " + myAction.value + " this request";
+            lblReplayDate.setAttribute("style", "display:block; margin-bottom:10px");
+            lblReplayDate.textContent = "Date:- " + document.getElementById(ReplayDateId).value;
+            var lblReplayMessage = document.createElement("label");
+            lblReplayMessage.textContent = "";
+            if (document.getElementById(ReplayMessageId) != null) {
+                lblReplayMessage.textContent = "Notes:- " + document.getElementById(ReplayMessageId).value;
+            }
+            var myApprovalCard = document.getElementById("myApprovalCard");
+            myApprovalCard.innerHTML=""
+            divApproval.appendChild(lblName);
+            divApproval.appendChild(lblReplayDate);
+            divApproval.appendChild(lblReplayMessage);
+            myApprovalCard.appendChild(divApproval);
+        }
+        document.getElementById("lmdetails").hidden = false;
+        document.getElementById("lmdetailss").hidden = true;
+                    //document.getElementById("dlm").hidden = true;
+    }
+</script>
+<script type="text/javascript">
+    function AddResponse()
+    {
+        var url = '@Url.Content("~/")' + "more4u/Benefit/AddResponse";
+        var requestId = document.getElementById("request").value;
+        var status = document.getElementById("StatusValue").value;
+        var message = document.getElementById("message").value;
+        $.getJSON(url, { requestWorkflowId: requestId, status: status, message: message }, function (data)
+        {
+            if (data == true)
+            {
+                var eleId = "requeststatus" + requestId;
+                var actionArea = "actionArea" + requestId;
+                if (status == 1) {
+                    //document.getElementById(requestId).innerHTML = "<b style='color:green'>Approved</b>";
+                    //document.getElementById("requeststatus" + requestId).innerHTML = "<b style='color:green'>Approved</b>";
+                    swal({
+                        title: "Approved!",
+                        text: "Sucess Process!",
+                        icon: "success",
+                    });
+                    document.getElementById(eleId).innerHTML = "<b style='color:green'>Approved</b>";
+                    document.getElementById(actionArea).innerHTML = "<b style='color:green'>Approved</b>";
+                    document.getElementById("message").value = "";
+
+                }
+                else
+                {
+                    swal({
+                        title: "Rejected!",
+                        text: "Sucess Process!",
+                        icon: "error",
+                    });
+                    document.getElementById(eleId).innerHTML = "<b style='color:red'>Rejected</b>";
+                    document.getElementById(actionArea).innerHTML = "<b style='color:red'>Rejected</b>";
+                    document.getElementById("message").value = "";
+                }
+            }
+            else {
+                swal({
+                    title: "error!",
+                    text: "Failed Process!",
+                    icon: "error",
+                });
+
+            }
+        });
+    }
+
+    function addGroupmembers(members)
+    {
+        for (var member in members)
+        {
+            var mainDiv = document.getElementById("groupMembers");
+            var memberDetails = document.createElement("div");
+            memberDetails.innerHTML = "<b>" + member["employeeName"] + "</b> </br>" + member["employeePosition"] + "\"";
+        }
+    }
+</script>
+<script>
+
+    function showMemberModal(members, i, participantIndex) {
+        document.getElementById("memberFrom").innerText = document.getElementById("From" + i).value;
+        document.getElementById("memberTo").innerText = document.getElementById("To" + i).value;
+        document.getElementById("requestIndex").value = i;
+        document.getElementById("memberName").innerText = members["EmployeeName"];
+        document.getElementById("memberDepartment").innerText = members["DepartmentName"];
+        document.getElementById("memberPosition").innerText = members["PositionName"];
+        document.getElementById("memberEmail").innerText = members["Email"];
+        document.getElementById("memberNumber").innerText = members["EmployeeNumber"];
+        document.getElementById("memberSapNumber").innerText = members["SapNumber"];
+        //document.getElementById("memberBirthDate").innerText = members["BirthDate"];
+        document.getElementById("memberGender").innerText = members["Gender"];
+        document.getElementById("memberMartialStatus").innerText = members["MaritalStatus"];
+        document.getElementById("memberCompany").innerText = members["Company"];
+        document.getElementById("memberProfile").src = "http://20.86.97.165/more4u/images/userProfile/" + members["ProfilePicture"];
+        $('#memberModal').modal('show');
+
+    }
+
+    $(document).ready(function () {
+
+       
+
+        $("#memberModal").on('show.bs.modal', function (event) {
+
+            var modal = $(this);
+            var i = document.getElementById('requestIndex').value;
+            if (document.getElementById("requestMessage" + i).value != "false") {
+                var messageDiv = document.createElement("div");
+                messageDiv.setAttribute("class", "col-lg-12 mb-1 mt-1 modalMessage");
+                var h6 = document.createElement("h6");
+                h6.textContent = "Message";
+                var message = document.createElement("p");
+                message.setAttribute("class", "text-muted");
+                message.textContent = document.getElementById("requestMessage" + i).value;
+                messageDiv.appendChild(h6);
+                messageDiv.appendChild(message);
+                modal.find('.modal-body .requestInfo').append(messageDiv);
+            }
+
+        });
+        $("#exampleModal").on('show.bs.modal', function (event) {
+            var anchor = $(event.relatedTarget) // Button that triggered the modal
+            var modal = $(this)
+            modal.find('#memberName').text(anchor.data('name'))
+            modal.find('#memberDepartment').text(anchor.data('department'))
+            modal.find('#memberPosition').text(anchor.data('position'))
+            modal.find('#memberCollar').text(anchor.data('collar'))
+            //modal.find('#memberDateBirth').text(anchor.data('birthdate'))
+            modal.find('#memberEmail').text(anchor.data('email'))
+            modal.find('#memberWorkDuration').text(anchor.data('workduration'))
+            modal.find('#memberNumber').text(anchor.data('number'))
+            modal.find('#memberCompany').text(anchor.data('company'))
+            modal.find('#memberSapNumber').text(anchor.data('sapnumber'))
+        });
+        $("#MessageModal").on('show.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var modal = $(this)
+            var id = button.data('request')
+            var st = button.data('status')
+            modal.find('#request').val(id)
+            modal.find('#StatusValue').val(st)
+        });
+    });
+
+
+    function clearElements() {
+        $(".modalMessage").remove();
+        $(".displayDocuments").remove();
+        document.getElementById("message").value = "";
+        $("#divApprovalId").remove();
+    }
+</script>
+<style>
+    .slider2 {
+        width: 1200px;
+    }
+
+    h6 {
+        font-size: medium;
+    }
+
+    div p {
+        font-size: small;
+    }
+
+    .alert-success {
+        --bs-alert-color: var(--bs-success-text-emphasis);
+        --bs-alert-bg: var(--bs-success-bg-subtle);
+        --bs-alert-border-color: var(--bs-success-border-subtle);
+        --bs-alert-link-color: var(--bs-success-text-emphasis);
+    }
+
+    .alert {
+        --bs-border-width: 1px;
+        --bs-border-radius: 0.375rem;
+        --bs-alert-bg: transparent;
+        --bs-alert-padding-x: 1rem;
+        --bs-alert-padding-y: 1rem;
+        --bs-alert-margin-bottom: 1rem;
+        --bs-alert-color: #2fb344;
+        --bs-alert-border-color: rgba(4, 32, 69, 0.14);
+        --bs-alert-border: var(--bs-border-width) solid var(--bs-alert-border-color);
+        --bs-alert-border-radius: var(--bs-border-radius);
+        --bs-alert-link-color: inherit;
+        position: relative;
+        padding: var(--bs-alert-padding-y) var(--bs-alert-padding-x);
+        margin-bottom: var(--bs-alert-margin-bottom);
+        color: var(--bs-alert-color);
+        background-color: var(--bs-alert-bg);
+        border: var(--bs-alert-border);
+        border-left: .25rem solid var(--bs-alert-color);
+        border-radius: var(--bs-alert-border-radius);
+    }
+</style>
+
+
+
+ <div class="row mt-4">
+            <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+                <div class="card">
+                  <div class="card-header pb-0">
+                    <div class="row">
+                      <div class="col-lg-6 col-7">
+                        <h6>Requests</h6>
+                        <p class="text-sm mb-0">
+                          <i class="fa fa-check text-info" aria-hidden="true"></i>
+                          <span class="font-weight-bold ms-1">Searching</span>  Criteria
+                        </p>
+                      </div>
+                      <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                          <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-ellipsis-v text-secondary"></i>
+                          </a>
+                          <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                            <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                            <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body px-0 pb-2">
+                    <div class="table-responsive">
+                      <div class="card-body p-3">
+      
+                          <!-- No Labels Form -->
+                        <form class="row g-3" method="post" asp-action="ShowRequests">
+                           
+                            <div class="col-md-4">
+                                <label class="form-label">Employee Number</label>
+                                <input type="number" class="form-control" id="inputtext4" placeholder="Employee Number" asp-for="employeeNumberSearch" name="RequestNumberSearch">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Benefit Type</label>
+                                  <select id="inputState" class="form-select" asp-items="@(new SelectList(Model.BenefitTypeModels,"Id","Name"))" asp-for="SelectedBenefitType" name="SelectedBenefitType">
+                              </select>
+                               
+                            </div>
+                            <div class="col-md-4 p-4">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        All 
+                                    </label>
+                                    <input class="form-check-input" type="checkbox" asp-for="SelectedAll" name="SelectedAll">
+                                </div>
+                            </div>
+                           
+                            <div class="col-md-4">
+                                <label class="form-label">From</label>
+                              <input class="form-control" type="date" asp-for="SearchDateFrom" name="SearchDateFrom" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">To</label>
+                                <input class="form-control" type="date" asp-for="SearchDateTo" name="SearchDateTo" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Request Status</label>
+                                <select class="form-select" asp-items="@(new SelectList(Model.RequestStatusModels,"Id","Name"))" asp-for="SelectedRequestStatus" name="SelectedRequestStatus">
+                                </select>
+                               
+                            </div>
+                           
+                            <div class="text-left">
+                                <button type="submit" class="btn btn-primary">   
+                                    Search
+                                </button>
+                            </div>
+                        </form><!-- End No Labels Form -->
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <div class="col-lg-4">
+              <div class="card p-3">
+                 <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100"><!-- /div> style="background-image: url('../assets/img/ivancik.jpg');"> -->
+                  <span class="mask bg-gradient-dark"></span>
+                  <div class="card-body position-relative z-index-1 d-flex flex-column h-100 ">
+                    <h5 class="text-white font-weight-bolder mb-4 pt-2">Manage Requests</h5>
+                    <p class="text-white">This page contains More4u requests sent by your colleagues (Approve / Reject)</p>
+@*                     <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
+                      Read More
+                      <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                    </a> *@
+                  </div>
+                </div>
+              </div>
+            </div>
+ </div>
+
+<div class="row">
+@if (Model.Requests != null && Model.Requests.Count != 0)
+    {
+        <div class="col-md-8 mt-4">
+          <div class="card h-100 mb-4">
+            <div class="card-header pb-0 px-3">
+              <h6 class="mb-0">Requests</h6>
+              <p class="text-sm mb-0">
+                <i class="fa fa-check text-info" aria-hidden="true"></i>
+                <span class="font-weight-bold ms-1">Searching</span> Results
+              </p>
+            </div>
+             <div class="card-body pt-4 p-3">
+              <ul class="list-group">
+            <!--list of requests-->
+            @for (index = 0; index < Model.Requests.Count; index++)
+    {
+
+        employeeName = "employeeName" + index;
+        employeeNumber = "employeeNumber" + index;
+        employeePhoto = "employeephoto" + index;
+        employeePosition = "employeePosition" + index;
+        employeeDepartment = "employeeDepartment" + index;
+        employeeBirthDate = "employeeBirthDate" + index;
+        employeeCollar = "employeeCollar" + index;
+        employeeCompanyCode = "employeeCompanyCode" + index;
+        employeeEmployeeNumber = "employeeEmployeeNumber" + index;
+        employeeSapNumber = "employeeSapNumber" + index;
+        employeeEmail = "employeeEmail" + index;
+        requestMessage = "requestMessage" + index;
+        requestStatus = "requeststatus" + Model.Requests[index].RequestWorkflowId;
+        To = "To" + index;
+        From = "From" + index;
+        employeeMartialStatus = "employeeMartialStatus" + index;
+        employeeGender = "employeeGender" + index;
+        requestBenefitType = "requestBenefitType" + index;
+        trId = "tr" + Model.Requests[index].RequestNumber;
+        actionArea = "actionArea" + Model.Requests[index].RequestWorkflowId;
+        warningMessageId = "warningMessageId" + Model.Requests[index].RequestWorkflowId;
+        filesCount = "filesCount" + index;
+        MyAction = "MyAction" + index;
+        ReplayDate = "ReplayDate" + index;
+        ReplayMessage = "ReplayMessage" + index;
+        ResponserAction = "ResponserAction" + index;
+                            @if (Model.Requests[index].WarningMessage != null)
+                            {
+                                <div style="margin-left:30px"><i class="bi bi-exclamation-circle text-warning"></i><span style="color:red; padding-left:5px">@Model.Requests[index].WarningMessage</span></div>
+                            }
+                           
+                                <div class="" id="@index">
+                                    @if (Model.Requests[index].MyAction != null)
+                                    {
+                                        <input type="hidden" id="@MyAction" value="@Model.Requests[index].MyAction.action" />
+                                        <input type="hidden" id="@ReplayDate" value="@Model.Requests[index].MyAction.ReplayDate" />
+                                                                          
+                                       
+                                    }
+                                </div>
+
+                            <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg" id=@trId>
+                                <div class="d-flex flex-column">
+                                    <h6 class="mb-3 text-sm">@Model.Requests[index].BenefitName</h6>
+                                @*       <hr class="horizontal dark my-sm-4"> *@
+                                    <span class="mb-2 text-xs">Employee: <span class="text-dark font-weight-bold ms-sm-2" id="requestNumber">@Model.Requests[index].CreatedBy.UserName</span></span>
+                                    @if (Model.Requests[index].BenefitType == "Group")
+                                    {
+                                        var FullParticipantsData = JsonSerializer.Serialize(Model.Requests[index].FullParticipantsData);
+                                        for (int memberIndex = 0; memberIndex < Model.Requests[index].FullParticipantsData.Count; memberIndex++)
+                                        {
+                                            var id = "group" + index + "member" + memberIndex;
+                                            <input type="hidden" id=@id value=@Model.Requests[index].FullParticipantsData[memberIndex].UserName />
+                                        }
+                                    }
+                                    @if (Model.Requests[index].DocumentsPath != null)
+                                    {
+                                        <input type="hidden" id="@filesCount" value="@Model.Requests[index].DocumentsPath.Length" />
+                                        for (int documentIndex = 0; documentIndex < Model.Requests[index].DocumentsPath.Length; documentIndex++)
+                                        {
+                                            var documentId = "document" + index + "number" + documentIndex;
+                                            <input type="hidden" id=@documentId value=@Model.Requests[index].DocumentsPath[documentIndex] />
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" id="@filesCount" value="0" />
+                                    }
+                                    <span class="mb-2 text-xs">Request Date: <span class="text-dark ms-sm-2 font-weight-bold">@Model.Requests[index].Requestedat</span></span>
+                                @if (Model.Requests[index].status == "Pending")
+                                {
+                                       <span class="mb-2 text-xs">Status: <span class="text-dark ms-sm-2 font-weight-bold" style="color: #1aa3ff;" id=@requestStatus>@Model.Requests[index].status</span></span>
+                                }
+                                else if (Model.Requests[index].status == "InProgress")
+                                {
+                                        <span class="mb-2 text-xs">Status: <span class="text-dark ms-sm-2 font-weight-bold" style="color: #ffd614;" id=@requestStatus>@Model.Requests[index].status</span></span>                                     
+                                }
+                                else if (Model.Requests[index].status == "Approved")
+                                {
+                                      <span class="mb-2 text-xs">Status: <span class="text-dark ms-sm-2 font-weight-bold" style="color: #00ff00;" id=@requestStatus>@Model.Requests[index].status</span></span>
+                   
+                                }
+                                else if (Model.Requests[index].status == "Rejected")
+                                {
+                                        <span class="mb-2 text-xs">Status: <span class="text-dark ms-sm-2 font-weight-bold" style="color: red;" id=@requestStatus>@Model.Requests[index].status</span></span>
+                                }
+                                else if (Model.Requests[index].status == "Cancelled")
+                                {
+                                        <span class="mb-2 text-xs">Status: <span class="text-dark ms-sm-2 font-weight-bold" style="color: gray;" id=@requestStatus>@Model.Requests[index].status</span></span>                                       
+                                }
+                                    <span class="text-xs">Required Date: <span class="text-dark ms-sm-2 font-weight-bold">@Model.Requests[index].From</span></span>
+                                    <input type="hidden" id=@employeeName value="@Model.Requests[index].CreatedBy.UserName" />
+                                    <input type="hidden" id=@employeePosition value="@Model.Requests[index].CreatedBy.PositionName" />
+                                    <input type="hidden" id=@employeeDepartment value="@Model.Requests[index].CreatedBy.DepartmentName" />
+                                    <input type="hidden" id=@employeeEmployeeNumber value="@Model.Requests[index].CreatedBy.UserNumber" />
+                                    <input type="hidden" id=@employeeCollar value="@Model.Requests[index].CreatedBy.Collar" />
+                                    <input type="hidden" id=@employeeBirthDate value="@Model.Requests[index].CreatedBy.BirthDate" />
+                                    <input type="hidden" id=@employeeCompanyCode value="@Model.Requests[index].CreatedBy.Entity" />
+                                    <input type="hidden" id=@employeeEmail value="@Model.Requests[index].CreatedBy.Email" />
+                                    <input type="hidden" id=@employeeSapNumber value="@Model.Requests[index].CreatedBy.SapNumber" />
+                                    <input type="hidden" id=@employeePhoto value="@Model.Requests[index].CreatedBy.ProfilePicture" />
+                                    @*<input type="hidden" id=@requestMessage value="@Model.Requests[index].Message" />*@
+                                    <input type="hidden" id=@From value="@Model.Requests[index].From" />
+                                    <input type="hidden" id=@To value="@Model.Requests[index].To" />
+                                    <input type="hidden" id=@employeeGender value="@Model.Requests[index].CreatedBy.Gender" />
+                                    <input type="hidden" id=@employeeMartialStatus value="@Model.Requests[index].CreatedBy.MaritalStatus" />
+                                    <input type="hidden" id=@requestBenefitType value="@Model.Requests[index].BenefitType" />
+                                    @if (Model.Requests[index].Message != null)
+                                    {
+                                        <input type="hidden" id=@requestMessage value="@Model.Requests[index].Message" />
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" id=@requestMessage value="false" />
+                                    }
+                                </div>
+                                <!--list of buttons-->
+                                <div class="ms-auto text-end">
+                                     @if (Model.Requests[index].HasDocuments == true || Model.Requests[index].WarningMessage != null)
+                                    {
+                                        <!--done-->
+                                        <input id="@warningMessageId" type="hidden" value="@Model.Requests[index].WarningMessage" />
+                                        <a class="btn btn-link text-dark px-3 mb-0" data-bs-toggle="tooltip" data-bs-placement="top" title="Request has uploaded documents or warning message"><i class="fa fa-exclamation-circle text-dark me-2" aria-hidden="true"></i></a>
+                                    }
+                                    @if (Model.Requests[index].BenefitType != "Group")
+                                    {
+                                        @if (Model.Requests[index].DocumentsPath == null)
+                                        {
+
+                                            if (Model.Requests[index].MyAction != null)
+                                            {
+                                                
+                                      @*  <a class="btn btn-link text-dark px-3 mb-0" id="requestNumber" data-bs-toggle="modal" data-placement="top" title="view" data-bs-target="#scrollingModal" data-files="0" data-index=@index data-myAction="true" data-members="0">
+                                             <i class="fa fa-eye text-dark me-2" aria-hidden="true"></i>
+                                        </a>*@
+                                                <a class="btn btn-link text-dark px-3 mb-0" id="requestNumber" title="view" onclick="displayRequestDetails(@index, 0, 0);">
+                                                    <i class="fa fa-eye text-dark me-2" aria-hidden="true"></i>View
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                               @* <a class="btn btn-link text-dark px-3 mb-0" id="requestNumber" data-bs-toggle="modal" data-placement="top" title="view" data-bs-target="#scrollingModal" data-files="0" data-index=@index data-myAction="true" data-members="0">
+                                                    <i class="fa fa-eye text-dark me-2" aria-hidden="true"></i>
+                                                </a>*@
+                                                <a class="btn btn-link text-dark px-3 mb-0" id="requestNumber" title="view" onclick="displayRequestDetails(@index, 0, 0);">
+                                                    <i class="fa fa-eye text-dark me-2" aria-hidden="true"></i>View
+                                                </a>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            var documentsNames = JsonSerializer.Serialize(Model.Requests[index].DocumentsPath);                                         
+                                    @*<a class="btn btn-link text-dark px-3 mb-0" id="requestNumber" data-bs-toggle="modal" data-placement="top" title="view" data-bs-target="#scrollingModal" data-filesLength=@Model.Requests[index].DocumentsPath.Length data-index=@index data-members="0">
+                                        <i class="fa fa-eye text-dark me-2" aria-hidden="true"></i>
+                                    </a>*@
+                                            <a class="btn btn-link text-dark px-3 mb-0" id="requestNumber" title="view" onclick="displayRequestDetails(@index, 0, 0);">
+                                                <i class="fa fa-eye text-dark me-2" aria-hidden="true"></i>View
+                                            </a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var FullParticipantsData = JsonSerializer.Serialize(Model.Requests[index].FullParticipantsData);
+                                        for (int memberIndex = 0; memberIndex < Model.Requests[index].FullParticipantsData.Count; memberIndex++)
+                                        {
+
+                                            var id = "group" + index + "member" + memberIndex;
+                                            <input type="hidden" id=@id value=@Model.Requests[index].FullParticipantsData[memberIndex].UserName />
+                                        }
+                                        @if (Model.Requests[index].DocumentsPath == null)
+                                        {
+                                            @*<a class="btn btn-link text-dark px-3 mb-0" id="requestNumber" data-bs-toggle="modal" data-placement="top" title="view" data-bs-target="#scrollingModal" data-files="0" data-index=@index data-members=@FullParticipantsData>
+                                                <i class="fa fa-eye text-dark me-2" aria-hidden="true"></i>
+                                            </a>*@
+                                            <a class="btn btn-link text-dark px-3 mb-0" id="requestNumber" title="view" onclick="displayRequestDetails(@index, @FullParticipantsData, 0);">
+                                                <i class="fa fa-eye text-dark me-2" aria-hidden="true"></i>View
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            var documentsNames = JsonSerializer.Serialize(Model.Requests[index].DocumentsPath);
+                                           @* <a class="btn btn-link text-dark px-3 mb-0" id="requestNumber" data-bs-toggle="modal" data-placement="top" title="view" data-bs-target="#scrollingModal" data-files=@documentsNames data-filesLength=@Model.Requests[index].DocumentsPath.Length data-index=@index data-members=@FullParticipantsData>
+                                             <i class="fa fa-eye text-dark me-2" aria-hidden="true"></i>
+                                            </a>*@
+                                            <a class="btn btn-link text-dark px-3 mb-0" id="requestNumber" title="view" onclick="displayRequestDetails(@index, @FullParticipantsData, @documentsNames);">
+                                                <i class="fa fa-eye text-dark me-2" aria-hidden="true"></i>View
+                                            </a>
+                                            
+                                        }
+                                    }
+                                    @if (Model.Requests[index].UserCanResponse)
+                                    {
+                                        <span id="@actionArea" style="display:inline-block; margin-left:-25px">
+                                            <a class="btn btn-link text-dark px-3 mb-0" data-request="@Model.Requests[index].RequestWorkflowId" data-status="1" data-bs-toggle="modal" data-bs-target="#MessageModal" title="Approve"><i class="fa fa-thumbs-up text-dark me-2" aria-hidden="true"></i>Approved</a>
+                                            <a class="btn btn-link text-danger text-gradient px-3 mb-0" data-request="@Model.Requests[index].RequestWorkflowId" data-status="2" data-bs-toggle="modal" data-bs-target="#MessageModal"><i class="far fa-trash-alt me-2"></i>Reject</a>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <div class="list-inline-item" id="requeststatus">
+                                            @if (Model.Requests[index].MyAction.whoIsResponseName != null)
+                                            {
+                                                approvalText = Model.Requests[index].MyAction.whoIsResponseName;
+                                                <input type="hidden" id="@ResponserAction" value="@Model.Requests[index].MyAction.whoIsResponseName" />
+                                            }
+                                            else
+                                            {
+                                                approvalText = "you";
+                                                <input type="hidden" id="@ResponserAction" value="you" />
+
+                                            }
+                                            @if (Model.Requests[index].MyAction.action == "Pending")
+                                            {
+                                                <div style="color: #1aa3ff">Pending</div>
+                                            }
+                                            else if (Model.Requests[index].MyAction.action == "InProgress")
+                                            {
+                                                <div style="color:#ffd614">InProgress</div>
+                                            }
+                                            else if (Model.Requests[index].MyAction.action == " Approved")
+                                            {
+                                                <div style="color: #00ff00">Approved</div>
+                                            }
+                                            else if (Model.Requests[index].MyAction.action == "Rejected")
+                                            {
+                                                <div style="color:red">Rejected</div>
+                                            }
+                                            else if (Model.Requests[index].status == "Cancelled")
+                                            {
+                                                <div style="color:gray">Cancelled</div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                @if (Model.Requests[index].SendToId != 0)
+                                {
+                                    var SendToModel = JsonSerializer.Serialize(Model.Requests[index].SendToModel);
+                                    string[] SendToModelArray = { SendToModel };
+                                    <div class=" col-lg-6 mt-2" style="margin-bottom:20px">Gift Send To</div>
+                                    <div class="row">
+                                        <div class="col-lg-12 ml-6" style="float:right">
+                                            <ul style="list-style: none;">
+                                                <li style="display:inline; padding:7px; background-color:darkturquoise; border-radius:10%;" class="btn btn-active mb-3" onclick="showMemberModal(@SendToModel, @index, 0)">@Model.Requests[index].SendToModel.UserName</li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                }
+                                @if (Model.Requests[index].BenefitType == "Group")
+                                {
+                                    <div class=" col-lg-6 mt-2" style="margin-bottom:20px"><b>Group Members</b></div>
+                                    <div class="row">
+                                        <div class="col-lg-12 ml-6" style="float:right">
+                                            <ul style="list-style: none;">
+                                                @for (int participantIndex = 0; participantIndex < Model.Requests[index].FullParticipantsData.Count; participantIndex++)
+                                                {
+                                                    var FullParticipantsData2 = JsonSerializer.Serialize(Model.Requests[index].FullParticipantsData[participantIndex]);
+
+                                                    @*<li style="display:inline; padding:7px; background-color:darkturquoise; border-radius:10%" class="btn btn-active" data-bs-toggle="modal" data-bs-target="#memberModal" data-index=@index data-participantIndex=@participantIndex data-members=@FullParticipantsData2>@Model.Requests[index].FullParticipantsData[participantIndex].EmployeeName</li>*@
+                                                    <li style="display:inline; padding:7px; background-color:darkturquoise; border-radius:10%;" class="btn btn-active mb-3" onclick="showMemberModal(@FullParticipantsData2, @index, @participantIndex)">@Model.Requests[index].FullParticipantsData[participantIndex].UserName</li>
+
+                                                }
+                                            </ul>
+
+                                        </div>
+                                    </div>
+
+                                }
+                            </li>
+                              <hr class="horizontal dark my-sm-4">
+        }
+
+            <!--end of requests-->
+            </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mt-4" id="lmdetails" hidden>
+          <div class="card h-100 mb-4">
+            <div class="card-header pb-0 px-3">
+              <div class="row">
+                <div class="col-md-12">
+                  <h6 class="mb-0">Request Details</h6>
+                </div>
+              </div>
+              </div>
+              <div class="card-header pb-0 px-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <a class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Request</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <a class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Approval</a>
+                        </li>
+                       
+                      </ul>
+                </div>
+            </div>
+        </div>
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                    <div class="card-body pt-4 p-3">
+                        <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Reqyest information</h6>
+                        <ul class="list-group">
+                          <li class="list-group-item border-0 d-flex justify-content-center ps-0 mb-2 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                              <div class="d-flex flex-column">
+                                <div class="bg-gradient-primary border-radius-lg h-100 w-100">
+                                                <img src="../assets/img/shapes/waves-white.svg" class="position-fixed w-50 top-0 d-lg-block d-none" alt="waves">
+                                    <div class="position-relative d-flex align-items-center justify-content-center h-100">
+                                                    <img id="employeePhoto" class="w-100 h-100 position-relative z-index-2 p-1" style="padding-top: 0.5rem;" src="../assets/img/CemexAssiutBabyOnBoard.png" alt="rocket">
+                                    </div>
+                                  </div>
+                              </div>
+                              
+                            </div>
+                           
+                          </li>
+                          <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
+
+                                <div class="d-flex flex-column">
+                                  <h6 class="mb-1 text-dark text-sm">From</h6>
+                                            <span class="text-xs" id="From">27 March 2020, at 12:30 PM</span>
+                                </div>
+                                
+                              </div>
+                            <div class="d-flex align-items-center">
+@*                                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
+*@
+                                <div class="d-flex flex-column">
+                                  <h6 class="mb-1 text-dark text-sm">To</h6>
+                                            <span class="text-xs" id="To">27 March 2020, at 12:30 PM</span>
+                                </div>
+                                
+                              </div>
+                          </li>
+                        </ul>
+                        <h6 class="text-uppercase text-body text-xs font-weight-bolder my-3">Prepared By</h6>
+                        <ul class="list-group">
+                          <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                              <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
+                              <div class="d-flex flex-column">
+                                <h6 class="mb-1 text-dark text-sm">Name</h6>
+                                            <span id="employeeNameee" class="text-xs">26 March 2020, at 13:45 PM</span>
+                              </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+@*                                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
+*@                                <div class="d-flex flex-column">
+                                  <h6 class="mb-1 text-dark text-sm">Email</h6>
+                                            <span id="employeeEmail" class="text-xs">26 March 2020, at 13:45 PM</span>
+                                </div>
+                              </div>
+                            
+                          </li>
+                          <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                              <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
+                              <div class="d-flex flex-column">
+                                <h6 class="mb-1 text-dark text-sm">Department</h6>
+                                            <span id="employeeDepartment" class="text-xs">26 March 2020, at 12:30 PM</span>
+                              </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+@*                                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
+*@                                <div class="d-flex flex-column">
+                                  <h6 class="mb-1 text-dark text-sm">Position</h6>
+                                            <span id="employeePosition" class="text-xs">26 March 2020, at 12:30 PM</span>
+                                </div>
+                              </div>
+                            
+                          </li>
+                          <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                              <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
+                              <div class="d-flex flex-column">
+                                <h6 class="mb-1 text-dark text-sm">Sap Number</h6>
+                                <span id="employeeSapNumber" class="text-xs">26 March 2020, at 12:30 PM</span>
+                              </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+@*                                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
+*@                                <div class="d-flex flex-column">
+                                  <h6 class="mb-1 text-dark text-sm">Employee Number</h6>
+                                  <span id="employeeEmployeeNumber" class="text-xs">26 March 2020, at 12:30 PM</span>
+                                </div>
+                              </div>
+                            
+                          </li>
+                          <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                              <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
+                              <div class="d-flex flex-column">
+                                <h6 class="mb-1 text-dark text-sm">Company</h6>
+                                            <span id="employeeCompanyCode" class="text-xs">26 March 2020, at 13:45 PM</span>
+                              </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+@*                                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
+*@                                <div class="d-flex flex-column">
+                                  <h6 class="mb-1 text-dark text-sm">Gender</h6>
+                                            <span id="employeeGender" class="text-xs">26 March 2020, at 13:45 PM</span>
+                                </div>
+                              </div>
+                            
+                          </li>
+                          <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                            <div class="d-flex align-items-center">
+                              <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
+                              <div class="d-flex flex-column">
+                                <h6 class="mb-1 text-dark text-sm">Martial Status</h6>
+                                <span id="employeeMartialStatus" class="text-xs">26 March 2020, at 12:30 PM</span>
+                              </div>
+                            </div>
+                            
+                          </li>
+                          <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                            
+                            <div class="d-flex align-items-center">
+@*                                 <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
+ *@                                <div class="d-flex flex-column" id="cardBody">
+                                  
+                                </div>
+                              </div>
+                            
+                          </li>
+                        </ul>
+                      </div>
+                </div>
+                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                    <div class="card-body p-3" id="myApprovalCard">
+                        
+                         
+                         
+                          
+                         
+                        
+                      </div> 
+                </div>
+            </div>
+           
+          </div>
+
+            <div class="card mb-4" style="height:fit-content" id="lmdetailss">
+                <div class="card-header pb-0 px-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="mb-0" id="title"> Request Details</h6>
+                        </div>
+                        @* <div class="col-md-6 d-flex justify-content-end align-items-center">
+                    <i class="fa fa-repeat me-2"></i>
+                    <small id="RequestsCount"></small>
+                    </div>*@
+                    </div>
+                </div>
+
+                <div class="card-body pt-4 p-3" id="requestsCard">
+
+                    <div class="row">
+                        <div class="card p-3">
+                            <div class="col-lg-8 my-auto">
+                                @* <h5>please select one of the benefits from the left side to check the request history details </h5> *@
+                                <p class="lead"><span class="font-weight-normal text-gradient text-primary">Please select one of the requests from the left side to check the request history details</span></p>
+                                <a type="button" class="btn bg-gradient-dark mt-4" asp-controller="Benefit" asp-action="ShowBenefits">Go to Dashboard</a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mt-4" id=" lmdetailss">
+        <div class="card mb-4" style="height:fit-content"  >
+            <div class="card-header pb-0 px-3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="mb-0" id="title"> Request Details</h6>
+                    </div>
+                  
+                </div>
+            </div>
+            
+            <div class="card-body pt-4 p-3" id="requestsCard">
+
+                <div class="row">
+                    <div class="card p-3">
+                        <div class="col-lg-8 my-auto">
+                            @* <h5>please select one of the benefits from the left side to check the request history details </h5> *@
+                            <p class="lead"><span class="font-weight-normal text-gradient text-primary">Please select one of the benefits from the left side to check the request history details</span></p>
+                            <a type="button" class="btn bg-gradient-dark mt-4" asp-controller="Benefit" asp-action="ShowBenefits">Go to Dashboard</a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-8 mt-4">
+        <div class="card p-4">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="card p-3">
+                        <div class="col-lg-8 my-auto">
+                            <h5>You have no Requests</h5>
+                            <p class="lead"><span class="font-weight-normal text-gradient text-primary">My Gifts contains Thanks Coupons sent by your colleagues, You will be eligible for a small free gesture from HR</span></p>
+                            <a type="button" class="btn bg-gradient-dark mt-4" asp-controller="Benefit" asp-action="ShowBenefits">Go to Dashboard</a>
+                        </div>
+                        @*          <div class="col-lg-6 my-auto position-relative">
+                    <img class="w-100 position-relative" src="~/softui/assets/img/illustrations/error-404.png" alt="404-error">
+                    </div>  *@
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    }
+  </div> 
+
+<div class="modal fade" id="memberModal" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="requestModalLabel">
+                    Request Details
+                </h6>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            
+                <div class="modal-body">
+                                       <div class="row">
+                        <div class="col col-lg-12 mb-2 mb-lg-0">
+                            <div class="card mb-1" style="border-radius: .5rem; padding:10px">
+                                <div class="row g-0">
+                                    <div class="gradient-custom  text-white col-lg-4" style="display:inline-block; height:80px; float:left; padding-left:10px;border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                                        <img id="memberProfile" src="~/images/userProfile/userProfile1.png"
+                                             alt="Avatar" class="rounded-circle pb-2" style="width: 100px; height: 100px; padding-left: 5px;" />
+                                    </div>
+                                    <div class="col-md-8 col-lg-8">
+                                        <div class="card-body p-1">
+                                            <h6>Request Information</h6>
+                                            <hr class="mt-0 mb-1">
+                                            <div class="row pt-1 requestInfo">
+                                                <div class="col-lg-6 mb-1">
+                                                    <h6>From</h6>
+                                                    <p class="text-muted" id="memberFrom"></p>
+                                                </div>
+                                                <div class="col-lg-6 mb-1">
+                                                    <h6>To</h6>
+                                                    <p class="text-muted" id="memberTo"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 col-lg-12">
+                                        <div class="card-body pl-2">
+                                            <h6>Employee Information</h6>
+                                            <hr class="mt-0">
+                                            <div class="row pt-1">
+                                                <div class="col-lg-6 mb-1">
+                                                    <h6>Name</h6>
+                                                    <p class="text-muted" id="memberName"></p>
+                                                </div>
+                                                <div class="col-lg-6 mb-1">
+                                                    <h6>Email</h6>
+                                                    <p class="text-muted" id="memberEmail"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row pt-1">
+                                                <div class="col-lg-6 mb-1">
+                                                    <h6>Department</h6>
+                                                    <p class="text-muted" id="memberDepartment"></p>
+                                                </div>
+                                                <div class="col-6 mb-1">
+                                                    <h6>Position</h6>
+                                                    <p class="text-muted" id="memberPosition"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row pt-1">
+                                                <div class="col-lg-6 mb-1">
+                                                    <h6>Sap Naumber</h6>
+                                                    <p class="text-muted" id="memberSapNumber"></p>
+                                                </div>
+                                                <div class="col-6 mb-1">
+                                                    <h6>Employee Number</h6>
+                                                    <p class="text-muted" id="memberNumber"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row pt-1">
+                                                <div class="col-lg-6">
+                                                    <h6>Company</h6>
+                                                    <p class="text-muted" id="memberCompany"></p>
+                                                </div>
+                                                @*<div class="col-6">
+                                                        <h6>BirthDate</h6>
+                                                        <p class="text-muted" id="memberBirthDate"></p>
+                                                    </div>*@
+                                            </div>
+                                            <div class="row pt-1">
+                                                <div class="col-lg-6">
+                                                    <h6>Gender</h6>
+                                                    <p class="text-muted" id="memberGender"></p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <h6>Martial Status</h6>
+                                                    <p class="text-muted" id="memberMartialStatus"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                   @* <button type="button" class="btn bg-gradient-primary">Create</button>*@
+                     <button type="submit" class="btn btn-link  ml-auto" data-bs-dismiss="modal">Close</button>
+                </div>
+           
+        </div>
+    </div>
+</div>
+
+ 
+
+<div class="modal fade" id="MessageModal" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="MessageModalLabel">
+                    Add Response
+                   
+                </h6>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+           
+                <div class="modal-body">
+                    <p class="mb-1 pt-2 text-bold">Message</p>
+                    <input type="hidden" id="request" />
+                    <input type="hidden" id="StatusValue" />
+                    <textarea id="message" class="responseMessage" style="width:420px; height:150px;" required placeholder="" ></textarea>
+                </div>
+                <div class="modal-footer">
+                   @* <button type="submit" class="btn bg-gradient-primary">Create</button>*@
+                    @* <button type="submit" class="btn btn-link  ml-auto" data-bs-dismiss="modal">Create</button>*@
+                <button type="button" class="btn btn-link  ml-auto" data-bs-dismiss="modal" onclick="clearElements()">Close</button>
+                <button type="button" class="btn bg-gradient-primary" data-bs-dismiss="modal" onclick="AddResponse()">Submit</button>
+                </div>
+           
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="RequestDetailsModal" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="RequestDetailsModalLabel">
+                    Request Details
+                    
+                </h6>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+           
+                <div class="modal-body">
+                <ul>
+                    <li class="groupMemberData" id="requesterName"></li>
+                    <li class="groupMemberData" id="requesterDepartment"></li>
+                    <li class="groupMemberData" id="requesterPosition"></li>
+                    <li class="groupMemberData" id="requesterEmail"></li>
+                    <li class="groupMemberData" id="requesterWorkDuration"></li>
+                    <li class="groupMemberData" id="requesterSapNumber"></li>
+                    <li class="groupMemberData" id="requesterNumber"></li>
+                    <li class="groupMemberData" id="requesterCompany"></li>
+                    @*<li class="groupMemberData" id="requesterDateBirth"></li>*@
+                    <li class="groupMemberData" id="requesterCollar"></li>
+                </ul>
+                </div>
+                <div class="modal-footer">
+                   @* <button type="submit" class="btn bg-gradient-primary">Create</button>*@
+                    @* <button type="submit" class="btn btn-link  ml-auto" data-bs-dismiss="modal">Create</button>*@
+                <button type="button" class="btn bg-gradient-primary" data-bs-dismiss="modal" onclick="clearElements()">Close</button>
+                </div>
+           
+        </div>
+    </div>
+</div>
+
+    <div class="modal fade" id="exampleModall" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">employee Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li class="groupMemberData" id="memberName"></li>
+                        <li class="groupMemberData" id="memberDepartment"></li>
+                        <li class="groupMemberData" id="memberPosition"></li>
+                        <li class="groupMemberData" id="memberEmail"></li>
+                        <li class="groupMemberData" id="memberWorkDuration"></li>
+                        <li class="groupMemberData" id="memberSapNumber"></li>
+                        <li class="groupMemberData" id="memberNumber"></li>
+                        <li class="groupMemberData" id="memberCompany"></li>
+                        @*<li class="groupMemberData" id="memberDateBirth"></li>*@
+                        <li class="groupMemberData" id="memberCollar"></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel">
+                    employee Data
+                </h6>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+           
+                <div class="modal-body">
+                    <ul>
+                        <li class="groupMemberData" id="memberName"></li>
+                        <li class="groupMemberData" id="memberDepartment"></li>
+                        <li class="groupMemberData" id="memberPosition"></li>
+                        <li class="groupMemberData" id="memberEmail"></li>
+                        <li class="groupMemberData" id="memberWorkDuration"></li>
+                        <li class="groupMemberData" id="memberSapNumber"></li>
+                        <li class="groupMemberData" id="memberNumber"></li>
+                        <li class="groupMemberData" id="memberCompany"></li>
+                        @*<li class="groupMemberData" id="memberDateBirth"></li>*@
+                        <li class="groupMemberData" id="memberCollar"></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn bg-gradient-primary" data-bs-dismiss="modal">Close</button>
+                    @* <button type="submit" class="btn btn-link  ml-auto" data-bs-dismiss="modal">Create</button>*@
+                </div>
+           
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }
+        

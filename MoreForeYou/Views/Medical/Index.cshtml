@@ -1,0 +1,208 @@
+﻿@model MoreForYou.Services.Models.Medical.MedicalMain
+@{
+    ViewData["Title"] = "Home";
+        ViewData["SubTitle"] = "Medical";
+        ViewData["activ"] = "lmMedical";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+    int end = 0;
+    int start = 0;
+    string name = string.Empty;
+    string Iconclass = string.Empty;
+}
+@* <link href="~/css/newStyleSheet.css" rel="stylesheet" /> *@
+@* <link href="~/css/ribbons.css" rel="stylesheet" /> *@
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+@if (Model != null)
+{
+    Double d = (Model.MedicalCategoryModels.Count / 3.0);
+    int rowsNumber = 0;
+    if (d > 1)
+    {
+        rowsNumber = (int)Math.Round(d, 0, MidpointRounding.AwayFromZero);
+
+    }
+    else
+    {
+        rowsNumber = 1;
+    }
+    <div class="row">
+        <div class="col-lg-7 mt-4">
+            <div class="col-xl-12">
+                @for (int index = 0; index < rowsNumber; index++)
+                {
+                    end = ((index + 1) * 3) - 1;
+                    start = index * 3;
+                    if (index == 0)
+                    {
+                        <div class="row">
+                            @for (int categoryIndex = start; categoryIndex <= end; categoryIndex++)
+                            {
+                                Iconclass = "<i class= 'fa fa-thermometer-full opacity-10'></i>";
+                                name = @Model.MedicalCategoryModels[categoryIndex].Name_EN.ToString();
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header mx-4 p-3 text-center">
+                                            <div class="icon icon-shape icon-lg bg-gradient-primary shadow text-center border-radius-lg">
+                                                @Html.Raw(Model.MedicalCategoryModels[categoryIndex].WebIcon)                                            
+                                                </div>
+                                        </div>
+                                        <div class="card-body pt-0 p-3 text-center">
+                                            <h6 class="text-center mb-0">@name</h6>
+        @*                                     <h6 class="text-center mb-0">
+                                                @Model.MedicalCategoryModels[categoryIndex].Name_EN.ToString()
+                                            </h6>
+                                            <h6 class="text-center mb-0">
+                                                Flag :  @Model.MedicalCategoryModels[categoryIndex].hasOneSubCategory
+                                            </h6> *@
+
+                                            @if (Model.MedicalCategoryModels[categoryIndex].hasOneSubCategory)
+                                            {
+                                                <a class="text-body text-xs font-weight-bold mb-0 icon-move-right mt-auto" href="#" onclick="loadDetails(@Model.MedicalCategoryModels[categoryIndex].Id,'@name', @Model.MedicalCategoryModels[categoryIndex].SubCategoriesCount)">
+                                                    Details
+                                                    <i class="fas fa-arrow-right text-xs ms-1" aria-hidden="true"></i>
+                                               @*      @Model.MedicalCategoryModels[categoryIndex].Id
+                                                    @Model.MedicalCategoryModels[categoryIndex].SubCategoriesCount) *@
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a class="text-body text-xs font-weight-bold mb-0 icon-move-right mt-auto" asp-action="LoadSubCategories" asp-controller="Medical" asp-route-Id="@Model.MedicalCategoryModels[categoryIndex].Id">
+                                                    Details
+                                                    <i class="fas fa-arrow-right text-xs ms-1" aria-hidden="true"></i>
+                                                </a>
+                                            }
+                                            <hr class="horizontal dark my-3">
+                                            <h5 class="mb-0">@Model.MedicalCategoryModels[categoryIndex].SubCategoriesCount</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row mt-3">
+                            @for (int categoryIndex = start; categoryIndex <= end; categoryIndex++)
+                            {
+                                Iconclass = "<i class= 'fa fa-thermometer-full opacity-10'></i>";
+                                name = @Model.MedicalCategoryModels[categoryIndex].Name_EN.ToString();
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header mx-4 p-3 text-center">
+                                          
+                                            <div class="icon icon-shape icon-lg bg-gradient-primary shadow text-center border-radius-lg">
+                                                @Html.Raw(Model.MedicalCategoryModels[categoryIndex].WebIcon)
+                                            </div>
+                                        </div>
+                                        <div class="card-body pt-0 p-3 text-center">
+                                            <h6 class="text-center mb-0">@Model.MedicalCategoryModels[categoryIndex].Name_EN</h6>
+                                            @if (Model.MedicalCategoryModels[categoryIndex].hasOneSubCategory)
+                                            {
+                                                <a class="text-body text-xs font-weight-bold icon-move-right mt-auto" href="#" onclick="loadDetails(@Model.MedicalCategoryModels[categoryIndex].Id,'@name', @Model.MedicalCategoryModels[categoryIndex].SubCategoriesCount)">
+                                                    Details
+                                                    <i class="fas fa-arrow-right text-xs ms-1" aria-hidden="true"></i>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a class="text-body text-xs font-weight-bold icon-move-right mt-auto" asp-action="LoadSubCategories" asp-controller="Medical" asp-route-Id="@Model.MedicalCategoryModels[categoryIndex].Id">
+                                                    Details
+                                                    <i class="fas fa-arrow-right text-xs ms-1" aria-hidden="true"></i>
+                                                </a>
+                                            }
+                                            <hr class="horizontal dark my-3">
+                                            <h5 class="mb-0">@Model.MedicalCategoryModels[categoryIndex].SubCategoriesCount</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                }
+            </div>
+        </div>
+        <div class="col-md-5 mt-4">
+            <div class="card mb-4" style="height:fit-content">
+                <div class="card-header pb-0 px-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="mb-0" id="categoryTitle">Medical Details</h6>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-end align-items-center">
+                            <span class="pl-2">
+                                # <small id="subCount"></small>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body pt-4 p-3">
+                    <ul class="list-group" id="medicalSub">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" tabindex="-1" id="detailsCard">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-8 col-xl-12">
+                        <div class="card h-100">
+                            <div class="card-body p-3">
+                                <ul class="list-group" id="medicalDetaildList">
+                                    <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+                                        <div class="avatar me-3">
+                                            <img id="detailsImage" src="~/SoftUI/assets/img/home-decor-1.jpg" alt="kal" class="border-radius-lg shadow">
+                                        </div>
+                                        <div class="d-flex align-items-start flex-column justify-content-center">
+                                            <h6 class="mb-0 text-sm" id="detailsName">Sophie B.</h6>
+                                            <p class="mb-0 text-xs" id="bio"></p>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+                                        <div class="d-flex  flex-column justify-content-center col-lg-6" id="detailsAddress">
+                                            <h6 class="mb-0 text-sm">Address</h6>
+                                            <p class="mb-0 text-xs">Awesome work, can you..</p>
+                                        </div>
+                                        <div class="d-flex align-items-start flex-column justify-content-center col-lg-6" id="detailsPhones">
+                                            <h6 class="mb-0 text-sm">Phone</h6>
+                                            <p class="mb-0 text-xs">About files I can..</p>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+                                        <div class="d-flex align-items-start flex-column justify-content-center" id="detailsWorkingHours">
+                                            <h6 class="mb-0 text-sm">Working Hours</h6>
+                                            <p class="mb-0 text-xs">Have a great afternoon..</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+}
+<script src="~/js/medicaljs.js"></script>
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

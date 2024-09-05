@@ -1,0 +1,152 @@
+﻿@using MoreForYou.Services.Models.API;
+@model IEnumerable<MoreForYou.Services.Models.API.Gift>
+
+@{
+    ViewData["Title"] = "Home";
+    ViewData["SubTitle"] = "My Gifts";
+    ViewData["activ"] = "lmGifts";
+    Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
+    int counter = 0;
+
+}
+<link href="~/css/newStyleSheet.css" rel="stylesheet" />
+
+<script>
+    function myFunction(value, items) {
+        var val = value;
+        console.log(val);
+            for (let i = 0; i < items.length; i++) {
+                console.log(items.length);
+                console.log(items[3].UserName);
+                if (items[i].UserName == val || val=="") {
+                    console.log("done");
+                    document.getElementById(items[i].RequestNumber).hidden = false;
+                    document.getElementById("lm+" + items[i].RequestNumber).hidden = false;
+                }
+                else {
+                    document.getElementById(items[i].RequestNumber).hidden = true;
+                    document.getElementById("lm+" + items[i].RequestNumber).hidden = true;
+                }
+            }
+    
+    }
+   
+</script>
+
+@if (Model != null)
+{
+    @* <div class="confetti">
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+    </div> *@
+
+  
+     <label for="cars">Choose a car:</label>
+
+
+}
+
+    @if (Model != null)
+    {
+     <div class="row mt-4">
+        <div class="col-lg-6 mb-lg-0 mb-4">
+          @*   <select class="form-control form-select col-md-1" placeholder="Select UserName" 
+            name="UserName" id="select-users" value="Gift.UserName" asp-items="@(new SelectList(ViewBag.giftt, nameof(Gift.RequestNumber), nameof(Gift.UserName),""))" 
+            onchange="getfilter(this.value,@JsonSerializer.Serialize(Model));"> <option value="">Select User</option></select> *@
+            <select class="form-select" id="RequestNumber"
+                    asp-items="@(new SelectList(ViewBag.giftt,"UserName","UserName"," "))" onchange="myFunction(this.value,@JsonSerializer.Serialize(Model))">
+                <option value="">Select User</option>
+                </select>
+  
+            @foreach (var item in Model)
+            {
+                counter = counter + 1;
+                <div class="card p-4" id="@item.RequestNumber">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="d-flex flex-column">
+
+                                <p class="mb-1 pt-2 text-bold">More4u Gift</p>
+                                    @* <h5 class="font-weight-bolder"><span class="font-weight-bolder text-gradient text-primary">@item.BenefitName</span></h5> *@
+                                    <h5 class="font-weight-bolder text-gradient text-primary">
+                                        @item.BenefitName</h5>
+                                    <hr class="horizontal dark my-sm-4">
+                                    <p class="mb-5"><b>Send By</b> : @item.UserName
+                                         <br /><b>Department</b> : @item.UserDepartment
+                                    <br /><b>Date </b>: @item.Date.ToShortDateString() , @item.Date.ToShortTimeString()</p>
+@*                                 <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
+                                    Benefit Details
+                                    <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                                </a> *@
+                            </div>
+                        </div>
+                        <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
+                            <div class="bg-gradient-primary border-radius-lg h-100 w-100">
+                                <img src="~/softui/assets/img/shapes/waves-white.svg" class="position-absolute w-50 top-0 d-lg-block d-none" alt="waves">
+                                <div class="position-relative d-flex align-items-center justify-content-center h-100">
+                                        <img class="w-100 h-100 position-relative z-index-2 p-1" style="padding-top: 0.5rem;" src="@item.BenefitCard" alt="rocket">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+                <hr class="horizontal dark my-sm-4" id="lm+@item.RequestNumber">
+            }
+
+        </div>
+        <div class="col-lg-6">
+            <div class="card p-3">
+            <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100">
+                <!-- /div> style="background-image: url('../assets/img/ivancik.jpg');"> -->
+                <span class="mask bg-gradient-dark"></span>
+                <div class="card-body position-relative z-index-1 d-flex flex-column h-100 ">
+                    <h5 class="text-white font-weight-bolder mb-4 pt-2">My Gifts</h5>
+                        <p class="text-white">My Gifts contains Thanks Coupons sent by your colleagues, You will be eligible for a small free gesture from HR.</p>
+                    <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
+                  @*       Read More
+                        <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i> *@
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+}
+else
+{
+                    <div class="card p-4">
+                <div class="card-body p-3">
+   <div class="row">
+           <div class="card p-3">
+            <div class="col-lg-8 my-auto">
+                <h5>You have no Gifts</h5>
+                <p class="lead"><span  class="font-weight-normal text-gradient text-primary">My Gifts contains Thanks Coupons sent by your colleagues, You will be eligible for a small free gesture from HR</span></p>
+                 <a type="button" class="btn bg-gradient-dark mt-4" asp-controller="Benefit" asp-action="ShowBenefits">Go to Dashboard</a>
+            </div>
+@*          <div class="col-lg-6 my-auto position-relative">
+            <img class="w-100 position-relative" src="~/softui/assets/img/illustrations/error-404.png" alt="404-error">
+        </div>  *@
+   </div>
+     </div>
+       </div>
+     </div>
+}
+
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

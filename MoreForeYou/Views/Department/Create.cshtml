@@ -1,0 +1,110 @@
+﻿@model MoreForYou.Services.Models.MaterModels.DepartmentModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+
+}
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+<script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Done !",
+                text: message,
+                icon: "success",
+            }).then(function () {
+               // window.location.href = "http://20.86.97.165/more4u/more4u/Department";
+            });
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Failed Process!",
+                text: error,
+                icon: "Error",
+            });
+        }
+    }
+</script>
+<script>
+    $(document).ready( function (){
+
+                $('#Name').change(function () {
+                    var ddlsource = "#Name";
+                    var url = '@Url.Content("~/")' + "more4u/Department/CheckUniqueDepartmentName";
+                $.getJSON(url, { Name: $(ddlsource).val() }, function (data)
+                {
+                    if (data == false) {
+                        document.getElementById('uniqueName').innerText = "This Department is already exist";
+                        document.getElementById('Name').value = "";
+
+                    }
+                    else
+                    {
+                        document.getElementById('uniqueName').innerText = "";
+                    }
+
+                });
+               });
+
+
+    });
+</script>
+
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (ViewBag.Error != null)
+{
+    <input type="hidden" id="error" value="@ViewBag.Error" />
+    <script>
+        showAlert("Error");
+    </script>
+}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body" style="box-shadow:10px 10px 10px rgba(0, 0, 0, 0.5)">
+                    <h5 class="card-title">Create Department</h5>
+                    <div class="form-validation">
+                        <form asp-action="Create">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label" for="val-username">
+                                    Name <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="Name" asp-for="Name" placeholder="Enter a Department Name..">
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                    <label id="uniqueName" style="color:red"></label>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-8 ml-auto">
+                                    <input type="submit" class="btn btn-primary" value="Save" asp-controller="Department">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <div>
+                <a asp-action="Index" asp-controller="Department">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+

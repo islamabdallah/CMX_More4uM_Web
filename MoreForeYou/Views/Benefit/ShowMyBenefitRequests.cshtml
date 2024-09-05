@@ -1,0 +1,672 @@
+﻿@model MoreForYou.Services.Models.API.MyRequests
+
+@inject UserManager<AspNetUser> userManager
+@inject SignInManager<AspNetUser> SignInManager
+@{
+    ViewData["Title"] = "Benefit";
+    ViewData["SubTitle"] = "ShowMyBenefitRequests";
+    ViewData["activ"] = "lmBenefits";
+    Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
+    var user = await userManager.GetUserAsync(User);
+    var displayName = user.UserName;
+    var roles = await userManager.GetRolesAsync(user);
+    int index = 0;
+    string employeeName = "";
+    string employeeNumber = "";
+    string employeePhoto = "";
+    string employeePosition = "";
+    string employeeDepartment = "";
+    string groupName = "";
+    string members = "";
+    string createdBy = "";
+    string expectedDateFrom = "";
+    string expectedDateTo = "";
+    string message = "";
+    string trId = "";
+    string roleStatus = "";
+    int flowIndex = 0;
+    string RequestOwnerName = "";
+    string RequestOwnerWorkDuaration = "";
+    string benefitRequestPhoto = "";
+    string benefitType = "";
+    string employeeReplay = "";
+    string employeeReplayDate = "";
+}
+<link href="~/css/ribbons.css" rel="stylesheet" />
+<style>
+    strong {
+        margin-right: 15px;
+        margin-bottom: 10px;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+
+   
+
+    .modal-body {
+        height: fit-content;
+        overflow-y: auto;
+    }
+
+    .messagediv {
+        width: 400px;
+        height: 200px;
+        border: 1px solid black;
+        overflow-x: scroll;
+        overflow-y: scroll;
+    }
+</style>
+<link href="~/css/ribbons.css" rel="stylesheet" />
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+<script>
+    function showMemberModal(members, i, participantIndex) {
+        document.getElementById("memberFrom").innerText = document.getElementById("expectedDateFrom" + i).value;
+        document.getElementById("memberTo").innerText = document.getElementById("expectedDateTo" + i).value;
+        document.getElementById("requestIndex").value = i;
+        document.getElementById("memberName").innerText = members[participantIndex]["EmployeeName"];
+        document.getElementById("memberDepartment").innerText = members[participantIndex]["DepartmentName"];
+        document.getElementById("memberPosition").innerText = members[participantIndex]["PositionName"];
+        document.getElementById("memberEmail").innerText = members[participantIndex]["Email"];
+        document.getElementById("memberNumber").innerText = members[participantIndex]["EmployeeNumber"];
+        document.getElementById("memberSapNumber").innerText = members[participantIndex]["SapNumber"];
+        document.getElementById("memberBirthDate").innerText = members[participantIndex]["BirthDate"];
+        document.getElementById("memberGender").innerText = members[participantIndex]["Gender"];
+        document.getElementById("memberMartialStatus").innerText = members[participantIndex]["MaritalStatus"];
+        document.getElementById("memberCompany").innerText = members[participantIndex]["Company"];
+        document.getElementById("memberProfilePicture").src = "http://20.86.97.165/more4u/images/userProfile/" + members[participantIndex]["ProfilePicture"];
+        $('#memberModal').modal('show');
+
+    }
+
+    function showRequestDetails(request, index) {
+        var i = index;
+        document.getElementById('requestFrom').innerText = request["From"];
+
+        document.getElementById('requestTo').innerText = request["To"];
+        document.getElementById('requestEmployeeName').innerText = request["CreatedBy"]["EmployeeName"];
+
+        document.getElementById('requestType').innerText = request["BenefitType"];
+        document.getElementById('benefitRequestPhoto').src = "http://20.86.97.165/more4u/images/BenefitCards/" + request["BenefitCard"];
+
+        if (request["SendToModel"] != null) {
+            var giftDiv = document.createElement("div");
+            giftDiv.setAttribute("class", "row pt-1 mt-3  requestInfo");
+            giftDiv.setAttribute("id", "giftDiv");
+            var giftLabel = document.createElement("h6");
+            giftLabel.setAttribute("class", "col-lg-4");
+            giftLabel.setAttribute("style", "display:inline-block");
+
+            giftLabel.textContent = "Gift Send To:- "
+            var giftToP = document.createElement("p");
+            giftToP.setAttribute("class", "text-muted col-lg-8");
+            giftToP.setAttribute("style", "font-size:small");
+            giftToP.textContent = request["SendToModel"]["EmployeeName"];
+            giftDiv.append(giftLabel);
+            giftDiv.append(giftToP);
+            document.getElementById('exampleModalBody').append(giftDiv);
+        }
+
+        //if (request["Message"] != null) {
+        //    var messageDiv = document.createElement("div");
+        //    //messageDiv.setAttribute("id", "modalMessage");
+        //    messageDiv.setAttribute("class", "row m-3 modalMessage");
+        //    var messageDivinner = document.createElement("div");
+        //    messageDivinner.setAttribute("class", "col-lg-12");
+        //    var messagelabel = document.createElement("label");
+        //    messagelabel.setAttribute("class", "mt-2 mb-2");
+        //    messagelabel.textContent = "Message";
+        //    var messagearea = document.createElement("textarea");
+        //    messagearea.setAttribute("class", "col-lg-12 p-3");
+        //    messagearea.setAttribute("disabled", "true");
+        //    messagearea.setAttribute("style", "background-color:#e6ffe6; border:none; border-radius:10px");
+        //    messagearea.textContent = request["Message"];
+        //    messageDivinner.appendChild(messagelabel);
+        //    messageDivinner.appendChild(messagearea);
+        //    messageDiv.appendChild(messageDivinner);
+        //    document.getElementById('exampleModalBody').append(messageDiv);
+        //}
+        if (request["RequestWorkFlowAPIs"] != null) {
+            var timelineDiv = document.createElement("div");
+            timelineDiv.setAttribute("class", "containerTimeline");
+            var workflowTitle = document.createElement("h6");
+            workflowTitle.setAttribute("style", "margin-top:10px");
+            workflowTitle.setAttribute("class", "workflowTitle");
+            workflowTitle.textContent = "WorkFlow";
+            document.getElementById('exampleModalBody').append(workflowTitle);
+            var x = 0;
+            for (var item in request["RequestWorkFlowAPIs"]) {
+                x = x + 1;
+                var mainDiv = document.createElement("div");
+                mainDiv.setAttribute("class", "timeline-block timeline-block-right");
+                mainDiv.setAttribute("id", "timeline" + x);
+                divName = document.createElement("span");
+                divName.setAttribute("id", "name" + x);
+                divName.setAttribute("class", "marker active");
+                var status = request["RequestWorkFlowAPIs"][item]["Status"];
+                var pending = document.createElement("i");
+                spanStatus = document.createElement("div");
+                spanDate = document.createElement("div");
+                spanDate.setAttribute("id", "replayDate" + x);
+                if (request["RequestWorkFlowAPIs"][item]["Notes"] != "") {
+                    replayNotes = document.createElement("p");
+                    replayNotes.setAttribute("id", "replayNotes" + x);
+                    replayNotes.setAttribute("style", "color:font-size:medium; color:black");
+                    replayNotes.textContent = request["RequestWorkFlowAPIs"][item]["Notes"];
+                }
+
+                if (status == "Pending") {
+                    pending.setAttribute("class", "bx bxs-envelope");
+                    divName.setAttribute("style", "background-color:#1aa3ff; font-size:x-large; color:white");
+                    spanStatus.setAttribute("style", "font-size: medium; color:#1aa3ff");
+                }
+                else if (status == "Approved") {
+                    pending.setAttribute("class", "bi bi-check-lg");
+                    spanDate.textContent = request["RequestWorkFlowAPIs"][item]["ReplayDate"];
+                    divName.setAttribute("style", "background-color:#00ff00; font-size:x-large; color:white");
+                    spanStatus.setAttribute("style", "font-size: medium; color:#00ff00");
+
+                }
+                else if (status == "Rejected") {
+                    pending.setAttribute("class", "fbi bi-x-lg");
+                    spanDate.textContent = request["RequestWorkFlowAPIs"][item]["ReplayDate"];
+                    divName.setAttribute("style", "background-color:#cc0000; font-size:x-large; color:white;");
+                    spanStatus.setAttribute("style", "font-size: medium; color: #cc0000;");
+
+                }
+                else if (status == "Not Yet") {
+                    //pending.setAttribute("class", "bx bx-alarm-snooze");
+                    //divName.setAttribute("style", "background-color:#999998");
+                }
+                divName.appendChild(pending);
+                divRole = document.createElement("div");
+                divRole.setAttribute("id", "role" + x);
+                divRole.setAttribute("class", "timeline-content");
+                //divRole.setAttribute("style", "float:left; margin-left:20px");
+                //divReplayDate = document.createElement("div");
+                //divReplayDate.setAttribute("id", "ReplayDate" + x);
+                //divReplayDate.setAttribute("style", "margin-right:20px; display:block");
+                h2 = document.createElement("p");
+                //h2.setAttribute("class", "col-lg-5");
+                h2.setAttribute("style", "font-size:small; color:black");
+                h2.textContent = request["RequestWorkFlowAPIs"][item]["EmployeeName"];
+                spanStatus.textContent = status;
+                //var newline = document.createElement("BR");
+                divRole.appendChild(h2);
+                divRole.appendChild(spanStatus);
+                //divRole.append(newline);
+                divRole.appendChild(replayNotes)
+                divRole.appendChild(spanDate);
+                mainDiv.append(divName);
+                mainDiv.append(divRole)
+                timelineDiv.append(mainDiv);
+                document.getElementById('exampleModalBody').append(timelineDiv);
+                //modal.find('#workflowEmployeeName').text(document.getElementById("employeeName" + i + x).value);
+                //modal.find('#workflowEmployeeRole').text(document.getElementById("roleStatus" + i + x).value);
+            }
+        }
+        $('#exampleModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+        $('#exampleModal').modal('show');
+        //$('#exampleModal').modal({ backdrop: 'static', keyboard: false }, 'show');
+
+
+    }
+</script>
+<script>
+
+    $(document).ready(function () {
+       
+        $('#memberModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+        $("#memberModal").on('show.bs.modal', function (event) {
+
+            var modal = $(this);
+            var i = document.getElementById('requestIndex').value;
+            if (document.getElementById("message" + i).value != "false") {
+                var messageDiv = document.createElement("div");
+                messageDiv.setAttribute("class", "col-lg-12 mb-1 mt-1 modalMessage");
+                var h6 = document.createElement("h6");
+                h6.textContent = "Message";
+                var message = document.createElement("p");
+                message.setAttribute("class", "text-muted");
+                message.textContent = document.getElementById("message" + i).value;
+                messageDiv.appendChild(h6);
+                messageDiv.appendChild(message);
+                modal.find('.modal-body .requestInfo').append(messageDiv);
+            }
+
+        });
+    });
+
+    function clearElements() {
+        $(".modalMessage").remove();
+        $(".containerTimeline").remove();
+        //document.getElementById("modalMessage").textContent = "";
+        $(".workflowTitle").remove();
+        var giftDiv = document.getElementById("giftDiv");
+        if (giftDiv != null) {
+            giftDiv.remove();
+        }
+    }
+
+</script>
+<script>
+    function displayRequestDetails(i, flow) {
+        document.getElementById("expectedDateFrom").innerText = document.getElementById("expectedDateFrom" + i).value;
+        document.getElementById("expectedDateTo").innerText = document.getElementById("expectedDateTo" + i).value;
+        document.getElementById("message").innerText = document.getElementById("message" + i).value;
+        //document.getElementById("RequestOwnerName").innerText = document.getElementById("RequestOwnerName" + i).value;
+        //document.getElementById("RequestOwnerWorkDuration").innerText = document.getElementById("RequestOwnerWorkDuration" +i).value;
+        for (var x = 0; x < flow; x++) {
+
+            document.getElementById("employeeNameF" + x).innerText = document.getElementById("employeeName" + i + x).value;
+            document.getElementById("roleStatusF" + x).innerText = document.getElementById("roleStatus" + i + x).value;
+        }
+    }
+
+    function displayGroupDetails(i) {
+        document.getElementById("employeeName").innerText = document.getElementById("groupName" + i).value;
+        document.getElementById("employeeDepartment").innerText = document.getElementById("members" + i).value;
+        document.getElementById("employeePosition").innerText = document.getElementById("createdBy" + i).value;
+    }
+</script>
+
+<script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Done !",
+                text: message,
+                icon: "success",
+            });
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Fail !",
+                text: error,
+                icon: "Error",
+            });
+        }
+    }
+</script>
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (ViewBag.Error != null)
+{
+    <input type="hidden" id="error" value="@ViewBag.Error" />
+    <script>
+        showAlert("Error");
+    </script>
+}
+@if (Model != null)
+{
+  
+    <!-- Container Start -->
+    <section class="section">
+
+        <div class="row">
+         @for (index = 0; index < Model.Requests.Count; index++)
+    {
+        <div class="IndexContainer">
+            <input type="hidden" id="requestIndex" />
+        </div>
+        employeeNumber = "employeeNumber" + index;
+        employeePhoto = "employeephoto" + index;
+        employeePosition = "employeePosition" + index;
+        employeeDepartment = "employeeDepartment" + index;
+        expectedDateFrom = "expectedDateFrom" + index;
+        expectedDateTo = "expectedDateTo" + index;
+        benefitType = "benefitType" + index;
+        message = "message" + index;
+        trId = "tr" + @Model.Requests[index].RequestNumber;
+        RequestOwnerWorkDuaration = "RequestOwnerWorkDuaration" + index;
+        RequestOwnerName = "RequestOwnerName" + index;
+        <div class="col-lg-12" style="margin:auto">
+            @*<div class="row">*@
+            <div class="card p-3">
+                <div class="card-title">
+                    @*<div style="margin-left:0px !important">*@
+                    <div class="col-lg-12"> @*style="float:right">*@
+                        <div class="" id="@index" hidden>
+                           
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-7" style="float:left">
+                            @*<div class="row mt-2">
+                                    <div class="col-lg-4" style="float: left">
+                                        <b>Request Number</b>
+                                    </div>
+                                    <div class="col-lg-4" style="float: left">
+                                        <span class="text-muted" style="margin-bottom: 10px; font-weight: bold">@Model.Requests[index].RequestNumber</span>
+                                    </div>
+                                </div>*@
+                            <div class="row mt-2">
+                                <div class="col-lg-4" style="float: left">
+                                            <b class="requestTitles">Status</b>
+                                </div>
+                                <div class="col-lg-5" style="float: left; padding-top: 5px">
+                                    @if (Model.Requests[index].status == "Pending")
+                                    {
+                                        <span style="margin-bottom: 10px; color: #1aa3ff; font-weight: bold">Pending</span>
+                                    }
+                                    else if (Model.Requests[index].status == "InProgress")
+                                    {
+                                        <span style="margin-bottom: 10px; color: #ffd614; font-weight: bold">InProgress</span>
+                                    }
+                                    else if (Model.Requests[index].status == "Approved")
+                                    {
+                                        <span style="margin-bottom: 10px; color: #00ff00; font-weight: bold">Approved</span>
+                                    }
+                                    else if (Model.Requests[index].status == "Rejected")
+                                    {
+                                        <span style="margin-bottom: 10px; color: red; font-weight: bold">Rejected</span>
+                                    }
+                                    else if (Model.Requests[index].status == "Cancelled")
+                                    {
+                                        <span style="margin-bottom: 10px; color: gray; font-weight: bold">Cancelled</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-lg-4" style="float: left">
+                                    <sapn class="requestTitles">Requested at</sapn>
+                                </div>
+                                <div class="col-lg-5" style="float: left">
+                                    <span class="text-muted" style="margin-bottom: 10px; font-weight: bold">@Model.Requests[index].Requestedat</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-lg-4" style="float: left">
+                                            <sapn class="requestTitles">Required at</sapn>
+                                </div>
+                                <div class="col-lg-5" style="float: left">
+                                    <span class="text-muted" style="margin-bottom: 10px; font-weight: bold">@Model.Requests[index].From</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2" style="margin-top:45px">
+                            @if (true)
+                            {
+                                var request = JsonSerializer.Serialize(Model.Requests[index]);
+                                <span style="display:inline-block">
+
+                                    <button data-placement="top" class="btn btn-info" title="view" onclick="showRequestDetails(@request, @index)" style=" border:none">
+                                           view     @*<i class="fa-solid fa-eye"></i>*@
+                                    </button>
+                                </span>
+                            }
+
+
+                            @if (Model.Requests[index].CanCancel)
+                            {
+                                <span style="display:inline-block; margin-left:5px">
+                                    <form asp-action="RequestCancel" method="post">
+                                        <input type="hidden" id="id" name="id" value="@Model.Requests[index].RequestNumber" />
+                                        <input type="hidden" id="benefitId" name="benefitId" value="@Model.Requests[index].benefitId" />
+                                        <button class="btn btn-danger" id="deletebtn" data-toggle="tooltip" data-placement="top" title="Cancel" type="submit">
+                                                 Cancel   @*<i class="fa-solid fa-trash"> style="color:white"></i>*@
+                                        </button>
+                                    </form>
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="display: inline-block; margin-left: 5px">
+                                    <a class="disabled btn btn-danger" data-toggle="tooltip" data-placement="top" title="Cancel" asp-action="" asp-route-id="@Model.Requests[index].RequestNumber">
+                                               Cancel @*<i class="fa-solid fa-xmark" style="color:white"></i>*@
+                                    </a>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                    <input type="hidden" id=@RequestOwnerName value="@Model.Requests[index].CreatedBy.UserName" />
+                    <input type="hidden" id=@RequestOwnerWorkDuaration value="@Model.Requests[index].CreatedBy.WorkDuration" />
+                    <input type="hidden" id=@employeeNumber value="@Model.Requests[index].CreatedBy.UserNumber" />
+                    <input type="hidden" id=@expectedDateFrom value="@Model.Requests[index].From" />
+                    <input type="hidden" id=@expectedDateTo value="@Model.Requests[index].To" />
+                    @if (Model.Requests[index].Message != null)
+                    {
+                        <input type="hidden" id=@message value="@Model.Requests[index].Message" />
+                    }
+                    else
+                    {
+                        <input type="hidden" id=@message value="false" />
+                    }
+                    <input type="hidden" id=@benefitType value="@Model.Requests[index].BenefitType" />
+
+                    <input type="hidden" id=@employeePhoto value="@Model.Requests[index].CreatedBy.ProfilePicture" />
+                    @if (Model.Requests[index].RequestWorkFlowAPIs != null)
+                    {
+                        @for (flowIndex = 0; flowIndex < Model.Requests[index].RequestWorkFlowAPIs.Count; flowIndex++)
+                        {
+                            employeeName = "employeeName" + index + flowIndex;
+                            roleStatus = "roleStatus" + index + flowIndex;
+                            <input type="hidden" id=@employeeName value="@Model.Requests[index].RequestWorkFlowAPIs[flowIndex].UserName" />
+                            <input type="hidden" id=@roleStatus value="@Model.Requests[index].RequestWorkFlowAPIs[flowIndex].Status" />
+                            if (Model.Requests[index].RequestWorkFlowAPIs[flowIndex].Status == "Aprroved" || Model.Requests[index].RequestWorkFlowAPIs[flowIndex].Status == "Rejected")
+                            {
+                                <input type="hidden" id="@employeeReplayDate" value="@Model.Requests[index].RequestWorkFlowAPIs[flowIndex].ReplayDate" />
+                                if (Model.Requests[index].RequestWorkFlowAPIs[flowIndex].Notes != null)
+                                {
+                                    <input type="hidden" id="@employeeReplay" value="@Model.Requests[index].RequestWorkFlowAPIs[flowIndex].Notes" />
+                                }
+                            }
+                        }
+                    }
+                    @*</div>*@
+
+                    @if (Model.Requests[index].BenefitType == "Group")
+                    {
+                        var FullParticipantsData2 = JsonSerializer.Serialize(Model.Requests[index].FullParticipantsData);
+                        <div style="float:left; margin-bottom:30px" class="col-lg-12 mt-2">
+                            <strong style="margin-bottom:10px">Group Members</strong>
+                            <div class="col-lg-11">
+                                <ul style="list-style: none;">
+                                    @for (int participantIndex = 0; participantIndex < Model.Requests[index].FullParticipantsData.Count; participantIndex++)
+                                    {
+                                        <div style="display: inline-block; margin-bottom: 10px; margin-left:10px">
+                                        <li style="padding:7px; background-color:darkturquoise; border-radius:10%; font-size:small" class="btn btn-active" onclick="showMemberModal(@FullParticipantsData2, @index, @participantIndex)">@Model.Requests[index].FullParticipantsData[participantIndex].UserName</li>
+                                </div>
+                            }
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+
+
+                </div>
+            </div>
+            </div>
+            @*</div>*@
+
+
+        }
+       @* </div>*@
+    </section>
+}
+else
+{
+    <div>There is no Requests for this benefit</div>
+}
+
+<div class="modal fade" id="basicModal" tabindex="-1" data-bs-keyboard="false" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Basic Modal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Non omnis incidunt qui sed occaecati magni asperiores est mollitia. Soluta at et reprehenderit. Placeat autem numquam et fuga numquam. Tempora in facere consequatur sit dolor ipsum. Consequatur nemo amet incidunt est facilis. Dolorem neque recusandae quo sit molestias sint dignissimos.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div><!-- End Basic Modal-->
+<div class="modal fade" id="exampleModal" data-bs-keyboard="false" data-bs-backdrop="static">
+    @*tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"*@>
+    <div class="modal-dialog modal-dialog-scrollable">
+        @*role="document">*@
+        <div class="modal-content" style="width:auto; padding:5px">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Request Details</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" onclick="clearElements()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="exampleModalBody">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <img id="benefitRequestPhoto" src="~/images/BenefitCards/2e06c105-26e8-4762-a4af-95fc1245ddd6_ThankYou.png" class="img-fluid" alt="">
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-lg-6">
+                        <span>Name:- </span> <span id="requestEmployeeName" style="font-size:small"></span>
+                    </div>
+                    <div class="col-lg-6">
+                        <span>Type:- </span> <span id="requestType"></span>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-6">
+                        <span>From:- </span> <span id="requestFrom"></span>
+                    </div>
+                    <div class="col-lg-6">
+                        <span>To:- </span> <span id="requestTo"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="clearElements()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="memberModal" tabindex="-1" role="dialog" aria-labelledby="requestModalLabel" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="requestModalLabel">Request Details</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" onclick="clearElements()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col col-lg-12 mb-2 mb-lg-0">
+                        <div class="card mb-1" style="border-radius: .5rem;">
+                            <div class="row g-0">
+                                <div class="gradient-custom  text-white col-lg-4" style="display:inline-block; height:50px; float:left; padding-left:10px;border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                                    <img id="memberProfilePicture" src="~/images/userProfile/userProfile1.png"
+                                         alt="Avatar" class="img-fluid my-2" style="width: 80px; padding-left:5px;" />
+                                </div>
+                                <div class="col-md-8 col-lg-8">
+                                    <div class="card-body p-1 pt-2">
+                                        <h6>Request Information</h6>
+                                        <hr class="mt-0 mb-1">
+                                        <div class="row pt-1 requestInfo">
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>From</h6>
+                                                <p class="text-muted" id="memberFrom"></p>
+                                            </div>
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>To</h6>
+                                                <p class="text-muted" id="memberTo"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-lg-12">
+                                    <div class="card-body pl-2">
+                                        <h6>Employee Information</h6>
+                                        <hr class="mt-0">
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>Name</h6>
+                                                <p class="text-muted" style="font-size:small" id="memberName">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>Email</h6>
+                                                <p class="text-muted" id="memberEmail">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>Department</h6>
+                                                <p class="text-muted" id="memberDepartment">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-6 mb-1">
+                                                <h6>Position</h6>
+                                                <p class="text-muted" id="memberPosition">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>Sap Naumber</h6>
+                                                <p class="text-muted" id="memberSapNumber">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-6 mb-1">
+                                                <h6>Employee Number</h6>
+                                                <p class="text-muted" id="memberNumber">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6">
+                                                <h6>Company</h6>
+                                                <p class="text-muted" id="memberCompany">Lorem ipsum</p>
+                                            </div>
+                                            @*<div class="col-6">
+                                                    <h6>BirthDate</h6>
+                                                    <p class="text-muted" id="memberBirthDate">Dolor sit amet</p>
+                                                </div>*@
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6">
+                                                <h6>Gender</h6>
+                                                <p class="text-muted" id="memberGender">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-6">
+                                                <h6>Martial Status</h6>
+                                                <p class="text-muted" id="memberMartialStatus">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="clearElements()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

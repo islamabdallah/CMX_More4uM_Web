@@ -1,0 +1,515 @@
+﻿@model MoreForYou.Services.Models.MasterModels.BenefitModel
+
+@{
+    ViewData["Title"] = "Benefits";
+    ViewData["SubTitle"] = "Create";
+    ViewData["activ"] = "TBenefits";
+    Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
+
+}
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+<script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Done !",
+                text: message,
+                icon: "success",
+            }).then(function () {
+              //  window.location.href = "http://20.86.97.165/more4u/more4u/Benefit";
+            });
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Failed Process!",
+                text: error,
+                icon: "Error",
+            });
+        }
+    }
+</script>
+
+<script>
+    function disableMinMaxParticipatiant(e) {
+        if (e.value == 3) {
+            document.getElementById("MaxParticipant").readOnly = false;
+            document.getElementById("MinParticipant").readOnly = false;
+
+        }
+        else {
+            document.getElementById("MaxParticipant").readOnly = true;
+            document.getElementById("MinParticipant").readOnly = true;
+        }
+    }
+
+
+    function enableCertainDateInput(e) {
+        if (e.value != -1) {
+            document.getElementById("CertainDate").readOnly = false;
+
+        }
+        else {
+            document.getElementById("CertainDate").readOnly = true;
+
+        }
+    }
+</script>
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (ViewBag.Error != null)
+{
+    <input type="hidden" id="error" value="@ViewBag.Error" />
+    <script>
+        showAlert("Error");
+    </script>
+}
+
+
+
+<div class="row my-4">
+    <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="row">
+                    <div class="col-lg-6 col-7">
+                        <h6>Add Benefit</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1">Benefit</span>  Details
+                        </p>
+                    </div>
+                    <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                            </a>
+                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive">
+                    <div class="card-body p-3">
+
+                        <form class="row g-3" asp-action="Create" asp-controller="Benefit" enctype="multipart/form-data">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row g-3 form-validation">
+                                        <div class="col-md-3">
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                Name <span class="text-danger">*</span>
+                                            </label>
+                                           
+                                            <input type="text" class="form-control" asp-for="Name" placeholder="Enter Name..">
+                                            
+                                            <span asp-validation-for="Name" class="text-danger"></span>
+
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                Arabic Name <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <input type="text" class="form-control" asp-for="ArabicName" placeholder="Enter Name..">
+                                            @*</div>*@
+                                            <span asp-validation-for="ArabicName" class="text-danger"></span>
+
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                Title <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <input type="text" class="form-control" asp-for="Title" placeholder="Enter Tile..">
+                                            @*</div>*@
+                                            <span asp-validation-for="Title" class="text-danger"></span>
+
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                Arabic Title <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <input type="text" class="form-control" asp-for="ArabicTitle" placeholder="Enter arabic title..">
+                                            @*</div>*@
+                                            <span asp-validation-for="ArabicTitle" class="text-danger"></span>
+
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                Description <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <textarea class="form-control" asp-for="Description" placeholder="Enter Description.."></textarea>
+                                            @*</div>*@
+                                            <span asp-validation-for="Description" class="text-danger"></span>
+
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                Arabic Description <span class="text-danger">*</span>
+                                            </label>
+                                            @* <div class="col-lg-6">*@
+                                            <textarea class="form-control" asp-for="ArabicDescription" placeholder="Enter Description.."></textarea>
+                                            @* </div>*@
+                                            <span asp-validation-for="ArabicDescription" class="text-danger"></span>
+
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                BenefitType <span class="text-danger">*</span>
+                                            </label>
+                                            @* <div class="col-lg-6">*@
+                                            <select asp-for="BenefitTypeId" class="form-select mb-3" onchange="disableMinMaxParticipatiant(this)">
+                                                <option value="2">Indivadual</option>
+                                                <option value="3">Group</option>
+
+                                            </select>
+                                            @*</div>*@
+                                            <span asp-validation-for="BenefitTypeId" class="text-danger"></span>
+
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                Year <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <input type="Number" class="form-control" asp-for="Year" data-toggle="tooltip" data-placement="bottom" title="Year">
+                                            @*</div>*@
+                                            <span asp-validation-for="Year" class="text-danger"></span>
+
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                Country <span class="text-danger">*</span>
+                                            </label>
+                                            @* <div class="col-lg-6">*@
+                                            <input type="text" class="form-control" asp-for="Country" data-toggle="tooltip" data-placement="bottom" title="Country">
+                                            @*</div>*@
+                                            <span asp-validation-for="Country" class="text-danger"></span>
+
+                                        </div>
+
+                                        <div class="col-md-3">
+
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                Gender <span class="text-danger">*</span>
+                                            </label>
+                                            @* <div class="col-lg-6">*@
+                                            <select asp-for="gender" class="form-select" asp-items="@(new SelectList(Model.genderModels, "Id", "Name"))">
+                                            </select>
+                                            @*</div>*@
+                                            <span asp-validation-for="gender" class="text-danger"></span>
+
+                                        </div>
+
+                                        <div class="col-md-3">
+
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                MaritalStatus <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <select asp-for="MaritalStatus" class="form-select">
+                                                <option value="-1">Any</option>
+                                                <option value="1">Single</option>
+                                                <option value="2">Married</option>
+                                                <option value="3">Divorced</option>
+                                            </select>
+                                            @*</div>*@
+                                            <span asp-validation-for="MaritalStatus" class="text-danger"></span>
+
+                                        </div>
+                                        <div class="col-md-3">
+
+                                            <label class="col-lg-3 text-nowrap form-label">
+                                                Payroll Area <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <select asp-for="Collar" class="form-select" asp-items="@(new SelectList(Model.Collars,"Id", "Name"))"></select>
+                                            @* </div>*@
+                                            <span asp-validation-for="Collar" class="text-danger"></span>
+
+                                        </div>
+
+
+                                       
+
+           
+
+                                        <div class="col-md-3">
+
+                                            <label class="col-lg-3 text-nowrap form-label">
+                                                WorkDuration <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <input type="number" class="form-control" asp-for="WorkDuration" placeholder="Enter  Work Duration..">
+                                            @*</div>*@
+                                            <span asp-validation-for="WorkDuration" class="text-danger"></span>
+
+                                        </div>
+
+                                        <div class="col-md-6">
+
+                                            <label class="col-lg-3 text-nowrap form-label">
+                                                Age <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <select class="form-select form-control input-sm" asp-for="AgeSign" asp-items="@(new SelectList(Model.AgeSigns))"></select>
+                                                <span class="input-group-btn"
+                                                      style="width:0px;"></span>
+                                                <input type="number" class="form-control input-sm" asp-for="Age" data-toggle="tooltip" data-placement="bottom" title="Age">
+
+                                                <span asp-validation-for="Age" class="text-danger"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 ">
+
+                                            <label class="col-lg-3 text-nowrap form-label" for="val-email">
+                                                Redemmation Date Matches With <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <select class="form-select form-control input-sm" asp-for="DateToMatch" asp-items="@(new SelectList(Model.DatesToMatch))" onchange="enableCertainDateInput(this)"></select>
+                                                &nbsp;
+                                                <span class="input-group-btn"
+                                                      style="width:0px;"> &nbsp;  </span>&nbsp;
+                                                <input type="date" class="form-control input-sm" asp-for="CertainDate" id="CertainDate" data-toggle="tooltip" data-placement="bottom" title="CertainDate" readonly>
+                                                <span asp-validation-for="DateToMatch" class="text-danger"></span>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-6">
+
+                                            <label class="col-lg-3 text-nowrap form-label" for="val-email">
+                                                Redemmation Date Matches With in arabic <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <input type="text" class="form-control" asp-for="ArabicDateToMatch" />
+                                            <span asp-validation-for="ArabicDateToMatch" class="text-danger"></span>
+                                            @* </div>*@
+
+                                        </div>
+                                        <div class="col-md-4">
+
+                                            <label class="col-lg-3 text-nowrap form-label" for="val-email">
+                                                Number of Days <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <input type="number" class="form-control" asp-for="numberOfDays" placeholder="Enter Address ..">
+                                            @*</div>*@
+                                            <span asp-validation-for="numberOfDays" class="text-danger"></span>
+
+                                        </div>
+                                        <div class="col-md-4">
+
+                                            <label class="col-lg-3 text-nowrap form-label">
+                                                Required Documents <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <textarea class="form-control" asp-for="RequiredDocuments">
+
+                                                </textarea>
+                                            @*</div>*@
+                                            <span asp-validation-for="RequiredDocuments" class="text-danger"></span>
+
+                                        </div>
+
+                                        <div class="col-md-4">
+
+                                            <label class="col-lg-3 text-nowrap form-label">
+                                                Required Documents in Arabic <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <textarea class="form-control" asp-for="ArabicRequiredDocuments">
+
+                                                </textarea>
+                                            @* </div>*@
+                                            <span asp-validation-for="ArabicRequiredDocuments" class="text-danger"></span>
+
+                                        </div>
+
+
+                                        <div class="col-md-4">
+
+                                            <label class="col-lg-3 text-nowrap form-label" for="val-email">
+                                                MinParticipant <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <input type="number" class="form-control" asp-for="MinParticipant" id="MinParticipant" data-toggle="tooltip" data-placement="bottom" title="Minimum Participant" readonly />
+                                            @* </div>*@
+                                            <span asp-validation-for="MinParticipant" class="text-danger"></span>
+
+                                        </div>
+                                        <div class="col-md-4">
+
+                                            <label class="col-lg-3 text-nowrap form-label">
+                                                MaxParticipant <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <input type="number" class="form-control" asp-for="MaxParticipant" id="MaxParticipant" readonly />
+                                            @* </div>*@
+                                            <span asp-validation-for="MaxParticipant" class="text-danger"></span>
+
+                                        </div>
+                                        <div class="col-md-4">
+
+                                            <label class="col-lg-3 text-nowrap form-label" for="val-email">
+                                                Card <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <input class="form-control" asp-for="ImageName" data-toggle="tooltip" data-placement="bottom" title="Card" />
+                                            @*</div>*@
+                                            <span asp-validation-for="ImageName" class="text-danger"></span>
+
+                                        </div>
+                                        <div class="col-md-4">
+
+                                            <label class="col-lg-3 text-nowrap form-label" for="val-email">
+                                                Times <span class="text-danger">*</span>
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <input type="number" class="form-control" asp-for="Times" data-toggle="tooltip" data-placement="bottom" title="Times">
+                                            @* </div>*@
+                                            <span asp-validation-for="Times" class="text-danger"></span>
+
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                Send Mail To
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <textarea class="form-control" asp-for="BenefitMails"></textarea>
+                                            @*</div>*@
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="col-lg-3 form-label text-nowrap">
+                                                Mail CC
+                                            </label>
+                                            @*<div class="col-lg-6">*@
+                                            <textarea class="form-control" asp-for="CarbonCopies"></textarea>
+                                            @* </div>*@
+                                        </div>
+
+                                         <div class="col-md-4">
+
+                                            <div class="form-check">
+                                                <label class="col-lg-4 form-label text-nowrap">
+                                                    @Html.DisplayNameFor(model => model.HasChilderen)
+                                                    <input class="form-check-input" asp-for="HasChilderen" />
+                                                </label>
+                                                <span asp-validation-for="HasChilderen" class="text-danger"></span>
+                                            </div>
+
+ 
+                                        </div>
+                                        <div class="col-md-4">
+                                           
+                                            <div class="form-check">
+                                                <label class="col-lg-4 form-label text-nowrap">
+                                        @Html.DisplayNameFor(model => model.IsAgift)
+                                        <input class="form-check-input" asp-for="IsAgift" />
+                                                </label>
+                                               
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <label class="col-lg-4 form-label text-nowrap">
+                                        @Html.DisplayNameFor(model => model.HasMails)
+                                        <input class="form-check-input" asp-for="HasMails" />
+                                                </label>
+                                              
+                                            </div>
+                                        </div>
+                                      
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <label class="col-lg-4 form-label text-nowrap">
+                                        @Html.DisplayNameFor(model => model.HasWorkflow) 
+                                        <input class="form-check-input" asp-for="HasWorkflow" />
+                                                </label>
+                                             
+                                            </div>
+                                        </div>
+                                  
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    @* style="box-shadow:10px 10px 10px rgba(0, 0, 0, 0.5)">*@
+                                    <h5 class="card-title">Workflow</h5>
+                                    <br />
+                                    <div class="form-group row mb-4">
+
+                            <div class="col-lg-4"><h5 class="card-title">Role</h5></div>
+                            <div class="col-lg-4"><h5 class="card-title">Order</h5></div>
+                                    </div>
+                                    <div class="form-group row mb-4">
+                                        @for (int index = 0; index < Model.RolesOrder.Count; index++)
+                                        {
+
+                                            var orderId = "order" + index;
+                                            var RoleId = "Role" + index;
+                                            <div class="row">
+                                                <div class="col-lg-4 mb-2">
+                                                    <label> @Model.RolesOrder[index].RoleName</label>
+                                                    <input type="hidden" id=@RoleId asp-for="RolesOrder[index].RoleId" />
+                                                </div>
+                                                <div class="col-lg-4 mb-2">
+                                        <input type="number" id=@orderId asp-for="RolesOrder[index].order" class="form-control" />
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            @*Learn more about <a href="#">Project ID</a>*@
+                                            @*<a asp-action="Index" class="btn btn-primary text-end" style="text-align:right;">Back to List</a>*@
+                                            <a asp-action="Index" class="text-end" style="text-align:right; font-size:x-large;">
+                                                <span><i class="bi bi-arrow-left-circle-fill"></i></span>
+                                            </a>
+
+@*                                            <a asp-action="Index" class="text-end" style="text-align:right; font-size:x-large;"><i class="fa fa-arrow-circle-left"></i></a>
+*@
+                                        </div>
+                                        <div class="col-auto">
+                                            @*<a href="#" class="btn btn-primary">
+                                            Save
+                                            </a>*@
+                                            <button type="submit" class="btn btn-primary"> Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

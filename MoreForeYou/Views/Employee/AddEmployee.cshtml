@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewData["Title"] = "AddEmployee";
+}
+
+<h1>AddEmployee</h1>
+
+<hr />
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title"> Add Employee</h4>
+    </div>
+    <div class="card-body">
+        <div class="basic-form">
+            <form asp-controller="Employee" asp-action="addEmployee" method="post" enctype="multipart/form-data">
+
+                <div class="row">
+                    <div class="col-6">
+                        <input type="file" name="postedFile" class="form-control" />
+                    </div>
+                </div>
+                <div class="row" style="margin-top:20px">
+                    <div class="col-4 " style="display:inline-block">
+                        <input type="submit" value="Upload" class="btn btn-primary" />
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
