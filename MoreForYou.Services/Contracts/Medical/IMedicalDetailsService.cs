@@ -18,8 +18,9 @@ namespace MoreForYou.Services.Contracts.Medical
         Task<List<MedicalDetailsModel>> GetMedicalDetailsForCountry(string Country);
 
         List<MedicalDetailsAPIModel> ConvertMedicalDetailsModelToMedicalDetailsAPIModel(List<MedicalDetailsModel> MedicalDetailsModels, int languageId);
-
+        List<MedicalDetailsAPIModel> ConvertMedicalDetailsModelToMedicalDetailsAPIModelWithId(List<MedicalDetailsModel> MedicalDetailsModels, int languageId);
         Task<MedicalDetailsModel> GetMedicalDetailsById(int MedicalDetailsId, string Country);
+        Task<MedicalDetailsModel> GetMedicalEntityById(int? MedicalDetailsId);
 
     }
 }

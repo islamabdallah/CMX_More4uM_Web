@@ -20,7 +20,7 @@ namespace MoreForYou.Services.Models
         public static string MedicalCategoryFolder = @"images/MedicalCategory/";
 
         public static string MedicalDetailsFolder = @"images/MedicalDetails/";
-
+        public static string MedicalRequestFolder = "MedicalRequestFiles/";
         public static string Url = "https://more4u.cemex.com.eg/more4u/";
         public static string APIUrl = "https://more4u.cemex.com.eg/More4uAPI/";
 
@@ -217,6 +217,13 @@ namespace MoreForYou.Services.Models
     }
 
     public class MartialStatusModel
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+    }
+
+    public class Country
     {
         public int Id { get; set; }
 

@@ -7,6 +7,7 @@ namespace MoreForYou.Services.Models.API.Medical
 {
     public class MedicalDetailsAPIModel
     {
+        public string? MedicalEntityId { get; set; }
         public string MedicalDetailsName { get; set; }
 
         public string MedicalDetailsAddress { get; set; }

@@ -188,12 +188,12 @@
 //            try
 //            {
 //                if (filterModel.SelectedCountry == null)
-//                    return (ActionResult)reportController.View((object)filterModel);
+//                    return View(filterModel);
 //                BenefitFilterModel benefitFilterModel = filterModel;
-//                benefitFilterModel.BenefitRequests = await reportController._BenefitService.BenefitSearch(filterModel);
+//                benefitFilterModel.BenefitRequests = await _BenefitService.BenefitSearch(filterModel);
 //                benefitFilterModel = (BenefitFilterModel)null;
 //                Benefit benefit = await reportController._repository.Find((Expression<Func<Benefit, bool>>)(b => (long?)b.Id == filterModel.SelectedBenefit && b.IsVisible == true), false, (Expression<Func<Benefit, object>>)(b => b.BenefitType)).FirstOrDefaultAsync<Benefit>();
-//                List <\u003C\u003Ef__AnonymousType14<long, string> > list = reportController._repository.Find((Expression<Func<Benefit, bool>>)(i => i.IsVisible == true), false, (Expression<Func<Benefit, object>>)(b => b.BenefitType)).Where<Benefit>((Expression<Func<Benefit, bool>>)(t => t.Country == filterModel.SelectedCountry)).Select(s => new
+//                var  list = reportController._repository.Find((Expression<Func<Benefit, bool>>)(i => i.IsVisible == true), false, (Expression<Func<Benefit, object>>)(b => b.BenefitType)).Where<Benefit>((Expression<Func<Benefit, bool>>)(t => t.Country == filterModel.SelectedCountry)).Select(s => new
 //                {
 //                    Id = s.Id,
 //                    VesselName = s.Name

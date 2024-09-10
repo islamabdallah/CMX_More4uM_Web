@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace MoreForYou.Services.Implementation.MedicalServices
 {
@@ -166,5 +167,66 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             }
         }
 
+        public async Task<MedicalDetailsModel> GetMedicalEntityById(int? MedicalDetailsId)
+        {
+            if (MedicalDetailsId != null)
+            {
+                //return new MedicalDetailsModel();
+                try
+                {
+                    MedicalDetails source = await _repository.Find(m => m.IsVisible == true && m.Id == MedicalDetailsId, false, m => m.MedicalSubCategory).FirstOrDefaultAsync();
+                    return source == null ? null : _mapper.Map<MedicalDetailsModel>(source);
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+                //throw new NotImplementedException();
+            }
+            else { return null; }
+        }
+
+        public List<MedicalDetailsAPIModel> ConvertMedicalDetailsModelToMedicalDetailsAPIModelWithId(List<MedicalDetailsModel> MedicalDetailsModels, int languageId)
+        {
+            try
+            {
+                List<MedicalDetailsAPIModel> detailsApiModelWithId = new List<MedicalDetailsAPIModel>();
+                if (MedicalDetailsModels == null)
+                    return (List<MedicalDetailsAPIModel>)null;
+                foreach (MedicalDetailsModel medicalDetailsModel in MedicalDetailsModels)
+                {
+                    MedicalDetailsAPIModel medicalDetailsApiModel = new MedicalDetailsAPIModel();
+                    switch (languageId)
+                    {
+                        case 1:
+                            medicalDetailsApiModel.MedicalEntityId = medicalDetailsModel.Id.ToString();
+                            medicalDetailsApiModel.MedicalDetailsName = medicalDetailsModel.Name_EN;
+                            medicalDetailsApiModel.MedicalDetailsAddress = medicalDetailsModel.Address_EN;
+                            medicalDetailsApiModel.MedicalDetailsMobile = medicalDetailsModel.Mobile;
+                            medicalDetailsApiModel.MedicalDetailsWorkingHours = medicalDetailsModel.WorkingHours_EN;
+                            medicalDetailsApiModel.SubCategoryName = medicalDetailsModel.MedicalSubCategory.Name_EN;
+                            medicalDetailsApiModel.CategoryName = medicalDetailsModel.MedicalSubCategory.MedicalCategory.Name_EN;
+                            break;
+                        case 2:
+                            medicalDetailsApiModel.MedicalEntityId = medicalDetailsModel.Id.ToString();
+                            medicalDetailsApiModel.MedicalDetailsName = medicalDetailsModel.Name_AR;
+                            medicalDetailsApiModel.MedicalDetailsAddress = medicalDetailsModel.Address_AR;
+                            medicalDetailsApiModel.MedicalDetailsMobile = medicalDetailsModel.Mobile;
+                            medicalDetailsApiModel.MedicalDetailsWorkingHours = medicalDetailsModel.WorkingHours_AR;
+                            medicalDetailsApiModel.SubCategoryName = medicalDetailsModel.MedicalSubCategory.Name_AR;
+                            medicalDetailsApiModel.CategoryName = medicalDetailsModel.MedicalSubCategory.MedicalCategory.Name_AR;
+                            break;
+                    }
+                    medicalDetailsApiModel.MedicalDetailsImage = CommanData.Url + CommanData.MedicalDetailsFolder + medicalDetailsModel.Image;
+                    detailsApiModelWithId.Add(medicalDetailsApiModel);
+                }
+                return detailsApiModelWithId;
+            }
+            catch (Exception ex)
+            {
+                return (List<MedicalDetailsAPIModel>)null;
+            }
+            //throw new NotImplementedException();
+        }
     }
 }

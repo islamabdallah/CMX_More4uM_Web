@@ -9,6 +9,8 @@ using MoreForYou.Services.Models.Message;
 using MoreForYou.Services.Models;
 using MoreForYou.Services.Models.API.Medical;
 using MoreForYou.Services.Contracts.Medical;
+using MoreForYou.Services.Implementation;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace More4UWebAPI.Controllers.MedicalRequest
 {
@@ -168,5 +170,38 @@ namespace More4UWebAPI.Controllers.MedicalRequest
                 Data = "heellllllllllllllllllllllllllllllo"
             });
         }
+
+        [HttpPost("vedio")]
+        public async Task<IActionResult> vedio( IFormFile file)
+        {
+            try
+            {
+                string uniqueFileName = null;
+                string filePath = null;
+
+                if (file != null)
+                {
+                    string uploadsFolder = Path.Combine(@"C:\inetpub\wwwroot\_testMore4u\wwwroot/", "");
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                    uniqueFileName = uniqueFileName.Replace(" ", "");
+                    filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+                    return Ok( new { Message = "Success Process", Data = uniqueFileName });
+                }
+                else
+                {
+                    return BadRequest(new { Message = "Failed Process", Data = 0 });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = "Failed Process", Data = false });
+            }
+                    
+        }
+
     }
 }

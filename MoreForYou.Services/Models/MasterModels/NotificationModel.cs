@@ -8,6 +8,8 @@ namespace MoreForYou.Services.Models.MasterModels
 {
    public class NotificationModel
     {
+        public long? MedicalRequestId { get; set; }
+
         [Required]
         public string Message { get; set; }
         public long Id { get; set; }
