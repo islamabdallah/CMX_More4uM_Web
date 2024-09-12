@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ClosedXML.Excel;
 using Data.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,8 @@ using MoreForYou.Services.Models.MasterModels;
 using MoreForYou.Services.Models.MaterModels;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -1181,7 +1184,97 @@ namespace MoreForYou.Services.Implementation
             return workDuration;
         }
 
+        public async Task<List<BenefitRequestModel>> BenefitSearch(BenefitFilterModel filterModel)
+        {
+            try
+            {
+                List<BenefitRequestModel> source = await _benefitRequestService.GetAllBenefitRequestsByCountry(filterModel.SelectedCountry);
+                if (filterModel.SelectedBenefit !=null)
+                {
+                    long? selectedBenefit1 = filterModel.SelectedBenefit;
+                    long num = 0;
+                    if (!(selectedBenefit1.GetValueOrDefault() == num && selectedBenefit1 !=null))
+                        source = source.Where<BenefitRequestModel>((Func<BenefitRequestModel, bool>)(t =>
+                        {
+                            long benefitId = t.BenefitId;
+                            long? selectedBenefit2 = filterModel.SelectedBenefit;
+                            long valueOrDefault = selectedBenefit2.GetValueOrDefault();
+                            return benefitId == valueOrDefault && selectedBenefit2 !=null;
+                        })).ToList();
+                }
+                if (filterModel.EmployeeNumber != null)
+                    source = source.Where<BenefitRequestModel>((Func<BenefitRequestModel, bool>)(t =>
+                    {
+                        long employeeId = t.EmployeeId;
+                        long? employeeNumber = filterModel.EmployeeNumber;
+                        long valueOrDefault = employeeNumber.GetValueOrDefault();
+                        return employeeId == valueOrDefault && employeeNumber != null;
+                    })).ToList<BenefitRequestModel>();
+                System.DateTime? nullable = filterModel.DateFrom;
+                if (nullable !=null)
+                    source = source.Where<BenefitRequestModel>((Func<BenefitRequestModel, bool>)(t =>
+                    {
+                        System.DateTime date = t.CreatedDate.Date;
+                        System.DateTime? dateFrom = filterModel.DateFrom;
+                        return dateFrom !=null && date >= dateFrom.GetValueOrDefault();
+                    })).ToList<BenefitRequestModel>();
+                nullable = filterModel.DateTo;
+                if (nullable != null)
+                    source = source.Where<BenefitRequestModel>((Func<BenefitRequestModel, bool>)(t =>
+                    {
+                        System.DateTime date = t.CreatedDate.Date;
+                        System.DateTime? dateTo = filterModel.DateTo;
+                        return dateTo != null && date <= dateTo.GetValueOrDefault();
+                    })).ToList<BenefitRequestModel>();
+                return source;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return (List<BenefitRequestModel>)null;
+            }
+        }
 
-
+        public MemoryStream ExportBenefitsToExcel(List<BenefitRequestModel> models)
+        {
+            try
+            {
+                DataTable dataTable = new DataTable("Grid");
+                dataTable.Columns.AddRange(new DataColumn[10]
+                {
+          new DataColumn("Benefit Name"),
+          new DataColumn("Benefit Type"),
+          new DataColumn("Requested By [Number]"),
+          new DataColumn("Requested By [Name]"),
+          new DataColumn("Submit Date", typeof (System.DateTime)),
+          new DataColumn("Request Status"),
+          new DataColumn("Expected Date [From]", typeof (System.DateTime)),
+          new DataColumn("Expected Date [To]", typeof (System.DateTime)),
+          new DataColumn("Send To [Number]"),
+          new DataColumn("Send To [Name]")
+                });
+                foreach (BenefitRequestModel model in models)
+                {
+                    string str = "";
+                    if (model.SendTo != 0L)
+                        str = this._employeeService.GetEmployeeBySapNumber(model.SendTo).Result.FullName;
+                    dataTable.Rows.Add((object)model.BenefitName, (object)model.Benefit.BenefitType.Name, (object)model.EmployeeId, (object)model.Employee.FullName, (object)model.CreatedDate, (object)model.RequestStatus.Name, (object)model.ExpectedDateFrom, (object)model.ExpectedDateTo, (object)model.SendTo, (object)str);
+                }
+                using (XLWorkbook xlWorkbook = new XLWorkbook())
+                {
+                    xlWorkbook.Worksheets.Add(dataTable);
+                    using (MemoryStream excel = new MemoryStream())
+                    {
+                        xlWorkbook.SaveAs((Stream)excel);
+                        return excel;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(ex.ToString());
+                return (MemoryStream)null;
+            }
+        }
     }
 }

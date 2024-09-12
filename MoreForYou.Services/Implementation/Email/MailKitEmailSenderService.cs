@@ -45,11 +45,11 @@ namespace MoreForYou.Service.Implementation.Email
                     message.To.Add(MailboxAddress.Parse(cc));
                 }
                 message.To.Clear();
-                message.To.Add(MailboxAddress.Parse("islammohamed.abdallah@cemex.com"));
-                message.To.Add(MailboxAddress.Parse("doaa.abdel@ext.cemex.com"));
-                message.To.Add(MailboxAddress.Parse(" asmaa.sedeek @ext.cemex.com"));
+                //message.Bcc.Add(MailboxAddress.Parse("islammohamed.abdallah@cemex.com"));
+               // message.To.Add(MailboxAddress.Parse("doaa.abdel@ext.cemex.com"));
+               // message.To.Add(MailboxAddress.Parse(" asmaa.sedeek @ext.cemex.com"));
                 message.To.Add(MailboxAddress.Parse(" lamia.mousa @ext.cemex.com"));
-                message.Cc.Add(MailboxAddress.Parse("eman.rasmy @cemex.com"));
+               // message.Cc.Add(MailboxAddress.Parse("eman.rasmy @cemex.com"));
             }
             message.Subject = subject;
             message.Body = new TextPart(TextFormat.Html) { Text = body };

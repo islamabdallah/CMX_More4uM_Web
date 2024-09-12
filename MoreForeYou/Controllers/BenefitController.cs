@@ -1172,20 +1172,11 @@ namespace MoreForYou.Controllers
 
                         if (benefitModel.RequiredDocuments != null)
                         {
-                            //if (request.Documents.Count() > 0)
-                            //{
                             int length = benefitModel.RequiredDocuments.Split(";").Length;
                             for (int index = 0; index < request.DocumentFiles.Count; index++)
                             {
                                 if (request.DocumentFiles[index].Length > 0)
                                 {
-                                    //using (var ms = new MemoryStream())
-                                    //{
-                                    //    request.DocumentFiles[index].CopyTo(ms);
-                                    //    var fileBytes = ms.ToArray();
-                                    //    string s = Convert.ToBase64String(fileBytes);
-                                    //    docs.Add(s);
-                                    //}
                                     if (_requestWorkflowService.UploadedImageAsync(request.DocumentFiles[index], CommanData.DocumentsFolder).Result != null)
                                     {
                                         docs.Add(_requestWorkflowService.UploadedImageAsync(request.DocumentFiles[index], CommanData.DocumentsFolder).Result);

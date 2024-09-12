@@ -1,0 +1,336 @@
+﻿@model MoreForYou.Services.Models.MasterModels.BenefitFilterModel
+@inject UserManager<AspNetUser> userManager
+@inject SignInManager<AspNetUser> SignInManager
+
+
+@{
+    ViewData["Title"] = "Report";
+    ViewData["SubTitle"] = "Index";
+    ViewData["activ"] = "lmRequests";
+    Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
+}
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable(
+            {
+               
+            });
+
+    });
+    </script>
+<div class="row my-4">
+    <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="row">
+                    <div class="col-lg-6 col-7">
+                        <h6>Report</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1">Searching</span> Criteria
+                        </p>
+                    </div>
+                    <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                            </a>
+                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive">
+                    <div class="card-body p-3">
+
+                        <!-- No Labels Form -->
+                        <form class="row g-3 form-validation" method="post" asp-action="Index">
+                            <div class="col-md-4">
+                                <label class="form-label">Area</label>
+                                <select class="form-select" id="CountryIdd" placeholder="Select Country" data-val="true" data-val-required="You must Select Area" name="SelectedCountry">
+                                    <option value="">Select Area</option>
+                                    <option value="Assiut">Assiut</option>
+                                    <option value="Cairo">Cairo</option>
+                                </select>
+                                <span class="text-danger field-validation-valid" data-valmsg-for="SelectedCountry" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Benefits</label>
+                                <select class="form-select" id="BenefitIdd" placeholder="Select Benefit" name="SelectedBenefit">
+                                    <option value="">Select Benefit</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">EmployeeNumber</label>
+                                <input type="number" class="form-control" id="EmployeeIdd" placeholder="Employee Number" name="EmployeeNumber" value="">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">From</label>
+                                <input type="Date" class="form-control" id="FromIdd" placeholder="DateFrom" name="DateFrom" value="">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">To</label>
+                                <input type="Date" class="form-control" id="ToIdd" placeholder="DateTo" name="DateTo" value="">
+                            </div>
+
+                            <div class="text-left">
+                                <button type="submit" class="btn btn-primary">
+                                    Search
+                                </button>
+                            </div>
+                            <input name="__RequestVerificationToken" type="hidden" value="CfDJ8LkWLgwYe7JKr2a57oUpSa9IGP4yBpulenBK1AA_tHMQYs1iKEIix-uQH9zL41yp-DH9MYzgyBu4W3hVjShGhMxUdK0a3nSdNpv2aUS9NHjMYqmASWaTDvra6_pMY7okr9WdyuIvhAUfFdhbTnIdiZKk5vAemYTKXCeNW0rs2mngghyE8JKAukV0yOc0G03Chw" />
+                        </form><!-- End No Labels Form -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="card">
+            <div class="card-header pb-0">
+                <h6>Requests</h6>
+                <p class="text-sm">
+                    <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
+
+                    <span class="font-weight-bold"></span>Actions
+                </p>
+            </div>
+            <div class="card-body p-3">
+                <div class="timeline timeline-one-side">
+                    <div class="timeline-block">
+                        <span class="timeline-step">
+                            <i class="ni ni-money-coins text-dark text-gradient"></i>
+                        </span>
+                        <div class="timeline-content">
+                            <div style="text-align: center;">
+                                <form class="row g-3" method="post" action="/more4u/more4u/Report/ExportExcel">
+                                    <div class="col-md-4">
+
+                                        <input class="form-select" id="CountryIdd1" placeholder="Select Country" hidden type="text" data-val="true" data-val-required="You must Select Area" name="SelectedCountry" value="" />
+
+
+                                    </div>
+                                    <div class="col-md-4">
+
+                                        <input class="form-select" id="BenefitIdd1" placeholder="Select Benefit" hidden type="number" name="SelectedBenefit" value="" />
+                                    </div>
+                                    <div class="col-md-4">
+
+                                        <input type="number" class="form-control" id="EmployeeIdd1" placeholder="Employee Number" hidden name="EmployeeNumber" value="">
+                                    </div>
+
+                                    <div class="col-md-4">
+
+                                        <input type="Date" class="form-control" id="FromIdd1" placeholder="DateFrom" hidden name="DateFrom" value="">
+                                    </div>
+                                    <div class="col-md-4">
+
+                                        <input type="Date" class="form-control" id="ToIdd1" placeholder="DateTo" hidden name="DateTo" value="">
+                                    </div>
+
+
+
+                                    <button class="btn bg-gradient-info mb-0" type="submit"><i class="fas fa-plus"></i>&nbsp;&nbsp;Export to Excel</button>
+                                    <input name="__RequestVerificationToken" type="hidden" value="CfDJ8LkWLgwYe7JKr2a57oUpSa9IGP4yBpulenBK1AA_tHMQYs1iKEIix-uQH9zL41yp-DH9MYzgyBu4W3hVjShGhMxUdK0a3nSdNpv2aUS9NHjMYqmASWaTDvra6_pMY7okr9WdyuIvhAUfFdhbTnIdiZKk5vAemYTKXCeNW0rs2mngghyE8JKAukV0yOc0G03Chw" />
+                                </form><!-- End No Labels Form -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row my-4">
+    <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="row">
+                    <div class="col-lg-6 col-7">
+                        <h6>Requests</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1">Searching</span> Results
+                        </p>
+                    </div>
+                    <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                            </a>
+                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive">
+                    <div class="card-body p-3">
+                        <table id="example" class="table data-table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Benefit</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Requested By [Number] </th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Requested By [Name] </th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Submit Data</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Status</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Send To [Number]</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Send To [Name]</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Required Document</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.BenefitRequests != null && Model.BenefitRequests.Count>0)
+                                {
+                                    @foreach (var item in Model.BenefitRequests)
+                                    {
+                                        <tr role="row" class="even">
+                                            <td class="text-center sorting_1">
+                                            <div class="avatar-group mt-2">
+                                                Thank You
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="avatar-group mt-2">
+                                                45629377
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="avatar-group mt-2">
+                                                Ahmed Salman Ahmed Salman
+                                            </div>
+                                        </td>
+
+                                        <td class="text-center">
+                                            <div class="avatar-group mt-2">
+                                                9/10/2024 4:34:12 PM
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge badge-sm bg-gradient-success pr-5">Approved</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="avatar-group mt-2">
+                                                45629646
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="avatar-group mt-2">
+                                                Waleed Ibrahim Mostafa Sayed
+                                            </div>
+                                        </td>
+                                        <td class="align-middle text-center"></td>
+                                        <td class="align-middle"></td>
+                                    </tr>
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="Attach-Detailes" tabindex="-1" role="dialog" aria-hidden="true" id="exampleModalMessage">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder2-open" viewBox="0 0 16 16">
+                        <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14V3.5zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5V6zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7H1.633z" />
+                    </svg> Request Attachment
+                </h5>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
+                        <a href="javascript:;" class="d-block">
+                            <img src="/more4u/images/BenefitCards/CemexAssiutPaternityLeave.png" alt="" class="img-fluid border-radius-lg" id="imlmm">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" id="">
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //Dropdownlist Selectedchange event
+    $("#CountryIdd").change(function () {
+        alert("welcome");
+        $("#BenefitIdd").empty();
+        $("#CountryIdd1").innerHTML = $("#CountryIdd").val();
+        alert($("#CountryIdd").val());
+        $.ajax({
+            type: 'POST',
+          //  url: '/more4u/more4u/Report/GetBenefitValues', // we are calling json method
+            url: '@Url.Content("~/")' + "more4u/Report/GetBenefitValues",
+            dataType: 'json',
+            data: { id: $("#CountryIdd").val() },
+            success: function (states) {
+                // states contains the JSON formatted list
+                // of states passed from the controller
+                alert("success");
+                $("#BenefitIdd").append('<option value="' + "0" + '">' + "Select Benefit" + '</option>');
+                // debugger;
+                $.each(states, function (i, state) {
+                    $("#BenefitIdd").append('<option value="' + state.Id + '">' + state.Name + '</option>');
+                    // here we are adding option for States
+                });
+
+            },
+            error: function (ex) {
+                alert('Failed to retrieve states.' + ex);
+            }
+        });
+        return false;
+    })
+
+</script>
+
+<script>
+
+    function getAttachmentDetails(id) {
+        console.log(id);
+        // var url2 = '/more4u/' + "BenefitRequestFiles/";
+        //         document.getElementById("imlmm").src = url2 + id;
+        // $('#Attach-Detailes').modal('show');
+
+    }
+
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+ 

@@ -4,6 +4,7 @@ using MoreForYou.Services.Models.MasterModels;
 using MoreForYou.Services.Models.MaterModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +22,9 @@ namespace MoreForYou.Services.Contracts
         BenefitConditionsAndAvailable CreateBenefitConditions(BenefitModel benefitModel, EmployeeModel employeeModel);
         BenefitAPIModel CreateBenefitAPIModel(BenefitModel model, int languageId);
         Task<List<BenefitAPIModel>> GetMyBenefits(long employeeNumber, int languageId);
+        Task<List<BenefitRequestModel>> BenefitSearch(BenefitFilterModel filterModel);
+
+        MemoryStream ExportBenefitsToExcel(List<BenefitRequestModel> models);
 
         Task<List<Participant>> GetEmployeesCanRedeemThisGroupBenefit(long employeeNumber, long benefitId);
 

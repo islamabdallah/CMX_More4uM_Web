@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Data.Repository;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Extensions.Logging;
 using MoreForYou.Models.Models.MasterModels;
 using MoreForYou.Service.Implementation.Email;
@@ -185,19 +186,23 @@ namespace MoreForYou.Services.Implementation
                 if (benefitMailModel.CarbonCopies == null)
                 {
                    // _outlookSenderService.SendFromOutlook(mailBody, sendToMails, null);
-                    _emailSender.SendEmailAsync(mailBody, sendToMails, "More4U Request", benefitRequestModel.EmployeeId, benefitRequestModel.Benefit.Name, null);
+                   // _emailSender.SendEmailAsync(mailBody, sendToMails, "More4U Request", benefitRequestModel.EmployeeId, benefitRequestModel.Benefit.Name, null);
+                    _emailSender.SendEmailAsync(mailBody, sendToMails, "More4U " + benefitRequestModel.Benefit.Name + "  Request Approval (" + benefitRequestModel.EmployeeId.ToString() + ")", benefitRequestModel.EmployeeId, benefitRequestModel.Benefit.Name, null);
+                
+                // _mGraphMailService.SendAsync(mailBody, sendToMails, "More4U Request", benefitRequestModel.EmployeeId, benefitRequestModel.Benefit.Name, null);
 
-                   // _mGraphMailService.SendAsync(mailBody, sendToMails, "More4U Request", benefitRequestModel.EmployeeId, benefitRequestModel.Benefit.Name, null);
-
-                }
+            }
                 else
                 {
                     string[] CCMails = benefitMailModel.CarbonCopies.Split(";");
                    // _outlookSenderService.SendFromOutlook(mailBody, sendToMails, "More4U Request",CCMails);
-                    _emailSender.SendEmailAsync(mailBody, sendToMails, "More4U Request", benefitRequestModel.EmployeeId, benefitRequestModel.Benefit.Name,CCMails);
-                    //_mGraphMailService.SendAsync(mailBody, sendToMails, "More4U Request", benefitRequestModel.EmployeeId, benefitRequestModel.Benefit.Name, CCMails);
+                   // _emailSender.SendEmailAsync(mailBody, sendToMails, "More4U Request", benefitRequestModel.EmployeeId, benefitRequestModel.Benefit.Name,CCMails);
+         
+                    _emailSender.SendEmailAsync(mailBody, sendToMails, "More4U " + benefitRequestModel.Benefit.Name + "  Request Approval (" + benefitRequestModel.EmployeeId.ToString() + ")", benefitRequestModel.EmployeeId, benefitRequestModel.Benefit.Name, CCMails);
+                
+                //_mGraphMailService.SendAsync(mailBody, sendToMails, "More4U Request", benefitRequestModel.EmployeeId, benefitRequestModel.Benefit.Name, CCMails);
 
-                }
+            }
 
             }
             else

@@ -11,6 +11,7 @@ using MoreForYou.Services.Models.MaterModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace MoreForYou.Services.Implementation
@@ -581,9 +582,9 @@ namespace MoreForYou.Services.Implementation
             }
         }
 
-        public Task<List<BenefitRequestModel>> GetAllBenefitRequestsByCountry(string country)
+        public async Task<List<BenefitRequestModel>> GetAllBenefitRequestsByCountry(string country)
         {
-            throw new NotImplementedException();
+            return this._mapper.Map<List<BenefitRequestModel>>((object)await this._repository.Find((Expression<Func<BenefitRequest, bool>>)(r => r.IsVisible == true), false, (Expression<Func<BenefitRequest, object>>)(r => r.Employee), (Expression<Func<BenefitRequest, object>>)(r => r.Benefit), (Expression<Func<BenefitRequest, object>>)(r => r.RequestStatus), (Expression<Func<BenefitRequest, object>>)(r => r.Benefit.BenefitType)).Where<BenefitRequest>((Expression<Func<BenefitRequest, bool>>)(t => t.Benefit.Country == country)).ToListAsync<BenefitRequest>());
         }
     }
 }

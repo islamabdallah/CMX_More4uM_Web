@@ -1,4 +1,5 @@
-﻿using MoreForYou.Services.Contracts;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using MoreForYou.Services.Contracts;
 using MoreForYou.Services.Contracts.Email;
 using MoreForYou.Services.Models;
 using MoreForYou.Services.Models.MasterModels;
@@ -218,14 +219,20 @@ namespace MoreForYou.Services.Implementation
                 if (CC == null)
                 {
                     mailResult = SendFromOutlook(mailBody, toMails, "More4U approval", null).Result;
-                    mailResult = _emailSender.SendEmailAsync(mailBody, toMails, "More4u [" + benefitModel.Name + "] _ Approval", requester.EmployeeNumber,benefitModel.Name, null).IsCompletedSuccessfully;
+                   // mailResult = _emailSender.SendEmailAsync(mailBody, toMails, "More4u [" + benefitModel.Name + "] _ Approval", requester.EmployeeNumber,benefitModel.Name, null).IsCompletedSuccessfully;
+                    mailResult = _emailSender.SendEmailAsync(mailBody, toMails, "More4u " + benefitModel.Name + " Request (" + requester.EmployeeNumber.ToString() + ")", requester.EmployeeNumber, benefitModel.Name, null).IsCompletedSuccessfully;
+
                 }
                 else
                 {
                     string[] ccMails = new string[] { CC };
                   mailResult = SendFromOutlook(mailBody, toMails,"More4U approval", ccMails).Result;
-                  mailResult = await _emailSender.SendEmailAsync(mailBody, toMails, "More4u "+ benefitModel.Name+ " Approval", requester.EmployeeNumber, benefitModel.Name, ccMails);
-                }
+                 // mailResult = await _emailSender.SendEmailAsync(mailBody, toMails, "More4u "+ benefitModel.Name+ " Approval", requester.EmployeeNumber, benefitModel.Name, ccMails);
+             
+                  
+                  mailResult = await _emailSender.SendEmailAsync(mailBody, toMails, "More4u " + benefitModel.Name + " Request (" + requester.EmployeeNumber.ToString() + ")", requester.EmployeeNumber, benefitModel.Name, ccMails) ;
+                
+            }
                 return true;
             }
             catch (Exception e)

@@ -25,6 +25,8 @@ using MoreForYou.Services.Implementation.Email;
 using MoreForYou.Services.Contracts.Medical;
 using MoreForYou.Services.Implementation.MedicalServices;
 using Castle.Core.Logging;
+using MoreForYou.Services.Contracts.TermsConditions;
+using MoreForYou.Services.Implementation.TermsConditions;
 
 namespace MoreForeYou
 {
@@ -95,6 +97,10 @@ namespace MoreForeYou
             services.AddScoped<IMedicalSubCategoryService, MedicalSubCategoryService>();
             services.AddScoped<IMedicalDetailsService, MedicalDetailsService>();
             services.AddScoped<IMGraphMailService, MGraphMailService>();
+            services.AddScoped<ITermsConditionsService, TermsConditionsService>();
+            services.AddScoped<IMedicalRequestService, MedicalRequestService>();
+            services.AddScoped<IMedicalResponseService, MedicalResponseService>();
+            services.AddScoped<IRelativeService, RelativeService>();
             services.Configure<MailKitEmailSenderOptions>(options =>
             {
                 options.Host_Address = _Configuration["ExternalProviders:MailKit:SMTP:Address"];
