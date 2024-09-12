@@ -35,13 +35,13 @@ namespace More4UWebAPI.Controllers.MedicalRequest
           IPrivilegeService privilegeService,
           IRelativeService relativeService)
         {
-            this._employeeService = employeeService;
-            this._userManager = userManager;
-            this._benefitMailService = benefitMailService;
-            this._BenefitService = benefitService;
-            this._userNotificationService = userNotificationService;
-            this._privilegeService = privilegeService;
-            this._relativeService = relativeService;
+            _employeeService = employeeService;
+            _userManager = userManager;
+            _benefitMailService = benefitMailService;
+            _BenefitService = benefitService;
+            _userNotificationService = userNotificationService;
+            _privilegeService = privilegeService;
+            _relativeService = relativeService;
         }
 
         [HttpPost("EmployeeRelatives")]

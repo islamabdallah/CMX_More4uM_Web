@@ -171,4 +171,50 @@ namespace MoreForYou.Services.Models.Message
         //    new Message {LanguageId=1, Text="بيانات خاطئة"}
         //};
     }
+
+    public static class MediccalMessage
+    {
+        public static string[] Done = new string[3]
+        {
+      " ",
+      nameof (Done),
+      "العملية تمت بنجاح"
+        };
+        public static string[] SuccessfulProcess = new string[3]
+        {
+      "",
+      "Successful Process",
+      "العملية تمت بنجاح"
+        };
+        public static string[] ChangePasswordFailed = new string[3]
+        {
+      "",
+      "Wrong old password",
+      "عملية فاشلة ، كلمة المرور السابقة خطأ"
+        };
+        public static string[] InvalidEmployeeData = new string[3]
+        {
+      "",
+      "Failed Process, Invalid User Data",
+      "عملية فاشلة ، بيانات المستخدم خطأ"
+        };
+        public static string[] InValidData = new string[3]
+        {
+      "",
+      "Invaild data",
+      "بيانات خاطئة"
+        };
+        public static string[] FailedProcess = new string[3]
+        {
+      "",
+      "Failed Process",
+      "عملية فاشلة"
+        };
+        public static string[] WrongToken = new string[3]
+        {
+      "",
+      "session has been expired!",
+      "يرجى تسجيل الدخول مرة أخرى!"
+        };
+    }
 }
