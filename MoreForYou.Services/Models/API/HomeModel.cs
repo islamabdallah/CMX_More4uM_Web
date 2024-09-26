@@ -22,7 +22,18 @@ namespace MoreForYou.Services.Models.API
         public int PriviligesCount { get; set; }
     }
 
+    public class HomeApiModel
+    {
+        public LoginUser user { get; set; }
 
+        public int UserUnSeenNotificationCount { get; set; }
+
+        public int PendingRequestMedicalCount { get; set; }
+
+        public string MedicalCoverage { get; set; }
+
+        public int RelativeCount { get; set; }
+    }
     public class TokenModel
     {
         public string? AccessToken { get; set; }

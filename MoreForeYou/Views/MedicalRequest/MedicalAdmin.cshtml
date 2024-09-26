@@ -1,0 +1,399 @@
+﻿@model MoreForYou.Services.Models.API.Medical.PendingRequestVModel
+@inject UserManager<AspNetUser> userManager
+@inject SignInManager<AspNetUser> SignInManager
+
+
+@{
+    ViewData["Title"] = "MedicalRequests";
+    ViewData["SubTitle"] = "Index";
+    ViewData["activ"] = "lmMedicalRequests";
+    Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
+    string optionId = "";
+}
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
+
+<div class="row my-4">
+    <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="row">
+                    <div class="col-lg-6 col-7">
+                        <h6>Report</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1">Searching</span> Criteria
+                        </p>
+                    </div>
+                    <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                            </a>
+                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive">
+                    <div class="card-body p-3">
+
+                        <!-- No Labels Form -->
+                        <form class="row g-3 form-validation" novalidate asp-action="MedicalAdmin" asp-controller="MedicalRequest" onsubmit="return validateForm()" name="myform">
+                        @* <form class="row g-3 form-validation" method="post" asp-controller="MedicalRequest" asp-action="MedicalAdmin" onsubmit="return validateForm()" name="myform"> *@
+                            <div class="col-md-4">
+                                <label class="form-label">Request Id</label>
+                                <input type="number" class="form-control" id="ReqId" placeholder="Request Id" name="requestId" asp-for="@Model.searchModel.requestId">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Employee Number</label>
+                                <input type="number" class="form-control" id="EmpNum" placeholder="Employee Number" name="userNumberSearch" asp-for="@Model.searchModel.userNumberSearch">
+                            </div>
+                            @* <div class="col-md-4">
+                                <label class="form-label">Employee Number</label>
+                                <select class="form-select" name="" id="id_select2_example"
+                                         onchange="test(this)"
+                                        asp-items="@( new SelectList(Model.participants,"employeeNumber","name"))">
+                                    
+                                   
+                                    }
+                                </select>
+                            </div> *@
+
+                            <div class="col-md-4">
+                                <label class="form-label">Request Type</label>
+                                <select class="form-select" id="selectedRequestType" placeholder="Select Request Type" name="selectedRequestType" asp-for="@Model.searchModel.selectedRequestType">
+                                    <option value="">Select Request Type</option>
+                                    <option value="1">Medication</option>
+                                    <option value="2">CheckUp</option>
+                                    <option value="3">SickLeave</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Request Status</label>
+                                <select class="form-select" id="selectedRequestStatus" placeholder="Select Request Status" name="selectedRequestStatus" asp-for="@Model.searchModel.selectedRequestStatus">
+                                    <option value="">Select Request Status</option>
+                                    <option value="1">Pending</option>
+                                    <option value="4">Rejected</option>
+                                    <option value="3">Approved</option>
+                                </select>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <label class="form-label">Date From</label>
+                                <input type="Date" class="form-control" id="searchDateFrom" placeholder="DateFrom" name="searchDateFrom" asp-for="@Model.searchModel.searchDateFrom">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Date To</label>
+                                <input type="Date" class="form-control" id="searchDateTo" placeholder="DateTo" name="searchDateTo" asp-for="@Model.searchModel.searchDateTo">
+                            </div>
+
+                            <div class="text-left">
+                                <button type="submit" class="btn btn-primary">
+                                    Search
+                                </button><span class="text-danger" id="sum"></span>
+                            </div>
+                            <input name="__RequestVerificationToken" type="hidden" value="CfDJ8LkWLgwYe7JKr2a57oUpSa9IGP4yBpulenBK1AA_tHMQYs1iKEIix-uQH9zL41yp-DH9MYzgyBu4W3hVjShGhMxUdK0a3nSdNpv2aUS9NHjMYqmASWaTDvra6_pMY7okr9WdyuIvhAUfFdhbTnIdiZKk5vAemYTKXCeNW0rs2mngghyE8JKAukV0yOc0G03Chw" />
+                        </form><!-- End No Labels Form -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="card h-100">
+            <div class="card-header pb-0">
+                <h6>Pending Request overview</h6>
+                <p class="text-sm">
+                    <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
+                    <span class="font-weight-bold">@Model.pendingRequest.requestsCount.totalRequest</span> Total Requests
+                </p>
+            </div>
+            <div class="card-body p-3">
+                <div class="timeline timeline-one-side">
+                    <div class="timeline-block mb-3">
+                        <span class="timeline-step">
+                            <i class="ni ni-bell-55 text-success text-gradient"></i>
+                        </span>
+                        <div class="timeline-content">
+                            <h6 class="text-dark text-sm font-weight-bold mb-0">@Model.pendingRequest.requestsCount.medications</h6>
+                            <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">Medication</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-block mb-3">
+                        <span class="timeline-step">
+                            <i class="ni ni-key-25 text-primary text-gradient"></i>
+                        </span>
+                        <div class="timeline-content">
+                            <h6 class="text-dark text-sm font-weight-bold mb-0">@Model.pendingRequest.requestsCount.checkups</h6>
+                            <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">Checkup</p>
+                        </div>
+                    </div>
+                    <div class="timeline-block">
+                        <span class="timeline-step">
+                            <i class="ni ni-money-coins text-dark text-gradient"></i>
+                        </span>
+                        <div class="timeline-content">
+                            <h6 class="text-dark text-sm font-weight-bold mb-0">@Model.pendingRequest.requestsCount.sickleave</h6>
+                            <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">Sick Leave</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row my-4">
+    <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="row">
+                    <div class="col-lg-6 col-7">
+                        <h6>Requests</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1">Searching</span> Results
+                        </p>
+                    </div>
+                    <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                            </a>
+                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive">
+                    <div class="card-body p-3">
+                        @* <table id="example" class="table data-table align-items-center mb-0"> *@
+                        <table class="table datatable align-items-center mb-0" id="example">
+                            <thead>
+                                <tr>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestID</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">employeeNumber </th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">employeeName </th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Submit Data</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestType</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestStatus</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.pendingRequest.requests != null && Model.pendingRequest.requests.Count > 0)
+                                {
+                                    @foreach (var item in Model.pendingRequest.requests)
+                                    {
+                                        <tr role="row" class="even">
+                                            <td>
+                                                @* class="text-center sorting_1"> *@
+                                                <div class="d-flex px-2 py-1">
+                                                    <div>
+                                                        <img src="  @item.employeeImageUrl" class="avatar avatar-sm me-3" alt="xd">
+                                                    </div>
+                                                    <div class="d-flex flex-column justify-content-center">
+                                                        <h6 class="mb-0 text-sm">  @item.requestID</h6>
+                                                    </div>
+                                                    @*  <div class="avatar-group mt-2">
+
+                                            </div> *@
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="avatar-group mt-2">
+                                                    @item.employeeNumber
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="avatar-group mt-2">
+                                                    @item.employeeName
+                                                </div>
+                                            </td>
+
+                                            <td class="text-center">
+                                                <div class="avatar-group mt-2">
+                                                    @item.requestDate
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                @if (item.requestTypeID == "1")
+                                                {
+
+                                                    <div class="avatar-group mt-2">
+                                                        Medication
+                                                    </div>
+
+                                                }
+                                                else if (item.requestTypeID == "2")
+                                                {
+
+                                                    <div class="avatar-group mt-2">
+                                                        Checkup
+                                                    </div>
+
+                                                }
+                                                else
+                                                {
+
+                                                    <div class="avatar-group mt-2">
+                                                        SickLeave
+                                                    </div>
+
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @if (item.requestStatus == "Pending")
+                                                {
+                                                    <span class="badge badge-sm bg-gradient-warning pr-5">@item.requestStatus</span>
+                                                }
+                                                else if (item.requestStatus == "Approved")
+                                                {
+                                                    <span class="badge badge-sm bg-gradient-success pr-5">@item.requestStatus</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-sm bg-gradient-danger pr-5">@item.requestStatus</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" onclick="" href="#">
+                                                    Details
+                                                    <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    var counter = 1;
+    var maxNumber = 1;
+    var minNumber = 2;
+    $('.dropdown-mul-1').dropdown({
+        //data: json1.data,
+        limitCount: 40,
+        multipleMode: 'label',
+        choice: function () {
+
+            console.log("test");
+        }
+    });
+    function custom_template(obj) {
+        counter++;
+        var data = $(obj.element).data();
+        var text = $(obj.element).text();
+        if (data && data['img_src']) {
+            img_src = data['img_src'];
+            value = data['value'];
+            template = $("<div style=\" width:auto; height:20px;   display: flex; padding:0px\" id=" + value + "><span style=\"font-weight: 100;font-size:10pt;text-align:center; padding:5px\">" + text + "</span><span style=\"font-weight: 200;font-size:13pt;text-align:center; padding:5px\">" + value + "</span></div>");
+            return template;
+        }
+    }
+    //function matchStart(params, data) {
+    //    // If there are no search terms, return all of the data
+    //    if ($.trim(params.term) === '') {
+    //        return null;
+    //    }
+    //    // Return `null` if the term should not be displayed
+    //    return null;
+    //}
+    var options =
+    {
+        'templateSelection': custom_template,
+        'templateResult': custom_template,
+        'minimumInputLength': 3,
+        'maximumSelectionLength': maxNumber - 1,
+        'maximumInputLength': 20,// only allow terms up to 20 characters long
+        'placeholder': 'Select a participant',
+        'maximumResultsForSearch': 2,
+        //    'matcher': matchStart,
+    }
+    $('#id_select2_example').select2(options);
+    $('.select2-container--default .select2-selection--single').css({ 'height': '100px' });
+    $('.select2-container--default .select2-selection--single').css({ 'width': '200px' });
+    function test(e) {
+        var optionSelected = $("option:selected", e);
+        var valueSelected = e.value;
+        console.log(optionSelected);
+        console.log(valueSelected);
+        var selectedIds = [];
+        var liEle = document.getElementsByClassName("select2-selection__choice");
+        if (liEle.length >= minNumber - 1) {
+            $('#submitbtn').prop('disabled', false);
+        }
+        else {
+            $('#submitbtn').prop('disabled', true);
+
+        }
+        if (liEle.length <= maxNumber - 1) {
+            document.getElementById("SelectedEmployeeNumbers").value = "";
+            for (var i = 0; i < liEle.length; i++) {
+                var iid = liEle[i].children[1].getAttribute("id");
+                selectedIds.push(iid);
+                document.getElementById("SelectedEmployeeNumbers").value = document.getElementById("SelectedEmployeeNumbers").value + iid + ";";
+            }
+        }
+        else {
+            alert("you can not add new members, you reach the maximum number of participants");
+        }
+
+
+    }
+
+
+</script>
+
+<script>
+    function validateForm() {
+       // let x = document.getElementById("ReqId").value;
+       // let y = document.getElementById("EmpNum").value;
+        alert(x);
+        alert(y);
+        
+         if (x=="" && y=="") {
+            //alert(q + y);
+            document.getElementById("sum").innerHTML = " You have to add Request Id or Employee Numver";
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

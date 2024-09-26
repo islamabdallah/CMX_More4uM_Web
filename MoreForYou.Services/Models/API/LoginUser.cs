@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoreForYou.Services.Models.API.Medical;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,6 +10,12 @@ namespace MoreForYou.Services.Models.API
         public string UserName { get; set; }
         public string Email { get; set; }
         public long UserNumber { get; set; }
+
+        public bool IsMedicalAdmin { get; set; }
+
+        public bool IsDoctor { get; set; }
+
+        public bool HasMedicalService { get; set; }
 
         public string PositionName { get; set; }
         public string DepartmentName { get; set; }
@@ -44,7 +51,7 @@ namespace MoreForYou.Services.Models.API
 
         public string State { get; set; }
         public string ProfilePictureAPI { get; set; }
-
+        public List<RelativeApiModel> Relatives { get; set; }
         //public string? Token { get; set; }
     }
 

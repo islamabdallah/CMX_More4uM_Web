@@ -60,9 +60,9 @@ namespace MoreForYou.Services.Models.API.Medical
     }
     public class EmployeeRelativesModel
     {
-        public int CemexId { get; set; }
+        public long CemexId { get; set; }
 
-        public int RelativeId { get; set; }
+        public long RelativeId { get; set; }
 
         public string EmployeeName { get; set; }
 

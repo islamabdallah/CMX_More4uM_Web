@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoreForYou.Services.Models.MaterModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -55,5 +56,14 @@ namespace MoreForYou.Services.Models.API.Medical
         public string? requestStatus { get; set; }
 
         public string? requestMedicalEntity { get; set; }
+    }
+
+    public class PendingRequestVModel
+    {
+        public List<EmployeeApiModel> participants {  get; set; }
+        public PendingRequestApiModel pendingRequest { get; set; }
+
+        public MedicalRequestSearchModel searchModel { get; set; }
+
     }
 }

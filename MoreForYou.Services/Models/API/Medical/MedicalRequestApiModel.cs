@@ -9,9 +9,7 @@ namespace MoreForYou.Services.Models.API.Medical
 {
     public class MedicalRequestApiModel
     {
-        public
-#nullable disable
-    string createdBy { get; set; }
+        public string createdBy { get; set; }
 
         public int requestedBy { get; set; }
 
