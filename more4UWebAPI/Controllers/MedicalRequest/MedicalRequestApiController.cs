@@ -211,7 +211,10 @@ namespace More4UWebAPI.Controllers.MedicalRequest
                 }
                 else
                 {
-                    requestSearch.userNumberSearch = requestSearch.userNumber;
+                    if (requestSearch.selectedRequestType != "" || requestSearch.selectedRequestStatus != "" || requestSearch.requestId != "" || requestSearch.relativeId != "" || requestSearch.searchDateFrom != "" || requestSearch.searchDateTo != "")
+                    {
+                        requestSearch.userNumberSearch = requestSearch.userNumber;
+                    }                  
                     employeeMedicalRequests = requestApiController._medicalRequest.GetAllEmployeeMedicalRequests(requestSearch);
                 }
                 if (employeeMedicalRequests != null)

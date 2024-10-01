@@ -1,4 +1,5 @@
 ﻿@model MoreForYou.Services.Models.MedicalRequestViewModels.MedicalRequestVM
+@using MoreForYou.Services.Models.API.Medical;
 
 @{
     ViewData["Title"] = "Medical";
@@ -7,6 +8,8 @@
     Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
 
 }
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
 
 <script>
     function myFunction(value) {
@@ -14,21 +17,159 @@
        // alert(val);
 
         if (val == 1) {
-            // console.log("done");
-            // document.getElementById(items[i].RequestNumber).hidden = false;
-            // document.getElementById("lm+" + items[i].RequestNumber).hidden = false;
-           // alert("1");
+            document.getElementById("lmSubDiv").hidden = true;
+            document.getElementById("lmDetDiv").hidden = true;
             document.getElementById("lmMedication").hidden = false;
+            document.getElementById("lmCheckup").hidden = true;
+            document.getElementById("lmPurpose").hidden = true;
+        }
+       else if (val == 2) {
+            document.getElementById("lmMedication").hidden = true;
+            document.getElementById("lmCheckup").hidden = false;
+            document.getElementById("lmPurpose").hidden = true;
         }
         else {
-            // document.getElementById(items[i].RequestNumber).hidden = true;
-            // document.getElementById("lm+" + items[i].RequestNumber).hidden = true;
-            alert("2");
+            document.getElementById("lmSubDiv").hidden = true;
+            document.getElementById("lmDetDiv").hidden = true;
+            document.getElementById("lmMedication").hidden = true;
+            document.getElementById("lmCheckup").hidden = true;
+            document.getElementById("lmPurpose").hidden = true;
         }
 
 
     }
+</script>
 
+<script>
+    function mySub(value) {
+       // alert(value);
+        if (value == "") {
+            alert("test");
+            document.getElementById("lmDetDiv").hidden = true;
+        }
+        else {
+            var Id = parseInt(value);
+            $.ajax({
+                url: '@Url.Content("~/")' + "more4u/Medical/GetSubCategories2",
+                data: { Id: Id },
+                type: "POST",
+                async: true,
+                success: function (data) {
+                    if (data != null) {
+                        var dataJSON = JSON.parse(data);
+                        alert(value);
+                        if (value == 1) {
+                            alert(value);
+                            document.getElementById("lmPurpose").hidden = false;
+                        }
+                        else {
+                            document.getElementById("lmPurpose").hidden = true;
+                        }
+
+                        if (dataJSON["MedicalSubCategoryModels"].length == 1) {                        
+                            var TypesDD = document.getElementById("lmDet");
+                            TypesDD.innerHTML = "";
+                            var op1 = document.createElement('option');
+                            op1.text = "Select Entity";
+                            op1.value = "";
+
+                            TypesDD.options[0] = op1;
+                            for (var index = 0; index < dataJSON["MedicalSubCategoryModels"][0]["MedicalDetailsCount"]; index++) {
+                             
+                                var op = document.createElement('option');
+                                op.text = dataJSON['MedicalSubCategoryModels'][0]['MedicalDetailsModels'][index]['Name_EN'];
+                                op.value = dataJSON['MedicalSubCategoryModels'][0]['MedicalDetailsModels'][index]['Id'];
+                              
+                                TypesDD.options[index+1] = op;
+                            }
+                            document.getElementById("lmSubDiv").hidden = true;
+                            document.getElementById("lmDetDiv").hidden = false;
+                        }
+                        else {
+                            var TypesD = document.getElementById("lmSub");
+                            TypesD.innerHTML = "";
+                            var op1 = document.createElement('option');
+                            op1.text = "Select Sub Category";
+                            op1.value = "";
+
+                            TypesD.options[0] = op1;
+                            for (var index = 0; index < dataJSON["MedicalSubCategoryModels"].length; index++) {
+                                // alert(dataJSON['MedicalSubCategoryModels'][0]['MedicalDetailsModels'][index]['Id']);
+                                // alert(dataJSON['MedicalSubCategoryModels'][0]['MedicalDetailsModels'][index]['Name_EN']);
+                                var op = document.createElement('option');
+                                op.text = dataJSON['MedicalSubCategoryModels'][index]['Name_EN'];
+                                op.value = dataJSON['MedicalSubCategoryModels'][index]['Id'];
+
+                                TypesD.options[index + 1] = op;
+                            }
+                            document.getElementById("lmSubDiv").hidden = false;
+                            document.getElementById("lmDetDiv").hidden = true;
+                        }
+                    }
+                    else {
+                        alert("failed");
+                    }
+                }
+            });
+        }
+      
+    }
+</script>
+
+<script>
+    function myDet(value) {
+        alert(value);
+        if (value == "") {
+            alert("test");
+            document.getElementById("lmDetDiv").hidden = true;
+        }
+        else{
+            var Id = parseInt(value);
+            $.ajax({
+                url: '@Url.Content("~/")' + "more4u/Medical/GetAllMedicalDetailsForSubCategory",
+                data: { Id: Id },
+                type: "POST",
+                async: true,
+                success: function (data) {
+                    if (data != null) {
+                        var dataJSON = JSON.parse(data);
+                      
+                            if (dataJSON["MedicalDetailsModels"] != null) {
+                                var TypesDD = document.getElementById("lmDet");
+                                TypesDD.innerHTML = "";
+                            var op1 = document.createElement('option');
+                                op1.text = "Select Entity";
+                                op1.value = "";
+
+                            TypesDD.options[0] = op1;
+                                for (var index = 0; index < dataJSON["MedicalDetailsModels"].length; index++) {
+                                    var op = document.createElement('option');
+                                    op.text = dataJSON['MedicalDetailsModels'][index]['Name_EN'];
+                                    op.value = dataJSON['MedicalDetailsModels'][index]['Id'];
+
+                                    TypesDD.options[index + 1] = op;
+                                }
+                                document.getElementById("lmDetDiv").hidden = false;
+                            }
+                        
+                    }
+                    else {
+                        swal("Failed process, loadDetailsfromSubCategory",
+                            {
+                                icon: "error",
+                            });
+                    }
+                },
+                error: function () {
+                    swal("Failed process,loadDetailsfromSubCategory",
+                        {
+                            icon: "error",
+                        });
+                }
+
+            });
+        }
+    }
 </script>
 <div class="row mt-4">
     <div class="col-lg-8 mb-lg-0 mb-4">
@@ -105,15 +246,13 @@
                                     Add Medication Request
                                 </h5>
                                 <hr class="horizontal dark my-sm-4">
-                                <form>
+                                <form asp-action="addRequest" asp-controller="MedicalRequest" enctype="multipart/form-data">
                                     <div class="row">
                                         <div class="form-group col-lg-6" style="margin-bottom:15px">
                                             <p class="mb-5">
                                                 Medical Entity
-                                                <select class="form-select" id="RequestNumber" asp-items="@(new SelectList(Model.medicationEntities,"MedicalEntityId","MedicalDetailsName"," "))"
-                                                        onchange="myFunction(this.value)">
+                                                <select class="form-select" id="lmMedicationLst" asp-items="@(new SelectList(Model.medicationEntities,"MedicalEntityId","MedicalDetailsName"," "))" asp-for="@Model.mRequest.medicalEntityId">
                                                     <option value="">Select Entity</option>
-
                                                 </select>
                                             </p>
                                         </div>
@@ -147,6 +286,97 @@
                                             @* <p class="mb-5">
                                             Comment *@
                                             <button type="submit" class="btn btn-primary">Submit Form</button>
+                                            @*   </p> *@
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div id="lmCheckup" hidden>
+                                <h5 class="font-weight-bolder text-gradient text-primary">
+                                    Add Checkup Request
+                                </h5>
+                                <hr class="horizontal dark my-sm-4">
+                                <form asp-action="addRequest" asp-controller="MedicalRequest" enctype="multipart/form-data">
+                                    <input type="number" asp-for="@Model.mRequest.requestType" value="2" />
+                                    <input type="text" asp-for="@Model.mRequest.createdBy" value="@Model.RelativesApiModel.CemexId" />
+                                    <input type="text" asp-for="@Model.mRequest.requestedBy" value="@Model.RelativesApiModel.CemexId" />
+                                    <input type="text" asp-for="@Model.mRequest.requestedFor" value="@Model.RelativesApiModel.RelativeId" />
+                                    <input class="form-check-input" type="checkbox" id="gridRadios1" asp-for="@Model.mRequest.selfRequest" checked>
+                                    <div class="row">
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px">
+                                            <p class="mb-5">
+                                                Medical Category
+                                                <select class="form-select" id="RequestNumber" asp-items="@(new SelectList(Model.CheckupCategoryAPIModels,"Id","Name_EN"," "))"
+                                                        onchange="mySub(this.value)">
+                                                    <option value="">Select Category</option>
+
+                                                </select>
+                                            </p>
+                                        </div>
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px" id="lmSubDiv" hidden>
+                                            <p class="mb-5">
+                                                <span id="lmSubtxt"> Medical SubCategory</span>
+                                                <select class="form-select" id="lmSub" 
+                                                        onchange="myDet(this.value)">
+                                                    <option value="">Select Sub Category</option>
+
+                                                </select>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px" id="lmDetDiv" hidden>
+                                            <p class="mb-5">
+                                                <span id="lmDettxt"> Medical Entity</span>
+                                                <select class="form-select" id="lmDet" asp-for="@Model.mRequest.medicalEntityId">
+                                                    <option value="">Select Entity</option>
+
+                                                </select>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px" id="lmPurpose" hidden>
+                                            <p class="mb-5">
+                                                 Medical SubCategory
+                                                <select class="form-select" id="lmSub"
+                                                        asp-for="@Model.mRequest.medicalPurpose">
+                                                    <option value="">Select Purpose</option>
+                                                    <option value="checkup">checkup</option>
+                                                    <option value="hospital Admission">hospital Admission</option>
+
+                                                </select>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px">
+                                            <p class="mb-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="gridCheck1" asp-for="@Model.mRequest.monthlyMedication">
+                                                    <label class="form-check-label" for="gridCheck1">
+                                                        Monthly Medication
+                                                    </label>
+                                                </div>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px">
+                                            <p class="mb-5">
+                                                File Upload
+                                                <input class="form-control" type="file" id="formFile" asp-for="@Model.mRequest.attachment" multiple>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px">
+                                            <p class="mb-5">
+                                                Comment
+                                                <textarea class="form-control" style="height: 100px" asp-for="@Model.mRequest.comment"></textarea>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px">
+                                            @* <p class="mb-5">
+                                            Comment *@
+                                            <button type="submit" class="btn bg-gradient-info">Save Request</button>
                                             @*   </p> *@
                                         </div>
                                     </div>

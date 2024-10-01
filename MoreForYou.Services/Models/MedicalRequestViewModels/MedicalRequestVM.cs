@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using MoreForYou.Services.Models.API.Medical;
+using MoreForYou.Services.Models.Medical;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace MoreForYou.Services.Models.MedicalRequestViewModels
         public MedicalRequestApiModel mRequest {  get; set; }
         public EmployeeRelativesApiModel RelativesApiModel { get; set; }
 
-        public List<MedicalCategoryAPIModel> CheckupCategoryAPIModels { get; set; }
+        public List<MedicalCategoryModel> CheckupCategoryAPIModels { get; set; }
 
         public List<MedicalSubCategoryAPIModel> CheckupSubCategoryAPIModels { get; set; }
 

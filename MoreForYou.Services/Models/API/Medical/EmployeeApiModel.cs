@@ -39,6 +39,8 @@ namespace MoreForYou.Services.Models.API.Medical
         public List<MedicalSubCategoryAPIModel> medicalSubCategoryAPIModels { get; set; }
 
         public List<MedicalDetailsAPIModel> medicalDetailsAPIModels { get; set; }
+
+        public List<string> requestPurposes {  get; set; }
     }
     public class EmployeeRelativesApiModel
     {

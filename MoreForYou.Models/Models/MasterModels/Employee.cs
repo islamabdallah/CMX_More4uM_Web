@@ -106,5 +106,8 @@ namespace MoreForYou.Models.Models.MasterModels
 
         [Required]
         public bool IsDirectEmployee { get; set; }
+        public bool? HasMore4uService { get; set; }
+        public bool? HasMedicalService { get; set; }
+
     }
 }

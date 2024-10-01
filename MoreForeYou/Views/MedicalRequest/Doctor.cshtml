@@ -26,8 +26,8 @@
                     <div class="col-lg-6 col-7">
                         <h6>Report</h6>
                         <p class="text-sm mb-0">
-                            <i class="fa fa-check text-info" aria-hidden="true"></i>
-                            <span class="font-weight-bold ms-1">Searching</span> Criteria
+                            <i class="fa fa-check text-gradient text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1 text-gradient text-info">Searching</span> Criteria
                         </p>
                     </div>
                     <div class="col-lg-6 col-5 my-auto text-end">
@@ -101,11 +101,11 @@
                             </div>
 
                             <div class="text-left">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn bg-gradient-info">
                                     Search
                                 </button><span class="text-danger" id="sum"></span>
                             </div>
-                            <input name="__RequestVerificationToken" type="hidden" value="CfDJ8LkWLgwYe7JKr2a57oUpSa9IGP4yBpulenBK1AA_tHMQYs1iKEIix-uQH9zL41yp-DH9MYzgyBu4W3hVjShGhMxUdK0a3nSdNpv2aUS9NHjMYqmASWaTDvra6_pMY7okr9WdyuIvhAUfFdhbTnIdiZKk5vAemYTKXCeNW0rs2mngghyE8JKAukV0yOc0G03Chw" />
+                            
                         </form><!-- End No Labels Form -->
                     </div>
                 </div>
@@ -165,8 +165,8 @@
                     <div class="col-lg-6 col-7">
                         <h6>Requests</h6>
                         <p class="text-sm mb-0">
-                            <i class="fa fa-check text-info" aria-hidden="true"></i>
-                            <span class="font-weight-bold ms-1">Searching</span> Results
+                            <i class="fa fa-check text-gradient text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1 text-gradient text-info">Searching</span> Results
                         </p>
                     </div>
                     <div class="col-lg-6 col-5 my-auto text-end">
@@ -193,6 +193,7 @@
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestID</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">employeeNumber </th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">employeeName </th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Requested For </th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Submit Data</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestType</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestStatus</th>
@@ -229,7 +230,18 @@
                                                     @item.employeeName
                                                 </div>
                                             </td>
-
+                                            <td class="text-center">
+                                                <div class="avatar-group mt-2">
+                                                    @if (item.selfRequest == true)
+                                                    {
+                                                        <span>Self Insurance</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Family Insurance</span>
+                                                    }
+                                                </div>
+                                            </td>
                                             <td class="text-center">
                                                 <div class="avatar-group mt-2">
                                                     @item.requestDate
@@ -276,7 +288,7 @@
                                                 }
                                             </td>
                                             <td>
-                                                <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" onclick="" href="#">
+                                                <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" asp-action="Details" asp-route-id="@item.requestID">
                                                     Details
                                                     <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
                                                 </a>

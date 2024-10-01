@@ -516,6 +516,8 @@ namespace MoreForYou.Services.Implementation
             user.Email = _userManager.FindByIdAsync(employeeModel.UserId).Result.Email;
             user.WorkDuration = CalculateWorkDuration(Convert.ToDateTime(employeeModel.JoiningDate));
             user.ProfilePictureAPI = CommanData.Url + CommanData.ProfileFolder + employeeModel.ProfilePicture;
+            user.hasMore4uService = employeeModel.hasMore4uService;
+            user.HasMedicalService = employeeModel.HasMedicalService;
             var roles = _userManager.GetRolesAsync(_userManager.FindByIdAsync(employeeModel.UserId).Result).Result;
             if(roles != null)
             {

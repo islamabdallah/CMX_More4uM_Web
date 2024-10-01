@@ -79,6 +79,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                 List<Relative> listAsync = await this._repository.Find((Expression<Func<Relative, bool>>)(i => i.IsVisible == true && i.IsActive == true && i.EmployeeNumber == employeeNumber)).ToListAsync();
                 if (listAsync != null)
                     return listAsync;
+                else return null;
             }
             catch (Exception ex)
             {
@@ -94,76 +95,85 @@ namespace MoreForYou.Services.Implementation.MedicalServices
           string Country)
         {
             List<Relative> employeeRelatives = await this.GetEmployeeRelatives(userNumber);
-            if (employeeRelatives == null || employeeRelatives.Count <= 0)
-                return (EmployeeRelativesApi)null;
-            EmployeeRelativesApi employeeRelativesApi = new EmployeeRelativesApi();
-            EmployeeRelativesApiModel relativesApiModel = new EmployeeRelativesApiModel();
-            List<RelativeApiModel> relativeApiModelList = new List<RelativeApiModel>();
-            if (languageCode == 2)
+            if (employeeRelatives != null)
             {
-                foreach (Relative relative in employeeRelatives)
+                if (employeeRelatives.Count > 0)
                 {
-                    if (relative.Relation == "Self")
+                    EmployeeRelativesApi employeeRelativesApi = new EmployeeRelativesApi();
+                    EmployeeRelativesApiModel relativesApiModel = new EmployeeRelativesApiModel();
+                    List<RelativeApiModel> relativeApiModelList = new List<RelativeApiModel>();
+                    if (languageCode == 2)
                     {
-                        relativesApiModel.RelativeId = relative.Id;
-                        relativesApiModel.CemexId = (int)relative.EmployeeNumber;
-                        relativesApiModel.EmployeeName = relative.ArabicRelatives;
-                        relativesApiModel.BirthDate = relative.BDate;
-                        relativesApiModel.MedicalCoverage = relative.CoverPercentage;
+                        foreach (Relative relative in employeeRelatives)
+                        {
+                            if (relative.Relation == "Self")
+                            {
+                                relativesApiModel.RelativeId = relative.Id;
+                                relativesApiModel.CemexId = (int)relative.EmployeeNumber;
+                                relativesApiModel.EmployeeName = relative.ArabicRelatives;
+                                relativesApiModel.BirthDate = relative.BDate;
+                                relativesApiModel.MedicalCoverage = relative.CoverPercentage;
+                            }
+                            else
+                                relativeApiModelList.Add(new RelativeApiModel()
+                                {
+                                    RelativeId = relative.Id,
+                                    RelativeName = relative.ArabicRelatives,
+                                    Relation = relative.ArabicRelation,
+                                    BirthDate = relative.BDate,
+                                    Order = relative.Order,
+                                    MedicalCoverage = relative.CoverPercentage
+                                });
+                        }
                     }
                     else
-                        relativeApiModelList.Add(new RelativeApiModel()
+                    {
+                        foreach (Relative relative in employeeRelatives)
                         {
-                            RelativeId = relative.Id,
-                            RelativeName = relative.ArabicRelatives,
-                            Relation = relative.ArabicRelation,
-                            BirthDate = relative.BDate,
-                            Order = relative.Order,
-                            MedicalCoverage = relative.CoverPercentage
-                        });
+                            if (relative.Relation == "Self")
+                            {
+                                relativesApiModel.RelativeId = relative.Id;
+                                relativesApiModel.CemexId = (int)relative.EmployeeNumber;
+                                relativesApiModel.EmployeeName = relative.Relatives;
+                                relativesApiModel.BirthDate = relative.BDate;
+                                relativesApiModel.MedicalCoverage = relative.CoverPercentage;
+                            }
+                            else
+                                relativeApiModelList.Add(new RelativeApiModel()
+                                {
+                                    RelativeId = relative.Id,
+                                    RelativeName = relative.Relatives,
+                                    Relation = relative.Relation,
+                                    BirthDate = relative.BDate,
+                                    Order = relative.Order,
+                                    MedicalCoverage = relative.CoverPercentage
+                                });
+                        }
+                    }
+                    relativesApiModel.Relatives = relativeApiModelList;
+                    employeeRelativesApi.RelativesApiModel = relativesApiModel;
+                    List<MedicalCategoryModel> medicalCategoryModels = await this._medicalCategoryService.GetAllMedicalCategories();
+                    medicalCategoryModels = type != 1 ? medicalCategoryModels.Where<MedicalCategoryModel>((Func<MedicalCategoryModel, bool>)(a => a.Id != 4L)).ToList<MedicalCategoryModel>() : medicalCategoryModels.Where<MedicalCategoryModel>((Func<MedicalCategoryModel, bool>)(a => a.Id == 4L)).ToList<MedicalCategoryModel>();
+                    if (medicalCategoryModels != null && medicalCategoryModels.Count > 0)
+                        employeeRelativesApi.medicalCategoryAPIModels = this._medicalCategoryService.ConvertMedicalCategoriesModelToMedicalCategoriesAPIModel(medicalCategoryModels, languageCode);
+                    List<MedicalSubCategoryModel> medicalSubCategoryModels = await this._medicalSubCategoryService.GetAllMedicalSubCategories();
+                    long[] lineIDs = medicalCategoryModels.Select<MedicalCategoryModel, long>((Func<MedicalCategoryModel, long>)(l => l.Id)).ToArray<long>();
+                    medicalSubCategoryModels = medicalSubCategoryModels.Where<MedicalSubCategoryModel>((Func<MedicalSubCategoryModel, bool>)(t => ((IEnumerable<long>)lineIDs).Contains<long>(t.MedicalCategory.Id))).ToList<MedicalSubCategoryModel>();
+                    if (medicalSubCategoryModels != null && medicalSubCategoryModels.Count > 0)
+                        employeeRelativesApi.medicalSubCategoryAPIModels = this._medicalSubCategoryService.ConvertMedicalSubCategoriesModelToMedicalSubCategoriesAPIModel(medicalSubCategoryModels, languageCode);
+                    List<MedicalDetailsModel> detailsForCountry = await this._medicalDetailsService.GetMedicalDetailsForCountry(Country);
+                    long[] lineID = medicalSubCategoryModels.Select<MedicalSubCategoryModel, long>((Func<MedicalSubCategoryModel, long>)(l => l.Id)).ToArray<long>();
+                    List<MedicalDetailsModel> list = detailsForCountry.Where<MedicalDetailsModel>((Func<MedicalDetailsModel, bool>)(t => ((IEnumerable<long>)lineID).Contains<long>(t.MedicalSubCategory.Id))).ToList<MedicalDetailsModel>();
+                    if (list != null && list.Count > 0)
+                        employeeRelativesApi.medicalDetailsAPIModels = this._medicalDetailsService.ConvertMedicalDetailsModelToMedicalDetailsAPIModelWithId(list, languageCode);
+                    return employeeRelativesApi;
                 }
-            }
+                    return (EmployeeRelativesApi)null;
+            }  
             else
             {
-                foreach (Relative relative in employeeRelatives)
-                {
-                    if (relative.Relation == "Self")
-                    {
-                        relativesApiModel.RelativeId = relative.Id;
-                        relativesApiModel.CemexId = (int)relative.EmployeeNumber;
-                        relativesApiModel.EmployeeName = relative.Relatives;
-                        relativesApiModel.BirthDate = relative.BDate;
-                        relativesApiModel.MedicalCoverage = relative.CoverPercentage;
-                    }
-                    else
-                        relativeApiModelList.Add(new RelativeApiModel()
-                        {
-                            RelativeId = relative.Id,
-                            RelativeName = relative.Relatives,
-                            Relation = relative.Relation,
-                            BirthDate = relative.BDate,
-                            Order = relative.Order,
-                            MedicalCoverage = relative.CoverPercentage
-                        });
-                }
+               return null;                 
             }
-            relativesApiModel.Relatives = relativeApiModelList;
-            employeeRelativesApi.RelativesApiModel = relativesApiModel;
-            List<MedicalCategoryModel> medicalCategoryModels = await this._medicalCategoryService.GetAllMedicalCategories();
-            medicalCategoryModels = type != 1 ? medicalCategoryModels.Where<MedicalCategoryModel>((Func<MedicalCategoryModel, bool>)(a => a.Id != 4L)).ToList<MedicalCategoryModel>() : medicalCategoryModels.Where<MedicalCategoryModel>((Func<MedicalCategoryModel, bool>)(a => a.Id == 4L)).ToList<MedicalCategoryModel>();
-            if (medicalCategoryModels != null && medicalCategoryModels.Count > 0)
-                employeeRelativesApi.medicalCategoryAPIModels = this._medicalCategoryService.ConvertMedicalCategoriesModelToMedicalCategoriesAPIModel(medicalCategoryModels, languageCode);
-            List<MedicalSubCategoryModel> medicalSubCategoryModels = await this._medicalSubCategoryService.GetAllMedicalSubCategories();
-            long[] lineIDs = medicalCategoryModels.Select<MedicalCategoryModel, long>((Func<MedicalCategoryModel, long>)(l => l.Id)).ToArray<long>();
-            medicalSubCategoryModels = medicalSubCategoryModels.Where<MedicalSubCategoryModel>((Func<MedicalSubCategoryModel, bool>)(t => ((IEnumerable<long>)lineIDs).Contains<long>(t.MedicalCategory.Id))).ToList<MedicalSubCategoryModel>();
-            if (medicalSubCategoryModels != null && medicalSubCategoryModels.Count > 0)
-                employeeRelativesApi.medicalSubCategoryAPIModels = this._medicalSubCategoryService.ConvertMedicalSubCategoriesModelToMedicalSubCategoriesAPIModel(medicalSubCategoryModels, languageCode);
-            List<MedicalDetailsModel> detailsForCountry = await this._medicalDetailsService.GetMedicalDetailsForCountry(Country);
-            long[] lineID = medicalSubCategoryModels.Select<MedicalSubCategoryModel, long>((Func<MedicalSubCategoryModel, long>)(l => l.Id)).ToArray<long>();
-            List<MedicalDetailsModel> list = detailsForCountry.Where<MedicalDetailsModel>((Func<MedicalDetailsModel, bool>)(t => ((IEnumerable<long>)lineID).Contains<long>(t.MedicalSubCategory.Id))).ToList<MedicalDetailsModel>();
-            if (list != null && list.Count > 0)
-                employeeRelativesApi.medicalDetailsAPIModels = this._medicalDetailsService.ConvertMedicalDetailsModelToMedicalDetailsAPIModelWithId(list, languageCode);
-            return employeeRelativesApi;
         }
 
         public async Task<EmployeeRelativesApiModel> GetEmployeeRelativesApiModel(

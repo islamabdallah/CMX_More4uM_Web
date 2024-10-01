@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository.EntityFramework;
 
@@ -11,9 +12,10 @@ using Repository.EntityFramework;
 namespace Repository.EntityFramework.Migrations
 {
     [DbContext(typeof(APPDBContext))]
-    partial class APPDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240926085959_hasmedical")]
+    partial class hasmedical
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1191,43 +1193,6 @@ namespace Repository.EntityFramework.Migrations
                     b.HasIndex("MedicalRequestId");
 
                     b.ToTable("MedicalAttachments");
-                });
-
-            modelBuilder.Entity("MoreForYou.Models.Models.MedicalModels.MedicalItem", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Dose")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DrugName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDelted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsVisible")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Quantity")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MedicalItems");
                 });
 
             modelBuilder.Entity("MoreForYou.Models.Models.MedicalModels.MedicalRequest", b =>

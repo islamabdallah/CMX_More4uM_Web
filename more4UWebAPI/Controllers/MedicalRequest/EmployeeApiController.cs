@@ -54,13 +54,6 @@ namespace More4UWebAPI.Controllers.MedicalRequest
             EmployeeModel result1 = employeeApiController._employeeService.GetEmployee(Convert.ToInt64(userNumber)).Result;
             int int32_1 = Convert.ToInt32(languageCode);
             int int32_2 = Convert.ToInt32(type);
-            if (!result1.IsDirectEmployee)
-                return (ActionResult)employeeApiController.BadRequest((object)new
-                {
-                    Flag = false,
-                    Message = UserMessage.InvalidEmployeeData[int32_1],
-                    Data = 0
-                });
             if (result1 == null)
                 return (ActionResult)employeeApiController.BadRequest((object)new
                 {
@@ -68,6 +61,25 @@ namespace More4UWebAPI.Controllers.MedicalRequest
                     Message = UserMessage.InvalidEmployeeData[int32_1],
                     Data = 0
                 });
+            if (!result1.IsDirectEmployee)
+                return (ActionResult)employeeApiController.BadRequest((object)new
+                {
+                    Flag = false,
+                    Message = UserMessage.InvalidEmployeeData[int32_1],
+                    Data = 0
+                });
+          
+            //if (!result1.HasMedicalService==null)
+            //{
+                if (!(bool)result1.HasMedicalService)
+                    return (ActionResult)employeeApiController.BadRequest((object)new
+                    {
+                        Flag = false,
+                        Message = UserMessage.LoginIndirect[int32_1],
+                        Data = 0
+                    });
+          //  }
+               
             switch (int32_2)
             {
                 case 1:
@@ -89,7 +101,9 @@ namespace More4UWebAPI.Controllers.MedicalRequest
                         employeeRelativesApiModel = result2.RelativesApiModel,
                         Category = result2.medicalCategoryAPIModels,
                         SubCategory = result2.medicalSubCategoryAPIModels,
-                        MedicalDetails = result2.medicalDetailsAPIModels
+                        MedicalDetails = result2.medicalDetailsAPIModels,
+                        requestPurposes = new List<string> { "checkup", "hospital Admission" }
+                        //data = result1.HasMedicalService
                     });
                 case 3:
                     EmployeeRelativesApiModel result3 = employeeApiController._relativeService.GetEmployeeRelativesApiModel(Convert.ToInt64(userNumber), int32_1).Result;
@@ -109,7 +123,8 @@ namespace More4UWebAPI.Controllers.MedicalRequest
                         employeeRelativesApiModel = result3,
                         Category = 0,
                         SubCategory = 0,
-                        MedicalDetails = 0
+                        MedicalDetails = 0,
+                         requestPurposes = new List<string> { "checkup", "hospital Admission" }
                     });
                 default:
                     return (ActionResult)employeeApiController.BadRequest((object)new
@@ -133,8 +148,8 @@ namespace More4UWebAPI.Controllers.MedicalRequest
                     Message = UserMessage.InvalidEmployeeData[languageCode],
                     Data = 0
                 });
-            AspNetUser byIdAsync = await employeeApiController._userManager.FindByIdAsync(result.UserId);
-            if (!employeeApiController._userManager.GetRolesAsync(byIdAsync).Result.ToList<string>().Contains("MedicalAdmin"))
+            AspNetUser byIdAsync = await _userManager.FindByIdAsync(result.UserId);
+            if (!_userManager.GetRolesAsync(byIdAsync).Result.ToList<string>().Contains("MedicalAdmin"))
                 return (ActionResult)employeeApiController.BadRequest((object)new
                 {
                     Flag = false,
@@ -167,7 +182,7 @@ namespace More4UWebAPI.Controllers.MedicalRequest
             return (ActionResult)this.Ok((object)new
             {
                 Message = "Done",
-                Data = "heellllllllllllllllllllllllllllllo"
+                Data = "ghg"
             });
         }
 

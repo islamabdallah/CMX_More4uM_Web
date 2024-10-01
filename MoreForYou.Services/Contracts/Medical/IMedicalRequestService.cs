@@ -25,7 +25,7 @@ namespace MoreForYou.Services.Contracts.Medical
 
         bool SendRequestToMedicalAdminRole(MedicalRequest model);
 
-        bool SendRequestToDoctorRoleAsync(MedicalRequest model);
+        Task<bool> SendRequestToDoctorRoleAsync(MedicalRequest model);
 
         MedicalRequest addMedicalRequest(MedicalRequest model, List<IFormFile> files);
 

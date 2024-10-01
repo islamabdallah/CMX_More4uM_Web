@@ -69,6 +69,7 @@ namespace Repository.EntityFramework
         public DbSet<MedicalAttachment> MedicalAttachments { get; set; }
 
         public DbSet<MedicalResponse> MedicalResponses { get; set; }
+        public DbSet<MedicalItem> MedicalItems { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

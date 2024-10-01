@@ -15,7 +15,9 @@ namespace MoreForYou.Services.Models.API
 
         public bool IsDoctor { get; set; }
 
-        public bool HasMedicalService { get; set; }
+        public bool? HasMedicalService { get; set; }
+
+        public bool? hasMore4uService { get; set; }
 
         public string PositionName { get; set; }
         public string DepartmentName { get; set; }

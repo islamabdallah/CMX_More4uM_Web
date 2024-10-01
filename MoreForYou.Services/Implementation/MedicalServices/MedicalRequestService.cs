@@ -39,6 +39,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
         private readonly IRepository<MedicalAttachment, long> _attachmentrepository;
         private readonly IRepository<MedicalRequestType, long> _typerepository;
         private readonly IRepository<Relative, long> _employeeRepository;
+        private readonly IRepository<MedicalItem, long> _itemsRepository;
         private readonly ILogger<MedicalRequestService> _logger;
         private readonly IMapper _mapper;
         private readonly IRequestWorkflowService _requestWorkflowService;
@@ -64,6 +65,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
           IRepository<Relative, long> employeeRepository,
           IRequestWorkflowService requestWorkflowService,
           IRepository<MedicalRequestType, long> typerepository,
+          IRepository<MedicalItem, long> itemsRepository,
           IEmployeeService employeeService,
           APPDBContext context,
           UserManager<AspNetUser> userManager,
@@ -81,6 +83,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             _logger = logger;
             _mapper = mapper;
             _logrepository = logrepository;
+            _itemsRepository = itemsRepository;
             _attachmentrepository = attachmentrepository;
             _requestWorkflowService = requestWorkflowService;
             _typerepository = typerepository;
@@ -183,9 +186,17 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                 if (relative != null)
                     requestModel.RequestedFor = relative.Id;
             }
+            if (requestAPI.requestType==1)
+            {
+                requestModel.MedicalPurpose = "Medication";
+            }
+            else
+            {
+                requestModel.MedicalPurpose = requestAPI.medicalPurpose;
+            }
             requestModel.RequestDate = requestAPI.requestDate;
             requestModel.RequestMedicalEntity = requestAPI.medicalEntityId;
-            requestModel.MedicalPurpose = "Medication";
+            
             requestModel.RequestComment = requestAPI.comment;
             requestModel.MonthlyMedication = requestAPI.monthlyMedication;
             requestModel.CreatedDate = DateTime.Now;
@@ -266,7 +277,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             throw new NotImplementedException();
         }
 
-        public bool SendRequestToDoctorRoleAsync(MedicalRequest model)
+        public async Task<bool> SendRequestToDoctorRoleAsync(MedicalRequest model)
         {
             try
             {
@@ -274,11 +285,10 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                 List<AspNetUser> list = _userManager.GetUsersInRoleAsync("Doctor").Result.ToList<AspNetUser>();
                 RoleModel result2 = _roleService.GetRoleByName("Doctor").Result;
                 RequestWokflowModel requestWokflowModel = new RequestWokflowModel();
-                using (List<AspNetUser>.Enumerator enumerator = list.GetEnumerator())
+                foreach (IdentityUser<string> identityUser in list)
                 {
-                    if (enumerator.MoveNext())
-                    {
-                        EmployeeModel result3 = _employeeService.GetEmployeeByUserId(enumerator.Current.Id).Result;
+                   
+                        EmployeeModel result3 = _employeeService.GetEmployeeByUserId(identityUser.Id).Result;
                         MedicalRequestType result4 = _typerepository.Find(i => i.Id == model.MedicalRequestTypeId).FirstOrDefaultAsync().Result;
                         NotificationModel model1 = new NotificationModel();
                         string str1 = "Request";
@@ -312,7 +322,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                                 {
                                     if (str1 == "Request")
                                     {
-                                        IClientProxy clientProxy = _hub.Clients.Client(connectionId);
+                                      //  IClientProxy clientProxy = _hub.Clients.Client(connectionId);
                                         string str4 = str1;
                                         DateTime dateTime = model.CreatedDate.Date;
                                         string str5 = dateTime.ToString("dd-MM-yyyy");
@@ -323,14 +333,14 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                                         string str6 = str2;
                                         string fullName = result3.FullName;
                                         string userId = result3.UserId;
-                                        CancellationToken cancellationToken = new CancellationToken();
-                                        clientProxy.SendAsync("sendToUser", (object)str4, (object)str5, (object)shortTimeString, (object)id, (object)str6, (object)fullName, (object)userId, cancellationToken);
+                                       // CancellationToken cancellationToken = new CancellationToken();
+                                        await _hub.Clients.Client(connectionId).SendAsync("sendToUser", (object)str4, (object)str5, (object)shortTimeString, (object)id, (object)str6, (object)fullName, (object)userId);
                                     }
                                 }
                             }
                         }
                         return true;
-                    }
+                    
                 }
             }
             catch (Exception ex)
@@ -450,10 +460,12 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             EmployeeModel result = _employeeService.GetEmployee(EmployeeNumber).Result;
             if (result != null)
             {
-                if (_userManager.GetRolesAsync(await   _userManager.FindByIdAsync(result.UserId)).Result.ToList<string>().Contains("Doctor"))
+                 if (_userManager.GetRolesAsync(await _userManager.FindByIdAsync(result.UserId)).Result.ToList<string>().Contains("Doctor"))
                     medicalRequestDetailsModel.MedicalResponse = GetMedicalResponseForDoctor(MedicalRequestId, langCode);
                 else if (Request.Status != "Pending")
                     medicalRequestDetailsModel.MedicalResponse = GetMedicalResponseForEmployee(MedicalRequestId, langCode);
+                
+               
             }
             return medicalRequestDetailsModel;
         }
@@ -471,7 +483,35 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             responseForEmployee.feedback = Request.MedicalRequest.ResponseFeedback;
             responseForEmployee.responseComment = Request.MedicalRequest.ResponseReason;
             responseForEmployee.medicalItems = new List<MedicalItemsAPIModel>();
-            if (Request.MedicalRequest.ResponseMedicalEntity.HasValue)
+            var responseList = _context.MedicalResponses.Where<MedicalResponse>((Expression<Func<MedicalResponse, bool>>)(t => t.MedicalRequestId == MedicalRequestId)).ToList<MedicalResponse>();
+
+            if (responseList != null)
+            {
+                if(responseList.Count > 0)
+                {
+                    foreach (var item in responseList)
+                    {
+                        var medicin = _context.MedicalItems.Where(t => t.Id == item.MedicalItemId).FirstOrDefault();
+                        if(medicin != null)
+                        {
+                            MedicalItemsAPIModel medicalItems = new MedicalItemsAPIModel()
+                            {
+                                itemId = medicin.Id.ToString(),
+                                itemName = medicin.DrugName,
+                                itemType = medicin.Type,
+                                itemQuantity = item.Quantity.ToString(),
+                                itemDose = medicin.Dose,
+                                itemImage = CommanData.Url + CommanData.MedicalRequestFolder + "capsules_10895948.PNG"
+                            };
+                            responseForEmployee.medicalItems.Add(medicalItems);
+                        }
+                        
+                    }
+
+                }
+            }
+          
+            if (Request.MedicalRequest.ResponseMedicalEntity.HasValue && Request.MedicalRequest.ResponseMedicalEntity!=0)
             {
                 responseForEmployee.medicalEntity = _context.MedicalDetails.Where<MedicalDetails>((Expression<Func<MedicalDetails, bool>>)(t => (long?)t.Id == (long?)Request.MedicalRequest.ResponseMedicalEntity)).FirstOrDefault<MedicalDetails>().Name_EN;
                 List<MedicalDetailsModel> list = _medicalDetailsService.GetMedicalDetailsForCountry("Assuit").Result.Where<MedicalDetailsModel>((Func<MedicalDetailsModel, bool>)(t =>
@@ -485,51 +525,51 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                 if (list != null && list.Count > 0)
                     responseForEmployee.medicalEntities = _medicalDetailsService.ConvertMedicalDetailsModelToMedicalDetailsAPIModelWithId(list, langCode);
             }
-            responseForEmployee.medicalItems = new List<MedicalItemsAPIModel>()
-      {
-        new MedicalItemsAPIModel()
-        {
-          itemId = "1",
-          itemName = "panadol",
-          itemType = "taplet",
-          itemQuantity = "1"
-        },
-        new MedicalItemsAPIModel()
-        {
-          itemId = "2",
-          itemName = "kaphsid",
-          itemType = "taplet",
-          itemQuantity = "1"
-        },
-        new MedicalItemsAPIModel()
-        {
-          itemId = "3",
-          itemName = "vitamin c",
-          itemType = "taplet",
-          itemQuantity = "1"
-        },
-        new MedicalItemsAPIModel()
-        {
-          itemId = "4",
-          itemName = "otrivin",
-          itemType = "drops",
-          itemQuantity = "1"
-        },
-        new MedicalItemsAPIModel()
-        {
-          itemId = "5",
-          itemName = "Ivyrospan",
-          itemType = "syrup",
-          itemQuantity = "1"
-        },
-        new MedicalItemsAPIModel()
-        {
-          itemId = "6",
-          itemName = "adol",
-          itemType = "syrup",
-          itemQuantity = "1"
-        }
-      };
+      //      responseForEmployee.medicalItems = new List<MedicalItemsAPIModel>()
+      //{
+      //  new MedicalItemsAPIModel()
+      //  {
+      //    itemId = "1",
+      //    itemName = "panadol",
+      //    itemType = "taplet",
+      //    itemQuantity = "1"
+      //  },
+      //  new MedicalItemsAPIModel()
+      //  {
+      //    itemId = "2",
+      //    itemName = "kaphsid",
+      //    itemType = "taplet",
+      //    itemQuantity = "1"
+      //  },
+      //  new MedicalItemsAPIModel()
+      //  {
+      //    itemId = "3",
+      //    itemName = "vitamin c",
+      //    itemType = "taplet",
+      //    itemQuantity = "1"
+      //  },
+      //  new MedicalItemsAPIModel()
+      //  {
+      //    itemId = "4",
+      //    itemName = "otrivin",
+      //    itemType = "drops",
+      //    itemQuantity = "1"
+      //  },
+      //  new MedicalItemsAPIModel()
+      //  {
+      //    itemId = "5",
+      //    itemName = "Ivyrospan",
+      //    itemType = "syrup",
+      //    itemQuantity = "1"
+      //  },
+      //  new MedicalItemsAPIModel()
+      //  {
+      //    itemId = "6",
+      //    itemName = "adol",
+      //    itemType = "syrup",
+      //    itemQuantity = "1"
+      //  }
+      //};
             return responseForEmployee;
         }
 
@@ -556,30 +596,53 @@ namespace MoreForYou.Services.Implementation.MedicalServices
         };
                 responseForDoctor.feedbackCollection = stringList;
                 if (Request.MedicalRequest.MedicalRequestTypeId == 1)
-                    responseForDoctor.medicalItems = new List<MedicalItemsAPIModel>()
-          {
-            new MedicalItemsAPIModel()
-            {
-              itemId = "1",
-              itemName = "panadol",
-              itemType = "taplet",
-              itemQuantity = "1"
-            },
-            new MedicalItemsAPIModel()
-            {
-              itemId = "2",
-              itemName = "kaphsid",
-              itemType = "taplet",
-              itemQuantity = "1"
-            },
-            new MedicalItemsAPIModel()
-            {
-              itemId = "6",
-              itemName = "adol",
-              itemType = "syrup",
-              itemQuantity = "1"
-            }
-          };
+                {
+                    var itemList = _itemsRepository.Find(t => t.IsVisible == true).ToList();
+                    responseForDoctor.medicalItems = new List<MedicalItemsAPIModel>();
+                    if (itemList.Count > 0)
+                    {
+                        foreach (var item in itemList)
+                        {
+                            MedicalItemsAPIModel medical = new MedicalItemsAPIModel()
+                            {
+                                itemId = item.Id.ToString(),
+                                itemName = item.DrugName,
+                                itemType = item.Type,
+                                itemQuantity ="0", //item.Quantity,
+                                itemDose = item.Dose
+                            };
+                            responseForDoctor.medicalItems.Add(medical);
+                        }
+                    }
+                }
+          //          responseForDoctor.medicalItems = new List<MedicalItemsAPIModel>()
+          //{
+          //  new MedicalItemsAPIModel()
+          //  {
+          //    itemId = "1",
+          //    itemName = "panadol",
+          //    itemType = "taplet",
+          //    itemQuantity = "1",
+          //    itemDose="50mg/ml"
+          //  },
+          //  new MedicalItemsAPIModel()
+          //  {
+          //    itemId = "2",
+          //    itemName = "kaphsid",
+          //    itemType = "taplet",
+          //    itemQuantity = "1",
+          //    itemDose="50mg/ml"
+          //  },
+          //  new MedicalItemsAPIModel()
+          //  {
+          //    itemId = "6",
+          //    itemName = "adol",
+          //    itemType = "syrup",
+          //    itemQuantity = "1",
+          //    itemDose="50mg/ml"
+          //  }
+          //};
+             
             }
             else
             {
@@ -588,8 +651,11 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                 responseForDoctor.feedback = Request.MedicalRequest.ResponseFeedback;
                 responseForDoctor.responseComment = Request.MedicalRequest.ResponseReason;
                 responseForDoctor.attachment = GetRequestAttachmentsByStatus(MedicalRequestId, "Response");
-                responseForDoctor.medicalEntity = _context.MedicalDetails.Where<MedicalDetails>((Expression<Func<MedicalDetails, bool>>)(t => (long?)t.Id == (long?)Request.MedicalRequest.ResponseMedicalEntity)).FirstOrDefault<MedicalDetails>().Name_EN;
-                if (Request.MedicalRequest.ResponseMedicalEntity.HasValue)
+                if (Request.MedicalRequest.ResponseMedicalEntity.HasValue && Request.MedicalRequest.ResponseMedicalEntity > 0)
+                {
+                    responseForDoctor.medicalEntity = _context.MedicalDetails.Where<MedicalDetails>((Expression<Func<MedicalDetails, bool>>)(t => (long?)t.Id == (long?)Request.MedicalRequest.ResponseMedicalEntity)).FirstOrDefault<MedicalDetails>().Name_EN;
+                }
+                    if (Request.MedicalRequest.ResponseMedicalEntity.HasValue && Request.MedicalRequest.ResponseMedicalEntity>0)
                 {
                     responseForDoctor.medicalEntity = _context.MedicalDetails.Where<MedicalDetails>((Expression<Func<MedicalDetails, bool>>)(t => (long?)t.Id == (long?)Request.MedicalRequest.ResponseMedicalEntity)).FirstOrDefault<MedicalDetails>().Name_EN;
                     List<MedicalDetailsModel> list = _medicalDetailsService.GetMedicalDetailsForCountry("Assuit").Result.Where<MedicalDetailsModel>((Func<MedicalDetailsModel, bool>)(t =>
@@ -603,7 +669,40 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                     if (list != null && list.Count > 0)
                         responseForDoctor.medicalEntities = _medicalDetailsService.ConvertMedicalDetailsModelToMedicalDetailsAPIModelWithId(list, langCode);
                 }
-                responseForDoctor.medicalItems = new List<MedicalItemsAPIModel>();
+               // responseForDoctor.medicalItems = new List<MedicalItemsAPIModel>();
+                if (Request.MedicalRequest.MedicalRequestTypeId == 1)
+                {
+                    //var itemList = _itemsRepository.Find(t => t.IsVisible == true).ToList();
+                    responseForDoctor.medicalItems = new List<MedicalItemsAPIModel>();
+                    var responseList = _context.MedicalResponses.Where<MedicalResponse>((Expression<Func<MedicalResponse, bool>>)(t => t.MedicalRequestId == MedicalRequestId)).ToList<MedicalResponse>();
+
+                    if (responseList != null)
+                    {
+                        if (responseList.Count > 0)
+                        {
+                            foreach (var item in responseList)
+                            {
+                                var medicin = _context.MedicalItems.Where(t => t.Id == item.MedicalItemId).FirstOrDefault();
+                                if (medicin != null)
+                                {
+                                    MedicalItemsAPIModel medicalItems = new MedicalItemsAPIModel()
+                                    {
+                                        itemId = medicin.Id.ToString(),
+                                        itemName = medicin.DrugName,
+                                        itemType = medicin.Type,
+                                        itemQuantity = item.Quantity.ToString(),
+                                        itemDose = medicin.Dose,
+                                        itemImage = CommanData.Url + CommanData.MedicalRequestFolder + "capsules_10895948.PNG"
+                                    };
+                                    responseForDoctor.medicalItems.Add(medicalItems);
+                                }
+
+                            }
+
+                        }
+                    }
+
+                }
             }
             return responseForDoctor;
         }
@@ -697,8 +796,10 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                 list = _logrepository.Find((Expression<Func<MedicalRequestLog, bool>>)(t => t.IsActive == true && t.MedicalRequest.RequestedBy == Convert.ToInt64(searchModel.userNumberSearch) && t.MedicalRequestId == Convert.ToInt64(searchModel.requestId)), false, (Expression<Func<MedicalRequestLog, object>>)(t => t.MedicalRequest)).ToList<MedicalRequestLog>();
             else if (searchModel.requestId != "")
                 list = _logrepository.Find((Expression<Func<MedicalRequestLog, bool>>)(t => t.IsActive == true && t.MedicalRequestId == Convert.ToInt64(searchModel.requestId)), false, (Expression<Func<MedicalRequestLog, object>>)(t => t.MedicalRequest)).ToList<MedicalRequestLog>();
-            else
+            else if (searchModel.userNumberSearch != "")
                 list = _logrepository.Find((Expression<Func<MedicalRequestLog, bool>>)(t => t.IsActive == true && t.MedicalRequest.RequestedBy == Convert.ToInt64(searchModel.userNumberSearch)), false, (Expression<Func<MedicalRequestLog, object>>)(t => t.MedicalRequest)).ToList<MedicalRequestLog>();
+            else
+            return (PendingRequestApiModel)null;
             if (list == null || list.Count <= 0)
                 return (PendingRequestApiModel)null;
             if (searchModel.selectedRequestType != "")

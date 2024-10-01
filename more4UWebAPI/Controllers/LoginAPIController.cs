@@ -161,19 +161,34 @@ namespace More4UWebAPI.APIController
         public async Task<ActionResult> getCurrentUser(long userNumber, int languageId)
         {
             LoginAPIController loginApiController = this;
+
+            /*
+             * Check Employee Exist 
+             * Check Direct Employee
+             *
+             */
+
+
+            #region Check Employee
+
             EmployeeModel result1 = loginApiController._EmployeeService.GetEmployee(userNumber).Result;
+            //Employee not exist
             if (result1 == null)
                 return (ActionResult)loginApiController.BadRequest((object)new
                 {
                     Message = UserMessage.LoginIndirect[languageId],
                     Data = 0
                 });
+
+            //Not Direct
             if (!result1.IsDirectEmployee)
                 return (ActionResult)loginApiController.BadRequest((object)new
                 {
                     Message = UserMessage.InValidData[languageId],
                     Data = 0
                 });
+
+            //Check duplicate 
             EmployeeModel employeeModel = await loginApiController._EmployeeService.GetEmployeeByUserId(result1.UserId);
             if (employeeModel == null)
                 return (ActionResult)loginApiController.BadRequest((object)new
@@ -181,6 +196,7 @@ namespace More4UWebAPI.APIController
                     Message = UserMessage.InValidData[languageId],
                     Data = 0
                 });
+
             AspNetUser aspNetUser = await loginApiController._userManager.FindByIdAsync(employeeModel.UserId);
             if (aspNetUser == null)
                 return (ActionResult)loginApiController.BadRequest((object)new
@@ -188,6 +204,10 @@ namespace More4UWebAPI.APIController
                     Message = UserMessage.InValidData[languageId],
                     Data = 0
                 });
+
+            #endregion
+
+
             HomeApiModel homeModel = new HomeApiModel();
             HomeModel homeModel1 = await loginApiController._BenefitService.ShowAllBenefits(employeeModel, languageId);
             homeModel.UserUnSeenNotificationCount = loginApiController._userNotificationService.GetUserUnseenNotificationCount(employeeModel.EmployeeNumber);
@@ -195,7 +215,7 @@ namespace More4UWebAPI.APIController
             homeModel.user = homeModel1.user;
             homeModel.user.Email = aspNetUser.Email;
             List<string> list = loginApiController._userManager.GetRolesAsync(aspNetUser).Result.ToList<string>();
-            homeModel.user.HasMedicalService = employeeModel.Country == "Assiut";
+            //homeModel.user.HasMedicalService = employeeModel.Country == "Assiut";
             if (list.Count != 0)
             {
                 homeModel.user.HasRoles = true;
@@ -210,9 +230,20 @@ namespace More4UWebAPI.APIController
             }
             homeModel.PendingRequestMedicalCount = loginApiController._medicalRequest.GetAllMedicalRequestsByType(4, 1).requests.Where<PendingRequestSummeyModel>((Func<PendingRequestSummeyModel, bool>)(t => t.requestStatus == "Pending")).ToList<PendingRequestSummeyModel>().Count<PendingRequestSummeyModel>();
             EmployeeRelativesApiModel result2 = loginApiController._relativeService.GetEmployeeRelativesApiModel(userNumber, languageId).Result;
-            homeModel.MedicalCoverage = result2.MedicalCoverage;
-            homeModel.RelativeCount = result2.Relatives.Count<RelativeApiModel>();
-            homeModel.user.Relatives = result2.Relatives;
+
+            if (result2 != null)
+            {
+                homeModel.MedicalCoverage = string.IsNullOrEmpty(result2.MedicalCoverage) ? "0" : result2.MedicalCoverage;
+                homeModel.RelativeCount = result2.Relatives!=null ? result2.Relatives.Count<RelativeApiModel>() : 0;
+                homeModel.user.Relatives = result2.Relatives;
+            }
+            else
+            {
+                homeModel.MedicalCoverage = "";
+                homeModel.RelativeCount = 0;
+                homeModel.user.Relatives = null;
+            }
+            
             return (ActionResult)loginApiController.Ok((object)new
             {
                 Message = UserMessage.Done[languageId],

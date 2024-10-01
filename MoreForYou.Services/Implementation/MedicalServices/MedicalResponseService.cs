@@ -92,6 +92,11 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                 {
                     long RequestId = Convert.ToInt64(model.requestId);
                     int int32 = Convert.ToInt32(model.status);
+                    string str1 = "Approved";
+                    if (int32 == 4)
+                    {
+                         str1 = "Rejected";
+                    }
                     MedicalRequestLog medicalRequestLog1 = _logrepository.Find((Expression<Func<MedicalRequestLog, bool>>)(i => i.MedicalRequestId == RequestId && i.IsActive == true), false, (Expression<Func<MedicalRequestLog, object>>)(i => i.MedicalRequest)).FirstOrDefault<MedicalRequestLog>();
                     if (medicalRequestLog1 == null || !(medicalRequestLog1.Status == "Pending"))
                         return (string)null;

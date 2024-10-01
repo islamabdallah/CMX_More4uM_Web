@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MoreForYou.APIController.Medical
 {
-    [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class MedicalAPIController : ControllerBase

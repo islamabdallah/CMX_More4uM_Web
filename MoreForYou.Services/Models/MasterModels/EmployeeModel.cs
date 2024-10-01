@@ -65,7 +65,9 @@ namespace MoreForYou.Services.Models.MaterModels
         public long? SupervisorId { get; set; }
 
         public bool isDeptManager { get; set; }
+        public bool? HasMedicalService { get; set; }
 
+        public bool? hasMore4uService { get; set; }
         [Required]
         public string Address { get; set; }
 

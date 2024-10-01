@@ -12,11 +12,44 @@
 <script src="~/js/JQuery/jquery-3.5.1.js"></script>
 <script src="~/js/sweetalert.min.js"></script>
 <script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Done !",
+                text: message,
+                icon: "success",
+            });
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Fail !",
+                text: error,
+                icon: "error",
+            });
+        }
+    }
+</script>
+<script>
     $(document).ready(function () {
         $('#example').DataTable();
     });
 </script>
-
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (ViewBag.Error != null)
+{
+    <input type="hidden" id="error" value="@ViewBag.Error" />
+    <script>
+        showAlert("Error");
+    </script>
+}
 <div class="row my-4">
     <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
         <div class="card">
@@ -25,8 +58,8 @@
                     <div class="col-lg-6 col-7">
                         <h6>Report</h6>
                         <p class="text-sm mb-0">
-                            <i class="fa fa-check text-info" aria-hidden="true"></i>
-                            <span class="font-weight-bold ms-1">Searching</span> Criteria
+                            <i class="fa fa-check text-gradient text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1 text-gradient text-info">Searching</span> Criteria
                         </p>
                     </div>
                     <div class="col-lg-6 col-5 my-auto text-end">
@@ -83,7 +116,7 @@
                             </div>
 
                             <div class="text-left">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn bg-gradient-info">
                                     Search
                                 </button>
                             </div>
@@ -147,8 +180,8 @@
                     <div class="col-lg-6 col-7">
                         <h6>Requests</h6>
                         <p class="text-sm mb-0">
-                            <i class="fa fa-check text-info" aria-hidden="true"></i>
-                            <span class="font-weight-bold ms-1">Searching</span> Results
+                            <i class="fa fa-check text-gradient text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1 text-gradient text-info">Searching</span> Results
                         </p>
                     </div>
                     <div class="col-lg-6 col-5 my-auto text-end">
@@ -175,6 +208,7 @@
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestID</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">employeeNumber </th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">employeeName </th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Requested For </th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Submit Data</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestType</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestStatus</th>
@@ -208,6 +242,19 @@
                                             <td class="text-center">
                                                 <div class="avatar-group mt-2">
                                                     @item.employeeName
+                                                </div>
+                                            </td>
+
+                                            <td class="text-center">
+                                                <div class="avatar-group mt-2">
+                                                    @if (item.selfRequest == true)
+                                                    {
+                                                        <span>Self Insurance</span>
+                                                    }
+                                                     else
+                                                    {
+                                                        <span>Family Insurance</span>
+                                                    }
                                                 </div>
                                             </td>
 
@@ -251,7 +298,7 @@
                                             }
                                             </td>
                                             <td>
-                                                <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" onclick="" href="#">
+                                                <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" asp-action="Details" asp-route-id="@item.requestID">
                                                     Details
                                                     <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
                                                 </a>
