@@ -2,6 +2,7 @@
 using Data.Repository;
 using Microsoft.Extensions.Logging;
 using MoreForYou.Models.Models.MasterModels;
+using MoreForYou.Models.Models.MedicalModels;
 using MoreForYou.Services.Contracts;
 using MoreForYou.Services.Models;
 using MoreForYou.Services.Models.API;
@@ -10,6 +11,7 @@ using MoreForYou.Services.Models.MaterModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace MoreForYou.Services.Implementation
@@ -17,6 +19,7 @@ namespace MoreForYou.Services.Implementation
     public class UserNotificationService : IUserNotificationService
     {
         private readonly IRepository<UserNotification, long> _repository;
+        private readonly IRepository<MedicalRequestLog, long> _medicalRepository;
         private readonly ILogger<UserNotificationService> _logger;
         private readonly IMapper _mapper;
         private readonly IEmployeeService _employeeService;
@@ -25,12 +28,13 @@ namespace MoreForYou.Services.Implementation
         public UserNotificationService(IRepository<UserNotification, long> repository,
             ILogger<UserNotificationService> logger,
             IMapper mapper,
-            IEmployeeService employeeService)
+            IEmployeeService employeeService, IRepository<MedicalRequestLog, long> medicalRepository)
         {
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
             _employeeService = employeeService;
+            _medicalRepository = medicalRepository;
         }
         public UserNotificationModel CreateUserNotification(UserNotificationModel model)
         {
@@ -84,19 +88,49 @@ namespace MoreForYou.Services.Implementation
                 foreach (var userNotification in userNotificationModels)
                 {
                     NotificationAPIModel notificationAPIModel = new NotificationAPIModel();
-                    if (userNotification.Notification.Type == "Request" || userNotification.Notification.Type == "CreateGroup" )
+                   
+                    if (userNotification.Notification.Type == "Request" || userNotification.Notification.Type == "CreateGroup" || userNotification.Notification.Type == "MedicalAction")
                     {
-                        notificationAPIModel.UserFullName = userNotification.Notification.BenefitRequest.Employee.FullName;
-                        notificationAPIModel.UserNumber = userNotification.Notification.BenefitRequest.Employee.EmployeeNumber;
-                        notificationAPIModel.UserProfilePicture = CommanData.Url + CommanData.ProfileFolder +  userNotification.Notification.BenefitRequest.Employee.ProfilePicture;
+                        if (userNotification.Notification.BenefitRequestId == null)
+                        {
+                            MedicalRequestLog medicalRequest2 = _medicalRepository.Find((Expression<Func<MedicalRequestLog, bool>>)(i => i.MedicalRequestId == userNotification.Notification.MedicalRequestId && i.IsActive == true)).FirstOrDefault<MedicalRequestLog>();
+                            EmployeeModel result = _employeeService.GetEmployeeByUserId(medicalRequest2.CreatedBy).Result;
+                            notificationAPIModel.UserFullName = result.FullName;
+                            notificationAPIModel.UserNumber = result.EmployeeNumber;
+                            notificationAPIModel.UserProfilePicture = CommanData.Url + CommanData.ProfileFolder + result.ProfilePicture;
+                            notificationAPIModel.RequestStatus = medicalRequest2.Status;
+                            notificationAPIModel.MedicalRequestNumber = userNotification.Notification.MedicalRequestId;
+                        }
+                        else
+                        {
+                            notificationAPIModel.UserFullName = userNotification.Notification.BenefitRequest.Employee.FullName;
+                            notificationAPIModel.UserNumber = userNotification.Notification.BenefitRequest.Employee.EmployeeNumber;
+                            notificationAPIModel.UserProfilePicture = CommanData.Url + CommanData.ProfileFolder + userNotification.Notification.BenefitRequest.Employee.ProfilePicture;
+                            notificationAPIModel.RequestStatus = userNotification.Notification.BenefitRequest.RequestStatus.Name;
+                        }
 
                     }
-                    else if (userNotification.Notification.Type == "Response" || userNotification.Notification.Type == "Take Action")
+                    else if (userNotification.Notification.Type == "Response" || userNotification.Notification.Type == "Take Action" || userNotification.Notification.Type== "MedicalView")
                     {
-                        EmployeeModel employeeModel = _employeeService.GetEmployee((long)userNotification.Notification.ResponsedBy).Result;
-                        notificationAPIModel.UserNumber = employeeModel.EmployeeNumber;
-                        notificationAPIModel.UserFullName = employeeModel.FullName;
-                        notificationAPIModel.UserProfilePicture =CommanData.Url + CommanData.ProfileFolder + employeeModel.ProfilePicture;
+                        if (userNotification.Notification.BenefitRequestId == null)
+                        {
+                            MedicalRequestLog medicalRequest2 = _medicalRepository.Find((Expression<Func<MedicalRequestLog, bool>>)(i => i.MedicalRequestId == userNotification.Notification.MedicalRequestId && i.IsActive == true)).FirstOrDefault<MedicalRequestLog>();
+                            EmployeeModel result = _employeeService.GetEmployeeByUserId(medicalRequest2.CreatedBy).Result;
+                            notificationAPIModel.UserFullName = result.FullName;
+                            notificationAPIModel.UserNumber = result.EmployeeNumber;
+                            notificationAPIModel.UserProfilePicture = CommanData.Url + CommanData.ProfileFolder + result.ProfilePicture;
+                            notificationAPIModel.RequestStatus = medicalRequest2.Status;
+                            notificationAPIModel.MedicalRequestNumber = userNotification.Notification.MedicalRequestId;
+                        }
+                        else
+                        {
+                            EmployeeModel employeeModel = _employeeService.GetEmployee((long)userNotification.Notification.ResponsedBy).Result;
+                            notificationAPIModel.UserNumber = employeeModel.EmployeeNumber;
+                            notificationAPIModel.UserFullName = employeeModel.FullName;
+                            notificationAPIModel.UserProfilePicture = CommanData.Url + CommanData.ProfileFolder + employeeModel.ProfilePicture;
+                            notificationAPIModel.RequestStatus = userNotification.Notification.BenefitRequest.RequestStatus.Name;
+                        }
+                       
 
                     }
                    switch(languageId)
@@ -109,10 +143,22 @@ namespace MoreForYou.Services.Implementation
                             break;
                     }
                     notificationAPIModel.NotificationType = userNotification.Notification.Type;
-                    notificationAPIModel.RequestStatus = userNotification.Notification.BenefitRequest.RequestStatus.Name;
+                  //  notificationAPIModel.RequestStatus = userNotification.Notification.BenefitRequest.RequestStatus.Name;
                     notificationAPIModel.Date = userNotification.CreatedDate;
-                    notificationAPIModel.BenefitId = userNotification.Notification.BenefitRequest.BenefitId;
-                    notificationAPIModel.RequestNumber = userNotification.Notification.BenefitRequestId;
+                    //notificationAPIModel.BenefitId = userNotification.Notification.BenefitRequest.BenefitId;
+                    if(userNotification.Notification.BenefitRequestId == null)
+                    {
+                        notificationAPIModel.RequestNumber = userNotification.Notification.MedicalRequestId;
+                        notificationAPIModel.BenefitId = (long)userNotification.Notification.MedicalRequestId;
+
+                    }
+                    else
+                    {
+                        notificationAPIModel.RequestNumber = userNotification.Notification.BenefitRequestId;
+                        notificationAPIModel.BenefitId = userNotification.Notification.BenefitRequest.BenefitId;
+
+                    }
+
                     notificationAPIModels.Add(notificationAPIModel);
                 }
                 return notificationAPIModels;

@@ -1,72 +1,291 @@
 ﻿@model MoreForYou.Services.Models.MedicalRequestViewModels.MedicalRequestVM
+@using MoreForYou.Services.Models.API.Medical;
 
 @{
     ViewData["Title"] = "Medical";
-    ViewData["SubTitle"] = "AddRequest";
+    ViewData["SubTitle"] = "Add Medical Request";
     ViewData["active"] = "lmDashboard";
     Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
 
 }
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
 
 <script>
     function myFunction(value) {
         var val = value;
-        alert(val);
-       
-            if (val == 1 || val == "") {
-                // console.log("done");
-                // document.getElementById(items[i].RequestNumber).hidden = false;
-                // document.getElementById("lm+" + items[i].RequestNumber).hidden = false;
-                alert("1");
-            }
-            else {
-                // document.getElementById(items[i].RequestNumber).hidden = true;
-                // document.getElementById("lm+" + items[i].RequestNumber).hidden = true;
-                alert("2");
-            }
-        
+        // alert(val);
+        document.getElementById("sum1").innerHTML = "";
+         document.getElementById("sum2").innerHTML = "";
+
+        if (val == 1) {
+            document.getElementById("lmSubDiv").hidden = true;
+            document.getElementById("lmDetDiv").hidden = true;
+            document.getElementById("lmMedication").hidden = false;
+            document.getElementById("lmCheckup").hidden = true;
+            document.getElementById("lmPurpose").hidden = true;
+            document.getElementById("lmMedicationLst").value = "";
+        }
+        else if (val == 2) {
+            document.getElementById("lmMedication").hidden = true;
+            document.getElementById("lmCheckup").hidden = false;
+            document.getElementById("lmPurpose").hidden = true;
+            document.getElementById("lmSubDiv").hidden = true;
+            document.getElementById("lmDetDiv").hidden = true;
+            document.getElementById("RequestNumberLm").value = "";
+        }
+        else {
+            document.getElementById("lmSubDiv").hidden = true;
+            document.getElementById("lmDetDiv").hidden = true;
+            document.getElementById("lmMedication").hidden = true;
+            document.getElementById("lmCheckup").hidden = true;
+            document.getElementById("lmPurpose").hidden = true;
+        }
+
 
     }
-
 </script>
+
+<script>
+    function mySub(value) {
+        // alert(value);
+        if (value == "") {
+            //alert("test");
+            document.getElementById("lmDetDiv").hidden = true;
+        }
+        else {
+            var Id = parseInt(value);
+            $.ajax({
+                url: '@Url.Content("~/")' + "more4u/Medical/GetSubCategories2",
+                data: { Id: Id },
+                type: "POST",
+                async: true,
+                success: function (data) {
+                    if (data != null) {
+                        var dataJSON = JSON.parse(data);
+                       // alert(value);
+                        if (value == 1) {
+                           // alert(value);
+                            document.getElementById("lmPurpose").hidden = false;
+                        }
+                        else {
+                            document.getElementById("lmPurpose").hidden = true;
+                        }
+
+                        if (dataJSON["MedicalSubCategoryModels"].length == 1) {
+                            var TypesDD = document.getElementById("lmDet");
+                            TypesDD.innerHTML = "";
+                            var op1 = document.createElement('option');
+                            op1.text = "Select Entity";
+                            op1.value = "";
+
+                            TypesDD.options[0] = op1;
+                            for (var index = 0; index < dataJSON["MedicalSubCategoryModels"][0]["MedicalDetailsCount"]; index++) {
+
+                                var op = document.createElement('option');
+                                op.text = dataJSON['MedicalSubCategoryModels'][0]['MedicalDetailsModels'][index]['Name_EN'];
+                                op.value = dataJSON['MedicalSubCategoryModels'][0]['MedicalDetailsModels'][index]['Id'];
+
+                                TypesDD.options[index + 1] = op;
+                            }
+                            document.getElementById("lmSubDiv").hidden = true;
+                            document.getElementById("lmDetDiv").hidden = false;
+                        }
+                        else {
+                            var TypesD = document.getElementById("lmSub");
+                            TypesD.innerHTML = "";
+                            var op1 = document.createElement('option');
+                            op1.text = "Select Sub Category";
+                            op1.value = "";
+
+                            TypesD.options[0] = op1;
+                            for (var index = 0; index < dataJSON["MedicalSubCategoryModels"].length; index++) {
+                                // alert(dataJSON['MedicalSubCategoryModels'][0]['MedicalDetailsModels'][index]['Id']);
+                                // alert(dataJSON['MedicalSubCategoryModels'][0]['MedicalDetailsModels'][index]['Name_EN']);
+                                var op = document.createElement('option');
+                                op.text = dataJSON['MedicalSubCategoryModels'][index]['Name_EN'];
+                                op.value = dataJSON['MedicalSubCategoryModels'][index]['Id'];
+
+                                TypesD.options[index + 1] = op;
+                            }
+                            document.getElementById("lmSubDiv").hidden = false;
+                            console.log("start");
+                            //TypesD.required = true;
+                          //  TypesD.setAttribute("required", "required");
+                            console.log("end");
+                            document.getElementById("lmDetDiv").hidden = true;
+                        }
+                    }
+                    else {
+                        alert("failed");
+                    }
+                }
+            });
+        }
+
+    }
+</script>
+
+<script>
+    function selectRel(value) {
+        if (value != "") {
+            document.getElementById("lmFor2").value = value;
+            document.getElementById("lmFor1").value = value;
+            document.getElementById("sum").innerHTML = "";
+        }
+
+    }
+</script>
+
+<script>
+    function myDet(value) {
+        //alert(value);
+        if (value == "") {
+            //alert("test");
+            document.getElementById("lmDetDiv").hidden = true;
+        }
+        else {
+            var Id = parseInt(value);
+            $.ajax({
+                url: '@Url.Content("~/")' + "more4u/Medical/GetAllMedicalDetailsForSubCategory",
+                data: { Id: Id },
+                type: "POST",
+                async: true,
+                success: function (data) {
+                    if (data != null) {
+                        var dataJSON = JSON.parse(data);
+
+                        if (dataJSON["MedicalDetailsModels"] != null) {
+                            var TypesDD = document.getElementById("lmDet");
+                            TypesDD.innerHTML = "";
+                            var op1 = document.createElement('option');
+                            op1.text = "Select Entity";
+                            op1.value = "";
+
+                            TypesDD.options[0] = op1;
+                            for (var index = 0; index < dataJSON["MedicalDetailsModels"].length; index++) {
+                                var op = document.createElement('option');
+                                op.text = dataJSON['MedicalDetailsModels'][index]['Name_EN'];
+                                op.value = dataJSON['MedicalDetailsModels'][index]['Id'];
+
+                                TypesDD.options[index + 1] = op;
+                            }
+                            document.getElementById("lmDetDiv").hidden = false;
+                        }
+
+                    }
+                    else {
+                        swal("Failed process, loadDetailsfromSubCategory",
+                            {
+                                icon: "error",
+                            });
+                    }
+                },
+                error: function () {
+                    swal("Failed process,loadDetailsfromSubCategory",
+                        {
+                            icon: "error",
+                        });
+                }
+
+            });
+        }
+    }
+</script>
+
+<script>
+    function getRelative() {
+        if (document.getElementById("gridRadios1").checked == true) {
+            document.getElementById("lmRelativeDiv").hidden = true;
+            document.getElementById("lmRelativeLst").value = "";
+            document.getElementById("lmgridRadios2").checked = true;
+            document.getElementById("lmgridRadios1").checked = true;
+            document.getElementById("lmFor2").value = document.getElementById("lmFor").value;
+            document.getElementById("lmFor1").value = document.getElementById("lmFor").value;
+        }
+        else {
+            document.getElementById("lmRelativeDiv").hidden = false;
+            document.getElementById("lmgridRadios2").checked = false;
+            document.getElementById("lmgridRadios1").checked = false;
+        }
+    }
+</script>
+<script>
+    function validateForm() {
+        if (document.getElementById("lmCheckup").hidden == false && document.getElementById("lmFile2").value == "" && document.getElementById("lmComm2").value == "") {
+            document.getElementById("sum2").innerHTML = " You have to Upload file or Enter Comment";
+            return false;
+        }
+       else if (document.getElementById("lmRelativeDiv").hidden == false && document.getElementById("lmRelativeLst").value == "") {
+            document.getElementById("sum").innerHTML = " You have to choose relative or SelfRequest";
+            return false;
+        }       
+        else {
+            document.getElementById("sum").innerHTML = "";
+            document.getElementById("sum2").innerHTML = "";
+            return true;
+        }
+
+    }
+</script>
+
+<script>
+    function validateForm1() {
+         if (document.getElementById("lmMedication").hidden != true && document.getElementById("lmFile1").value == "" && document.getElementById("lmComm1").value == "") {
+            document.getElementById("sum1").innerHTML = " You have to Upload file or Enter Comment";
+            return false;
+        }
+        else if (document.getElementById("lmRelativeDiv").hidden == false && document.getElementById("lmRelativeLst").value == "") {
+            document.getElementById("sum").innerHTML = " You have to choose relative or SelfRequest";
+            return false;
+        }
+        else {
+            document.getElementById("sum").innerHTML = "";
+            document.getElementById("sum1").innerHTML = "";
+            return true;
+        }
+
+    }
+</script>
+
 <div class="row mt-4">
     <div class="col-lg-8 mb-lg-0 mb-4">
         @*   <select class="form-control form-select col-md-1" placeholder="Select UserName"
         name="UserName" id="select-users" value="Gift.UserName" asp-items="@(new SelectList(ViewBag.giftt, nameof(Gift.RequestNumber), nameof(Gift.UserName),""))"
         onchange="getfilter(this.value,@JsonSerializer.Serialize(Model));"> <option value="">Select User</option></select> *@
-        
 
-      
-            <div class="card p-4" id="RequestNumber">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="d-flex flex-column">
 
-                                <p class="mb-1 pt-2 text-bold">Medical Request</p>
-                                @* <h5 class="font-weight-bolder"><span class="font-weight-bolder text-gradient text-primary">@item.BenefitName</span></h5> *@
-                                <h5 class="font-weight-bolder text-gradient text-info">
-                                    Add Request
-                                </h5>
-                                <hr class="horizontal dark my-sm-4">
+
+        <div class="card p-4" id="RequestNumber">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="d-flex flex-column">
+
+                            <p class="mb-1 pt-2 text-bold">Medical Request</p>
+                            @* <h5 class="font-weight-bolder"><span class="font-weight-bolder text-gradient text-primary">@item.BenefitName</span></h5> *@
+                            <h5 class="font-weight-bolder text-gradient text-info">
+                                Add Request
+                            </h5>
+                            <hr class="horizontal dark my-sm-4">
                             <div class="row">
                                 <div class="form-group col-lg-6" style="margin-bottom:15px">
                                     <p class="mb-5">
                                         RequestType
                                         <select class="form-select" id="RequestNumber"
                                                 onchange="myFunction(this.value)">
-                                            <option value="">Select User</option>
+                                            <option value="">Select Type</option>
                                             <option value="1">Medication</option>
                                             <option value="2">Checkup</option>
                                             <option value="3">Sick Leave</option>
                                         </select>
                                     </p>
                                 </div>
-                               
+
                                 <div class="form-group col-lg-3" style="margin-bottom:15px">
                                     <p class="mb-4">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
+                                            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" onchange="getRelative()" checked>
                                             <label class="form-check-label" for="gridRadios1">
                                                 Self Request
                                             </label>
@@ -74,92 +293,203 @@
                                     </p>
                                 </div>
                                 <div class="form-group col-lg-3" style="margin-bottom:15px">
+                                    <input type="text" id="lmFor" asp-for="@Model.mRequest.requestedFor" value="@Model.RelativesApiModel.RelativeId" hidden />
                                     <p class="mb-4">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2" disabled>
+                                            @if (Model.RelativesApiModel.Relatives.Count > 0)
+                                            {
+                                                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2" onchange="getRelative()">
+                                            }
+                                            else
+                                            {
+                                                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option2" disabled>
+                                            }
                                             <label class="form-check-label" for="gridRadios2">
-                                                Relatives Request
+                                                Family Insurance
                                             </label>
                                         </div>
                                     </p>
                                 </div>
-
-                                <div class="form-group col-lg-6" style="margin-bottom:15px" hidden>
-                                <p class="mb-5">
-                                    Relatives
-                                    <input id="SupervisorId" class=" form-control" name="SendToId">
-                                </p>
-                            </div>
+                                @if (Model.RelativesApiModel.Relatives.Count > 0)
+                                {
+                                    <div class="form-group col-lg-6" style="margin-bottom:15px" id="lmRelativeDiv" hidden>
+                                        <p class="mb-5">
+                                            Relatives
+                                            <input id="SupervisorId" class=" form-control" name="SendToId">
+                                            <select class="form-select" id="lmRelativeLst" asp-items="@(new SelectList(Model.RelativesApiModel.Relatives,"RelativeId","RelativeName"," "))"
+                                                    onchange="selectRel(this.value)">
+                                                <option value="">Select Relative</option>
+                                            </select><span class="text-danger" id="sum"></span>
+                                        </p>
+                                    </div>
+                                }
                                 <p class="mb-5" hidden>
                                     <b>Send By</b> : UserName
                                     <br /><b>Department</b> : UserDepartment
                                     <br /><b>Date </b>: Date.ToShortDateString() , Date.ToShortTimeString()
                                 </p>
-                              
-                       </div>
-                          
-                          
-                           <div>
-                                <h5 class="font-weight-bolder text-gradient text-primary">
+
+                            </div>
+
+
+                            <div id="lmMedication" hidden>
+                                <h5 class="font-weight-bolder text-gradient text-info">
                                     Add Medication Request
                                 </h5>
                                 <hr class="horizontal dark my-sm-4">
-                                 <form>
-                             <div class="row">
-                                <div class="form-group col-lg-6" style="margin-bottom:15px">
-                                    <p class="mb-5">
-                                        Medical Entity
-                                        <select class="form-select" id="RequestNumber" asp-items="@(new SelectList(Model.medicationEntities,"MedicalEntityId","MedicalDetailsName"," "))"
-                                                onchange="myFunction(this.value)">
-                                            <option value="">Select Entity</option>
-                                            
-                                        </select>
-                                    </p>
-                                </div>
-
-                                <div class="form-group col-lg-6" style="margin-bottom:15px">
-                                    <p class="mb-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="gridCheck1">
-                                            <label class="form-check-label" for="gridCheck1">
-                                                Monthly Medication
-                                            </label>
+                                <form asp-action="addRequest" asp-controller="MedicalRequest" enctype="multipart/form-data" onsubmit="return validateForm1()" name="myform1">
+                                    <input type="number" asp-for="@Model.mRequest.requestType" value="1" hidden/>
+                                    <input type="text" asp-for="@Model.mRequest.createdBy" value="@Model.RelativesApiModel.CemexId" hidden />
+                                    <input type="text" asp-for="@Model.mRequest.requestedBy" value="@Model.RelativesApiModel.CemexId" hidden />
+                                    <input type="text" id="lmFor2" asp-for="@Model.mRequest.requestedFor" value="@Model.RelativesApiModel.RelativeId" hidden />
+                                    <input class="form-check-input" type="checkbox" id="lmgridRadios2" asp-for="@Model.mRequest.selfRequest" checked hidden>
+                                    <div class="row">
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px">
+                                            <p class="mb-5">
+                                                Medical Entity
+                                                <select class="form-select" id="lmMedicationLst" asp-items="@(new SelectList(Model.medicationEntities,"MedicalEntityId","MedicalDetailsName"," "))" asp-for="@Model.mRequest.medicalEntityId" required>
+                                                    <option value="">Select Entity</option>
+                                                </select>
+                                            </p>
                                         </div>
-                                    </p>
-                                </div>
-                                
-                                <div class="form-group col-lg-6" style="margin-bottom:15px">
-                                    <p class="mb-5">
-                                        File Upload
-                                        <input class="form-control" type="file" id="formFile" multiple>
-                                    </p>
-                                </div>
-                               
-                                <div class="form-group col-lg-6" style="margin-bottom:15px">
-                                    <p class="mb-5">
-                                        Comment
-                                        <textarea class="form-control" style="height: 100px"></textarea>
-                                    </p>
-                                </div>
 
-                                    <div class="form-group col-lg-6" style="margin-bottom:15px">
-                                        @* <p class="mb-5">
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px">
+                                            <p class="mb-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="gridCheck1" asp-for="@Model.mRequest.monthlyMedication">
+                                                    <label class="form-check-label" for="gridCheck1">
+                                                        Monthly Medication
+                                                    </label>
+                                                </div>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px">
+                                            <p class="mb-5">
+                                                File Upload
+                                                <input class="form-control" type="file" id="lmFile1" asp-for="@Model.mRequest.attachment" multiple>
+
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px">
+                                            <p class="mb-5">
+                                                Comment
+                                                <textarea class="form-control" style="height: 100px" id="lmComm1" asp-for="@Model.mRequest.comment"></textarea>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-12" style="margin-bottom:15px">
+                                            @* <p class="mb-5">
                                             Comment *@
-                                        <button type="submit" class="btn btn-primary">Submit Form</button>
-                                      @*   </p> *@
+                                            <button type="submit" class="btn bg-gradient-info">Save Request</button>
+                                            <span class="text-danger" id="sum1"></span>
+                                            @*   </p> *@
+                                        </div>
                                     </div>
-                              </div>
+                                </form>
+                            </div>
+
+                            <div id="lmCheckup" hidden>
+                                <h5 class="font-weight-bolder text-gradient text-info">
+                                    Add Checkup Request
+                                </h5>
+                                <hr class="horizontal dark my-sm-4">
+                                <form asp-action="addRequest" asp-controller="MedicalRequest" enctype="multipart/form-data" onsubmit="return validateForm()" name="myform">
+                                    <input type="number" asp-for="@Model.mRequest.requestType" value="2"hidden />
+                                    <input type="text" asp-for="@Model.mRequest.createdBy" value="@Model.RelativesApiModel.CemexId" hidden/>
+                                    <input type="text" asp-for="@Model.mRequest.requestedBy" value="@Model.RelativesApiModel.CemexId" hidden/>
+                                    <input type="text" id="lmFor1" asp-for="@Model.mRequest.requestedFor" value="@Model.RelativesApiModel.RelativeId"hidden />
+                                    <input class="form-check-input" type="checkbox" id="lmgridRadios1" asp-for="@Model.mRequest.selfRequest" checked hidden>
+                                    <div class="row">
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px">
+                                            <p class="mb-5">
+                                                Medical Category
+                                                <select class="form-select" id="RequestNumberLm" asp-items="@(new SelectList(Model.CheckupCategoryAPIModels,"Id","Name_EN"," "))"
+                                                        onchange="mySub(this.value)" required>
+                                                    <option value="">Select Category</option>
+
+                                                </select>
+                                            </p>
+                                        </div>
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px" id="lmSubDiv" hidden>
+                                            <p class="mb-5">
+                                                <span id="lmSubtxt"> Medical SubCategory</span>
+                                                <select class="form-select" id="lmSub"
+                                                        onchange="myDet(this.value)" required>
+                                                    <option value="">Select Sub Category</option>
+
+                                                </select>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px" id="lmDetDiv" hidden>
+                                            <p class="mb-5">
+                                                <span id="lmDettxt"> Medical Entity</span>
+                                                <select class="form-select" id="lmDet" asp-for="@Model.mRequest.medicalEntityId" required>
+                                                    <option value="">Select Entity</option>
+
+                                                </select>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px" id="lmPurpose" hidden>
+                                            <p class="mb-5">
+                                                Medical Purpose
+                                                <select class="form-select" id="lmSub1"
+                                                        asp-for="@Model.mRequest.medicalPurpose" required>
+                                                    <option value="">Select Purpose</option>
+                                                    <option value="checkup">checkup</option>
+                                                    <option value="hospital Admission">hospital Admission</option>
+
+                                                </select>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px" hidden>
+                                            <p class="mb-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="gridCheck1" asp-for="@Model.mRequest.monthlyMedication">
+                                                    <label class="form-check-label" for="gridCheck1">
+                                                        Monthly Medication
+                                                    </label>
+                                                </div>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px">
+                                            <p class="mb-5">
+                                                File Upload
+                                                <input class="form-control" type="file" id="lmFile2" asp-for="@Model.mRequest.attachment" multiple>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-6" style="margin-bottom:15px">
+                                            <p class="mb-5">
+                                                Comment
+                                                <textarea class="form-control" style="height: 100px" id="lmComm2" asp-for="@Model.mRequest.comment"></textarea>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group col-lg-12" style="margin-bottom:15px">
+                                            @* <p class="mb-5">
+                                            Comment *@
+                                            <button type="submit" class="btn bg-gradient-info">Save Request</button>
+                                            </select><span class="text-danger" id="sum2"></span>
+                                            @*   </p> *@
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
 
                         </div>
-                       
+
                     </div>
                 </div>
 
             </div>
+        </div>
     </div>
-   </div>
     <div class="col-lg-4">
         <div class="card p-3">
             <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100">
@@ -171,10 +501,10 @@
                     <p class="mb-5 text-white">
                         <b>Cemex Id</b> : @Model.RelativesApiModel.CemexId
                         <br /><b>EmployeeName</b> : @Model.RelativesApiModel.EmployeeName
-                        <br /><b>Date </b>: @Model.RelativesApiModel.BirthDate.ToShortDateString() 
-                        <br /><b>EmployeeDepartment</b> : @Model.RelativesApiModel.EmployeeDepartment
+                        <br /><b>Date </b>: @Model.RelativesApiModel.BirthDate.ToShortDateString()
+                        <br /><b>RelativeId</b> : @Model.RelativesApiModel.RelativeId
                         <br /><b>MedicalCoverage </b>: @Model.RelativesApiModel.MedicalCoverage
-                       
+
                     </p>
                     <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
                         @*       Read More

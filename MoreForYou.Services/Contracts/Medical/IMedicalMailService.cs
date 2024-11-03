@@ -1,5 +1,6 @@
 ﻿using MoreForYou.Models.Models.MedicalModels;
 using MoreForYou.Services.Models.API.Medical;
+using MoreForYou.Services.Models.MasterModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace MoreForYou.Services.Contracts.Medical
 {
-    public interface IMedicalResponseService
+    public interface IMedicalMailService
     {
-        string addMedicalResponseAsync(MedicalResponseApiModel model);
-        Task<bool> SendDoctorResponseToEmployeeAsync(MedicalRequest model, long empNumber, string status);
+        bool SendToMailList(MedicalRequestDetailsModel model, List<string> groupMails = null, List<GroupEmployeeModel> groupEmployeeModels = null);
+
     }
 }

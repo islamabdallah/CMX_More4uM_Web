@@ -1,0 +1,217 @@
+﻿@model IEnumerable<MoreForYou.Models.Models.MedicalModels.Relative>
+
+@{
+    ViewData["Title"] = "Employee Relative";
+    ViewData["SubTitle"] = "Approve";
+    ViewData["activ"] = "Employee";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
+}
+
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable(
+            {
+
+            });
+
+    });
+
+    function showEmployeeDetails(item) {
+        //for (var x in item) {
+        //    alert(item[x]);
+        document.getElementById("employeeNameee").innerText = item["FullName"];
+        document.getElementById("employeeEmail").innerText = item['Email'];
+        document.getElementById("employeeDepartment").innerText = item["Department"]["Name"];
+        document.getElementById("employeePosition").innerText = item["Position"]["Name"];
+        document.getElementById("employeeSapNumber").innerText = item["SapNumber"];
+        document.getElementById("employeeEmployeeNumber").innerText = item["EmployeeNumber"];
+        document.getElementById("employeeCompanyCode").innerText = item["Company"]["Code"];
+        document.getElementById("employeeAddress").innerText = item['Address'];
+        document.getElementById("employeePhone").innerText = item["PhoneNumber"];
+        document.getElementById("employeeGender").innerText = item["GenderString"];
+        document.getElementById("employeeMartialStatus").innerText = item["MaritalStatusString"];
+        document.getElementById("employeeBirthDate").innerText = item["BirthDateString"];
+        document.getElementById("employeeJoinDate").innerText = item["JoiningDateString"];
+        document.getElementById("employeeCollar").innerText = item["CollarString"];
+        document.getElementById("employeeSupervisorName").innerText = item["Supervisor"]["FullName"];
+        document.getElementById("employeePhoto").src = "http://20.86.97.165/more4u/images/userProfile/" + item["ProfilePicture"];
+
+        $('#scrollingModal').modal('show');
+
+    }
+</script>
+
+<div class="row">
+    <div class="col-md-7 mt-4">
+        <div class="card">
+            <div class="card-header pb-0 px-3">
+                <h6 class="mb-0">Pending Employee</h6>
+            </div>
+            <div class="card-body pt-4 p-3">
+                <ul class="list-group">
+                     @if (Model != null)
+                    {
+
+                        @foreach (var item in Model)
+                        {
+                            <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+                                <div class="d-flex flex-column">
+                                    <h6 class="mb-3 text-sm">Employee Information</h6>
+                                    <span class="mb-2 text-xs">Employee Name: <span class="text-dark font-weight-bold ms-sm-2">@item.Relatives</span></span>
+                                    <span class="mb-2 text-xs">Employee Number: <span class="text-dark ms-sm-2 font-weight-bold">@item.EmployeeNumber</span></span>
+                                    <span class="text-xs">Medical Coverage Percentage: <span class="text-dark ms-sm-2 font-weight-bold">@item.CoverPercentage</span></span>
+                                </div>
+                                <div class="ms-auto text-end">
+                                    <a class="btn btn-link text-success text-success px-3 mb-0" asp-controller="Relative" asp-action="Approve" asp-route-id="@item.Id"><i class="fa fa-thumbs-up text-success me-2"></i>Approve</a>
+                                    <a class="btn btn-link text-dark px-3 mb-0" asp-controller="Relative" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</a>
+                                </div>
+                            </li>
+                        }
+                    }
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5 mt-4">
+        <div class="card p-3">
+            <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100">
+                <!-- /div> style="background-image: url('../assets/img/ivancik.jpg');"> -->
+                <span class="mask bg-gradient-dark"></span>
+                <div class="card-body position-relative z-index-1 d-flex flex-column h-100 ">
+                    <h5 class="text-white font-weight-bolder mb-4 pt-2">Pending Employee</h5>
+                    <p class="text-white">This Page contains New Employees that has been added to the System but their medical information is pending</p>
+                    <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
+                        @*       Read More
+                        <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i> *@
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="scrollingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalMessageTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Relatives Details</h5>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close" onclick="clearElements()">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header p-0 mx-3 mt-3 position-relative z-index-1">
+                        <a href="javascript:;" class="d-block">
+                            @*<img id="" src="~/softui/assets/img/CemexAssiutBabyOnBoard.png" class="img-fluid border-radius-lg">*@
+                            <img id="employeePhoto" src="~/images/userProfile/userProfile1.png" class="img-fluid border-radius-lg">
+                        </a>
+                    </div>
+                    <div class="row">
+                        <div class="col col-lg-12 mb-2 mb-lg-0">
+
+
+                            <div class="row mt-5">
+                                <div class="col-md-12 col-lg-12">
+                                    <div class="card-body pl-2" id="cardBody">
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>Name</h6>
+                                                <p class="text-muted" id="employeeNameee">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>Email</h6>
+                                                <p class="text-muted" id="employeeEmail">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>Department</h6>
+                                                <p class="text-muted" id="employeeDepartment">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-6 mb-1">
+                                                <h6>Position</h6>
+                                                <p class="text-muted" id="employeePosition">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6 mb-1">
+                                                <h6>Sap Naumber</h6>
+                                                <p class="text-muted" id="employeeSapNumber">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-6 mb-1">
+                                                <h6>Employee Number</h6>
+                                                <p class="text-muted" id="employeeEmployeeNumber">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6">
+                                                <h6>Company</h6>
+                                                <p class="text-muted" id="employeeCompanyCode">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <h6>Payroll Area</h6>
+                                                <p class="text-muted" id="employeeCollar">Lorem ipsum</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6">
+                                                <h6>Address</h6>
+                                                <p class="text-muted" id="employeeAddress">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-6">
+                                                <h6>Phone</h6>
+                                                <p class="text-muted" id="employeePhone">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-lg-6">
+                                                <h6>Gender</h6>
+                                                <p class="text-muted" id="employeeGender">Lorem ipsum</p>
+                                            </div>
+                                            <div class="col-6">
+                                                <h6>Martial Status</h6>
+                                                <p class="text-muted" id="employeeMartialStatus">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-6">
+                                                <h6>Birth Date</h6>
+                                                <p class="text-muted" id="employeeBirthDate">Dolor sit amet</p>
+                                            </div>
+                                            <div class="col-6">
+                                                <h6>Join Date</h6>
+                                                <p class="text-muted" id="employeeJoinDate">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-1">
+                                            <div class="col-12">
+                                                <h6>Supervisor</h6>
+                                                <p class="text-muted" id="employeeSupervisorName">Dolor sit amet</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal" onclick="clearElements()">Close</button>
+                @*<button type="button" class="btn bg-gradient-primary">Redeem</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -93,17 +93,6 @@ else if (ViewBag.Error != null)
                                 <label class="form-label">Employee Number</label>
                                 <input type="number" class="form-control" id="EmpNum" placeholder="Employee Number" name="userNumberSearch" asp-for="@Model.searchModel.userNumberSearch">
                             </div>
-                            @* <div class="col-md-4">
-                                <label class="form-label">Employee Number</label>
-                                <select class="form-select" name="" id="id_select2_example"
-                                         onchange="test(this)"
-                                        asp-items="@( new SelectList(Model.participants,"employeeNumber","name"))">
-                                    
-                                   
-                                    }
-                                </select>
-                            </div> *@
-
                             <div class="col-md-4">
                                 <label class="form-label">Request Type</label>
                                 <select class="form-select" id="selectedRequestType" placeholder="Select Request Type" name="selectedRequestType" asp-for="@Model.searchModel.selectedRequestType">
@@ -419,14 +408,14 @@ else if (ViewBag.Error != null)
 
 <script>
     function validateForm() {
-       // let x = document.getElementById("ReqId").value;
-       // let y = document.getElementById("EmpNum").value;
-        alert(x);
-        alert(y);
+        let x = document.getElementById("ReqId").value;
+        let y = document.getElementById("EmpNum").value;
+       // alert(x);
+       // alert(y);
         
          if (x=="" && y=="") {
             //alert(q + y);
-            document.getElementById("sum").innerHTML = " You have to add Request Id or Employee Numver";
+            document.getElementById("sum").innerHTML = " You have to add Request Id or Employee Number";
             return false;
         }
         else {

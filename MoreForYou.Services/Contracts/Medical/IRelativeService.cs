@@ -13,12 +13,9 @@ namespace MoreForYou.Services.Contracts.Medical
         Task<List<Relative>> GetEmployeeRelatives(long employeeNumber);
 
         Task<int> GetPendingRelativeCountAsync();
+        Task<List<Relative>> GetPendingRelative();
 
-        Task<EmployeeRelativesApi> GetEmployeeRelativesApi(
-          long userNumber,
-          int languageCode,
-          int type,
-          string Country);
+        Task<EmployeeRelativesApi> GetEmployeeRelativesApi(long userNumber, int languageCode,int type, string Country);
 
         Task<EmployeeRelativesApiModel> GetEmployeeRelativesApiModel(long userNumber, int languageCode);
 

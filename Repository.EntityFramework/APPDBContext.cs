@@ -58,6 +58,7 @@ namespace Repository.EntityFramework
         public DbSet<MedicalSubCategory> MedicalSubCategories { get; set; }
 
         public DbSet<MedicalDetails> MedicalDetails { get; set; }
+        public DbSet<MedicalItem> MedicalItems { get; set; }
         public DbSet<Relative> Relatives { get; set; }
 
         public DbSet<MedicalRequestType> MedicalRequestTypes { get; set; }
@@ -69,7 +70,6 @@ namespace Repository.EntityFramework
         public DbSet<MedicalAttachment> MedicalAttachments { get; set; }
 
         public DbSet<MedicalResponse> MedicalResponses { get; set; }
-        public DbSet<MedicalItem> MedicalItems { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

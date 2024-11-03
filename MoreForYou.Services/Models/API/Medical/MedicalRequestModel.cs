@@ -23,7 +23,8 @@ namespace MoreForYou.Services.Models.API.Medical
         public string? relation { get; set; }
 
         public string? order { get; set; }
-
+        public string? employeeDepartment { get; set; }
+        public string? employeePhoneNumber { get; set; }
         public int requestType { get; set; }
 
         public DateTime requestDate { get; set; }

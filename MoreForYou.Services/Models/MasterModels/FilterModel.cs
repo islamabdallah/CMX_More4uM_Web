@@ -1,4 +1,6 @@
-﻿using MoreForYou.Services.Models.MaterModels;
+﻿using MoreForYou.Models.Models.MedicalModels;
+using MoreForYou.Services.Models.API.Medical;
+using MoreForYou.Services.Models.MaterModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -43,5 +45,16 @@ namespace MoreForYou.Services.Models.MasterModels
 
 
 
+    }
+
+    public class RelativeFilterModel
+    {
+        public EmployeeRelativesApiModel EmployeeRelativeModel { get; set; }
+
+        public List<Relative>relatives { get; set; }
+        public string EmployeePicrure { get; set; }
+        public EmployeeModel employeeModel { get; set; }
+
+        public long EmployeeNumber { get; set; }
     }
 }

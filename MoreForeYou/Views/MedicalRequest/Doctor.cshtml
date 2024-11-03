@@ -13,11 +13,37 @@
 <script src="~/js/JQuery/jquery-3.5.1.js"></script>
 <script src="~/js/sweetalert.min.js"></script>
 <script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Done Succesfully !",
+                text: message,
+                icon: "success",
+            });
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Fail !",
+                text: error,
+                icon: "error",
+            });
+        }
+    }
+</script>
+<script>
     $(document).ready(function () {
         $('#example').DataTable();
     });
 </script>
-
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
 <div class="row my-4">
     <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
         <div class="card">
@@ -49,7 +75,7 @@
                     <div class="card-body p-3">
 
                         <!-- No Labels Form -->
-                        <form class="row g-3 form-validation" novalidate asp-action="MedicalAdmin" asp-controller="MedicalRequest" onsubmit="return validateForm()" name="myform">
+                        <form class="row g-3 form-validation" novalidate asp-action="Doctor" asp-controller="MedicalRequest" onsubmit="return validateForm()" name="myform">
                             @* <form class="row g-3 form-validation" method="post" asp-controller="MedicalRequest" asp-action="MedicalAdmin" onsubmit="return validateForm()" name="myform"> *@
                             <div class="col-md-4">
                                 <label class="form-label">Request Id</label>
@@ -387,14 +413,14 @@
 
 <script>
     function validateForm() {
-        // let x = document.getElementById("ReqId").value;
-        // let y = document.getElementById("EmpNum").value;
-        alert(x);
-        alert(y);
+         let x = document.getElementById("ReqId").value;
+         let y = document.getElementById("EmpNum").value;
+       // alert(x);
+       // alert(y);
 
         if (x == "" && y == "") {
             //alert(q + y);
-            document.getElementById("sum").innerHTML = " You have to add Request Id or Employee Numver";
+            document.getElementById("sum").innerHTML = " You have to add Request Id or Employee Number";
             return false;
         }
         else {

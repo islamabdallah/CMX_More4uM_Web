@@ -17,9 +17,9 @@ namespace MoreForYou.Services.Models.MasterModels
         public bool IsVisible { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
-        [Required]
-        public long BenefitRequestId { get; set; }
-        [Required]
+       
+        public long? BenefitRequestId { get; set; }
+        
         public BenefitRequestModel BenefitRequest { get; set; }
         public string Type { get; set; }
 

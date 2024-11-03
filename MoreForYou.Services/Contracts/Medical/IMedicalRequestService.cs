@@ -12,6 +12,7 @@ namespace MoreForYou.Services.Contracts.Medical
     public interface IMedicalRequestService
     {
         Task<MedicalRequest> CreateMedicalRequest(MedicalRequest model);
+        List<MedicalItemsAPIModel> MedicalItemsByPattern(string type, string text);
 
         Task<MedicalRequest> CreateMedicalRequestModelAsync(MedicalRequestApiModel requestAPI);
 

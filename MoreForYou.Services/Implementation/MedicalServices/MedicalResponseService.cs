@@ -20,6 +20,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using MoreForYou.Models.Auth;
+using MoreForYou.Services.Models.MasterModels;
+using Microsoft.EntityFrameworkCore;
+using DocumentFormat.OpenXml.VariantTypes;
 
 namespace MoreForYou.Services.Implementation.MedicalServices
 {
@@ -43,7 +47,8 @@ namespace MoreForYou.Services.Implementation.MedicalServices
         private readonly IUserNotificationService _userNotificationService;
         private readonly IUserConnectionManager _userConnectionManager;
         private readonly IRequestWorkflowService _requestWorkflowService;
-
+        private readonly IMedicalMailService _medicalMailService;
+        private readonly IMedicalRequestService _medicalRequest;
         public MedicalResponseService(
           IRepository<MedicalRequest, long> RequestRepository,
           ILogger<MedicalRequestService> logger,
@@ -62,7 +67,9 @@ namespace MoreForYou.Services.Implementation.MedicalServices
           INotificationService notificationService,
           IUserNotificationService userNotificationService,
           IUserConnectionManager userConnectionManager,
-          IRoleService roleService)
+          IRoleService roleService,
+          IMedicalMailService medicalMailService,
+          IMedicalRequestService medicalRequest)
         {
             _repository = RequestRepository;
             _logger = logger;
@@ -82,6 +89,8 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             _userNotificationService = userNotificationService;
             _employeeRepository = employeeRepository;
             _requestWorkflowService = requestWorkflowService;
+            _medicalMailService = medicalMailService;
+            _medicalRequest = medicalRequest;
         }
 
         public string addMedicalResponseAsync(MedicalResponseApiModel model)
@@ -115,44 +124,58 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                     medicalRequestLog2.IsDelted = false;
                     _logrepository.Add(medicalRequestLog2);
                     MedicalRequest medicalRequest = _repository.Find((Expression<Func<MedicalRequest, bool>>)(i => i.Id == RequestId && i.IsVisible == true)).FirstOrDefault<MedicalRequest>();
-                    medicalRequest.ResponseMedicalEntity = new int?(Convert.ToInt32(model.medicalEntity));
-                    medicalRequest.ResponseFeedback = model.feedback;
+                    if (int32 != 4)
+                    {
+                        medicalRequest.ResponseMedicalEntity = new int?(Convert.ToInt32(model.medicalEntity));
+                        medicalRequest.ResponseFeedback = model.feedback;
+                    }
                     medicalRequest.ResponseReason = model.responseComment;
                     _repository.Update(medicalRequest);
-                    if (model.attachment != null && model.attachment.Count != 0)
+                    if (int32 != 4)
                     {
-                        int num = 0;
-                        foreach (IFormFile ImageName in model.attachment)
+                        if (model.attachment != null && model.attachment.Count != 0)
                         {
-                            if (ImageName.Length > 0L)
+                            int num = 0;
+                            foreach (IFormFile ImageName in model.attachment)
                             {
-                                if (_attachmentrepository.Add(new MedicalAttachment()
+                                if (ImageName.Length > 0L)
                                 {
-                                    Name = _requestWorkflowService.UploadedImageAsync(ImageName, "MedicalRequestFiles").Result,
-                                    Type = ImageName.ContentType,
+                                    if (_attachmentrepository.Add(new MedicalAttachment()
+                                    {
+                                        Name = _requestWorkflowService.UploadedImageAsync(ImageName, "MedicalRequestFiles").Result,
+                                        Type = ImageName.ContentType,
+                                        MedicalRequestId = RequestId,
+                                        Status = "Response"
+                                    }) != null)
+                                        ++num;
+                                }
+                            }
+                        }
+                        if (model.medicalItems != null && model.medicalItems.Count != 0)
+                        {
+                            foreach (MedicalItemsAPIModel medicalItem in model.medicalItems)
+                            {
+                                MedicalResponse medicalResponse = new MedicalResponse()
+                                {
                                     MedicalRequestId = RequestId,
-                                    Status = "Response"
-                                }) != null)
-                                    ++num;
+                                    MedicalItemId = new long?(Convert.ToInt64(medicalItem.itemId)),
+                                    Quantity = new int?(Convert.ToInt32(medicalItem.itemQuantity)),
+                                    DateFrom = new DateTime?(Convert.ToDateTime(medicalItem.itemDateFrom))
+                                };
+                                medicalResponse.DateFrom = new DateTime?(Convert.ToDateTime(medicalItem.itemDateTo));
+                                _responserepository.Add(medicalResponse);
                             }
                         }
                     }
-                    if (model.medicalItems != null && model.medicalItems.Count != 0)
-                    {
-                        foreach (MedicalItemsAPIModel medicalItem in model.medicalItems)
-                        {
-                            MedicalResponse medicalResponse = new MedicalResponse()
-                            {
-                                MedicalRequestId = RequestId,
-                                MedicalItemId = new long?(Convert.ToInt64(medicalItem.itemId)),
-                                Quantity = new int?(Convert.ToInt32(medicalItem.itemQuantity)),
-                                DateFrom = new DateTime?(Convert.ToDateTime(medicalItem.itemDateFrom))
-                            };
-                            medicalResponse.DateFrom = new DateTime?(Convert.ToDateTime(medicalItem.itemDateTo));
-                            _responserepository.Add(medicalResponse);
-                        }
-                    }
                     contextTransaction.Commit();
+
+                    MedicalRequest medicalRequest2 = _repository.Find((Expression<Func<MedicalRequest, bool>>)(i => i.Id == RequestId && i.IsVisible == true)).FirstOrDefault<MedicalRequest>();
+                    var testNotify = SendDoctorResponseToEmployeeAsync(medicalRequest2, result.EmployeeNumber,str1);
+                    if (int32 != 4)
+                    {
+                        MedicalRequestDetailsModel detailsModel = _medicalRequest.GetMedicalRequestsDetailsAsync(medicalRequest2.Id, medicalRequest2.RequestedBy, 2).Result;
+                        var testMail = _medicalMailService.SendToMailList(detailsModel);
+                    }
                     return model.requestId;
                 }
                 catch (Exception ex)
@@ -161,6 +184,82 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                     return (string)null;
                 }
             }
+        }
+
+        public async Task<bool> SendDoctorResponseToEmployeeAsync(MedicalRequest model, long empNumber, string status)
+        {
+            try
+            {
+                EmployeeModel result1 = _employeeService.GetEmployee(model.RequestedBy).Result;
+                //EmployeeModel result1 = _employeeService.GetEmployee(empNumber).Result;
+              //  List<AspNetUser> list = _userManager.GetUsersInRoleAsync("Doctor").Result.ToList<AspNetUser>();
+              //  RoleModel result2 = _roleService.GetRoleByName("Doctor").Result;
+                RequestWokflowModel requestWokflowModel = new RequestWokflowModel();
+               // foreach (IdentityUser<string> identityUser in list)
+               // {
+
+                    EmployeeModel result3 = _employeeService.GetEmployee(empNumber).Result;// _employeeService.GetEmployeeByUserId(identityUser.Id).Result;
+                    MedicalRequestType result4 = _typerepository.Find(i => i.Id == model.MedicalRequestTypeId).FirstOrDefaultAsync().Result;
+                   // MedicalRequestType result4 = _typerepository.Find(i => i.Id == 2).FirstOrDefaultAsync().Result;
+                    NotificationModel model1 = new NotificationModel();
+                    string str1 = "MedicalView";
+                    if (str1 == "MedicalView")
+                    {
+                        string str2 = result3.FullName +" "+status+ " your request for " + result4.Name;
+                        string str3 = result3.FullName +" "+status+"  علي طلبك ل " + result4.Name;
+                        model1.IsDelted = false;
+                        model1.IsVisible = true;
+                        model1.UpdatedDate = DateTime.Now;
+                        model1.CreatedDate = DateTime.Now;
+                        model1.MedicalRequestId = Convert.ToInt64(model.Id);
+                        model1.Type = str1;
+                        model1.Message = str2;
+                        model1.ArabicMessage = str3;
+                        NotificationModel notification = _notificationService.CreateNotification(model1);
+                        if (notification != null)
+                            _userNotificationService.CreateUserNotification(new UserNotificationModel()
+                            {
+                                CreatedDate = DateTime.Now,
+                                UpdatedDate = DateTime.Now,
+                                EmployeeId = result1.EmployeeNumber,
+                                NotificationId = notification.Id,
+                                Seen = false
+                            });
+                        var connectionsTest = _userConnectionManager.GetUserConnections(result3.UserId);
+                        List<string> stringList = str1 == "MedicalView" || str1 == "RequestCancel" ? _userConnectionManager.GetUserConnections(result3.UserId) : _userConnectionManager.GetUserConnections(result1.UserId);
+                        if (stringList != null && stringList.Count > 0)
+                        {
+                            foreach (string connectionId in stringList)
+                            {
+                                if (str1 == "Response")
+                                {
+                                    //  IClientProxy clientProxy = _hub.Clients.Client(connectionId);
+                                    string str4 = str1;
+                                    DateTime dateTime = DateTime.Now.Date; //model.CreatedDate.Date;
+                                    string str5 = dateTime.ToString("dd-MM-yyyy");
+                                    dateTime = DateTime.Now;//model.CreatedDate;
+                                    string shortTimeString = dateTime.ToShortTimeString();
+                                    // ISSUE: variable of a boxed type
+                                    long id = Convert.ToInt64(model.Id);
+                                    string str6 = str2;
+                                    string fullName = result3.FullName;
+                                    string userId = result3.UserId;
+                                    // CancellationToken cancellationToken = new CancellationToken();
+                                    await _hub.Clients.Client(connectionId).SendAsync("sendToUser", (object)str4, (object)str5, (object)shortTimeString, (object)id, (object)str6, (object)fullName, (object)userId);
+                                }
+                            }
+                        }
+                    }
+                    return true;
+
+                //}
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return false;
+            }
+            throw new NotImplementedException();
         }
     }
 }

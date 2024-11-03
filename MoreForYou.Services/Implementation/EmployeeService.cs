@@ -52,6 +52,17 @@ namespace MoreForYou.Services.Implementation
         public Task<bool> CreateEmployee(EmployeeModel model)
         {
             var employee = _mapper.Map<Employee>(model);
+            if(employee != null)
+            {
+                if (employee.IsDirectEmployee)
+                {
+                    employee.HasMore4uService = true;
+                    if (employee.Country == "Assiut")
+                    {
+                        employee.HasMedicalService = true;
+                    }
+                }             
+            }
             try
             {
                 var addedEmployee = _repository.Add(employee);
@@ -722,9 +733,9 @@ namespace MoreForYou.Services.Implementation
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
 
-                return token; 
-                
+                return token;
             }
+
             catch (Exception ex)
             {
                 return null;

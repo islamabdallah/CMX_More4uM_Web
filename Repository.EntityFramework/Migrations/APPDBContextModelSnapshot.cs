@@ -907,7 +907,7 @@ namespace Repository.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("BenefitRequestId")
+                    b.Property<long?>("BenefitRequestId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedDate")
@@ -918,6 +918,9 @@ namespace Repository.EntityFramework.Migrations
 
                     b.Property<bool>("IsVisible")
                         .HasColumnType("bit");
+
+                    b.Property<long?>("MedicalRequestId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -1200,6 +1203,9 @@ namespace Repository.EntityFramework.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -1632,9 +1638,7 @@ namespace Repository.EntityFramework.Migrations
                 {
                     b.HasOne("MoreForYou.Models.Models.MasterModels.BenefitRequest", "BenefitRequest")
                         .WithMany()
-                        .HasForeignKey("BenefitRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BenefitRequestId");
 
                     b.Navigation("BenefitRequest");
                 });

@@ -12,8 +12,8 @@ using Repository.EntityFramework;
 namespace Repository.EntityFramework.Migrations
 {
     [DbContext(typeof(APPDBContext))]
-    [Migration("20240926085959_hasmedical")]
-    partial class hasmedical
+    [Migration("20241015121839_itemCategory")]
+    partial class itemCategory
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -909,7 +909,7 @@ namespace Repository.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("BenefitRequestId")
+                    b.Property<long?>("BenefitRequestId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedDate")
@@ -920,6 +920,9 @@ namespace Repository.EntityFramework.Migrations
 
                     b.Property<bool>("IsVisible")
                         .HasColumnType("bit");
+
+                    b.Property<long?>("MedicalRequestId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -1193,6 +1196,46 @@ namespace Repository.EntityFramework.Migrations
                     b.HasIndex("MedicalRequestId");
 
                     b.ToTable("MedicalAttachments");
+                });
+
+            modelBuilder.Entity("MoreForYou.Models.Models.MedicalModels.MedicalItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Dose")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DrugName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDelted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Quantity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MedicalItems");
                 });
 
             modelBuilder.Entity("MoreForYou.Models.Models.MedicalModels.MedicalRequest", b =>
@@ -1597,9 +1640,7 @@ namespace Repository.EntityFramework.Migrations
                 {
                     b.HasOne("MoreForYou.Models.Models.MasterModels.BenefitRequest", "BenefitRequest")
                         .WithMany()
-                        .HasForeignKey("BenefitRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BenefitRequestId");
 
                     b.Navigation("BenefitRequest");
                 });

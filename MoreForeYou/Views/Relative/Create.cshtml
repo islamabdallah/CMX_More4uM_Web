@@ -1,0 +1,181 @@
+﻿@model MoreForYou.Models.Models.MedicalModels.Relative
+
+@{
+    ViewData["Title"] = "Employee Relative";
+    ViewData["SubTitle"] = "Edit";
+    ViewData["activ"] = "Employee";
+    Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
+
+}
+<script src="~/js/JQuery/jquery-3.5.1.js"></script>
+<script src="~/js/sweetalert.min.js"></script>
+<script>
+    function showAlert(type) {
+        if (type == "Message") {
+            var message = document.getElementById("message").value;
+            swal({
+                title: "Done !",
+                text: message,
+                icon: "success",
+            }).then(function () {
+                window.location.href = "http://20.86.97.165/more4u/more4u/Employee";
+            });
+        }
+        else {
+            var error = document.getElementById("error").value;
+            swal({
+                title: "Failed Process!",
+                text: error,
+                icon: "Error",
+            });
+        }
+    }
+</script>
+@if (ViewBag.Message != null)
+{
+    <input type="hidden" id="message" value="@ViewBag.Message" />
+    <script>
+        showAlert("Message");
+    </script>
+}
+else if (ViewBag.Error != null)
+{
+    <input type="hidden" id="error" value="@ViewBag.Error" />
+    <script>
+        showAlert("Error");
+    </script>
+}
+
+<div class="row my-4">
+    <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <div class="row">
+                    <div class="col-lg-6 col-7">
+                        <h6>Edit Employee Relative</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-check text-info" aria-hidden="true"></i>
+                            <span class="font-weight-bold ms-1 text-gradient text-info">Employee Relative</span>  Info
+                        </p>
+                    </div>
+                    <div class="col-lg-6 col-5 my-auto text-end">
+                        <div class="dropdown float-lg-end pe-4">
+                            <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v text-secondary"></i>
+                            </a>
+                            <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive">
+                    <div class="card-body p-3">
+
+                        <form class="row g-3" asp-action="Create" asp-controller="Relative" method="post">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row g-3 form-validation" style="">
+                                        <div class="col-md-4">
+
+                                            <label class="form-label text-nowrap" for="val-username">
+                                                FullName_English <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" class="form-control" asp-for="Relatives">
+
+
+
+                                        </div>
+
+                                        <div class="col-md-4">
+
+                                            <label class="form-label text-nowrap" for="val">
+                                                FullName_Arabic <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" class="form-control" asp-for="ArabicRelatives">
+
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label text-nowrap" for="val-email">
+                                                Employee Number <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="Number" class="form-control" id="EmployeeNumber" asp-for="EmployeeNumber" data-toggle="tooltip" data-placement="bottom" title="Employee Number">
+
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label text-nowrap" for="val-email">
+                                                Relation
+                                            </label>
+                                            <input type="text" class="form-control" id="SapNumber" asp-for="Relation" data-toggle="tooltip" data-placement="bottom" title="Sap Number">
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label text-nowrap" for="val-email">
+                                                Arabic Relation
+                                            </label>
+                                            <input class="form-control" asp-for="ArabicRelation" id="Id" placeholder="Enter ID ..">
+                                        </div>
+
+                                        <div class="col-md-4">
+
+                                            <label class="form-label text-nowrap" for="val-email">
+                                                Order <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="number" class="form-control" asp-for="Order" placeholder="Enter Address ..">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label text-nowrap" for="">
+                                                Medical Coverage
+                                            </label>
+                                            <input class="form-control" asp-for="CoverPercentage" placeholder="Enter Address ..">
+
+                                        </div>
+
+                                        <div class="col-md-4">
+
+                                            <label class="form-label text-nowrap" for="">
+                                                Birth Date <span class="text-danger">*</span>
+                                            </label>
+                                            <input class="form-control" type="datetime-local" id="" asp-for="BDate" data-toggle="tooltip" data-placement="bottom" title="Phone Number">
+                                        </div>
+
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="row align-items-center">
+                                            @*   <div class="col">
+                                            <a asp-action="Index" class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto">
+                                            <span><i class="fas fa-arrow-left text-sm ms-1" aria-hidden="true"></i></span>
+                                            </a>
+                                            </div> *@
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn bg-gradient-info"> Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+
+

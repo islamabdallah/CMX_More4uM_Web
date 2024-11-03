@@ -41,6 +41,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
         private readonly IRepository<Relative, long> _employeeRepository;
         private readonly IRepository<MedicalItem, long> _itemsRepository;
         private readonly ILogger<MedicalRequestService> _logger;
+        private readonly IRepository<MedicalSubCategory, long> _subRepository;
         private readonly IMapper _mapper;
         private readonly IRequestWorkflowService _requestWorkflowService;
         public readonly IEmployeeService _employeeService;
@@ -59,7 +60,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
         public MedicalRequestService(
           IRepository<MedicalRequest, long> RequestRepository,
           ILogger<MedicalRequestService> logger,
-          IMapper mapper,
+          IMapper mapper, IRepository<MedicalSubCategory, long> subRepository,
           IRepository<MedicalRequestLog, long> logrepository,
           IRepository<MedicalAttachment, long> attachmentrepository,
           IRepository<Relative, long> employeeRepository,
@@ -100,6 +101,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             _medicalCategoryService = medicalCategoryService;
             _medicalSubCategoryService = medicalSubCategoryService;
             _medicalDetailsService = medicalDetailsService;
+            _subRepository = subRepository;
         }
 
         public async Task<MedicalRequest> CreateMedicalRequest(MedicalRequest model)
@@ -189,6 +191,14 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             if (requestAPI.requestType==1)
             {
                 requestModel.MedicalPurpose = "Medication";
+            }
+            else if(requestAPI.medicalPurpose=="فحص طبي")
+            {
+                requestModel.MedicalPurpose = "checkup";
+            }
+            else if(requestAPI.medicalPurpose=="اجراء عملية")
+            {
+                requestModel.MedicalPurpose = "hospital Admission";
             }
             else
             {
@@ -291,8 +301,8 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                         EmployeeModel result3 = _employeeService.GetEmployeeByUserId(identityUser.Id).Result;
                         MedicalRequestType result4 = _typerepository.Find(i => i.Id == model.MedicalRequestTypeId).FirstOrDefaultAsync().Result;
                         NotificationModel model1 = new NotificationModel();
-                        string str1 = "Request";
-                        if (str1 == "Request")
+                        string str1 = "MedicalAction";
+                        if (str1 == "MedicalAction")
                         {
                             string str2 = result1.FullName + " added new request for " + result4.Name;
                             string str3 = result1.FullName + "  اضاف طلب جديد " + result4.Name;
@@ -314,8 +324,8 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                                     NotificationId = notification.Id,
                                     Seen = false
                                 });
-                            _userConnectionManager.GetUserConnections(result3.UserId);
-                            List<string> stringList = str1 == "Request" || str1 == "RequestCancel" ? _userConnectionManager.GetUserConnections(result3.UserId) : _userConnectionManager.GetUserConnections(result1.UserId);
+                           var connectionsTest= _userConnectionManager.GetUserConnections(result3.UserId);
+                            List<string> stringList = str1 == "MedicalAction" || str1 == "RequestCancel" ? _userConnectionManager.GetUserConnections(result3.UserId) : _userConnectionManager.GetUserConnections(result1.UserId);
                             if (stringList != null && stringList.Count > 0)
                             {
                                 foreach (string connectionId in stringList)
@@ -387,7 +397,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                     medicalRequestLog.IsDelted = false;
                     _logrepository.Add(medicalRequestLog);
                     contextTransaction.Commit();
-                    SendRequestToDoctorRoleAsync(model1);
+                   var testNotify= SendRequestToDoctorRoleAsync(model1);
                     return model1;
                 }
                 catch (Exception ex)
@@ -413,13 +423,33 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             requestsDetailsById.requestDate = Request.MedicalRequest.RequestDate;
             requestsDetailsById.monthlyMedication = Request.MedicalRequest.MonthlyMedication;
             requestsDetailsById.attachment = GetRequestAttachmentsByStatus(MedicalRequestId, "Request");
+            if (langCode == 2)
+            {
+                requestsDetailsById.requestedFor = relative.ArabicRelatives;
+            }
             if (Request.MedicalRequest.RequestMedicalEntity.HasValue)
             {
                 MedicalDetails medicalDetails = _context.MedicalDetails.Where<MedicalDetails>((Expression<Func<MedicalDetails, bool>>)(t => (long?)t.Id == (long?)Request.MedicalRequest.RequestMedicalEntity)).FirstOrDefault<MedicalDetails>();
                 requestsDetailsById.MedicalEntity = medicalDetails.Name_EN;
                 requestsDetailsById.MedicalEntityId = medicalDetails.Id.ToString();
+                if (langCode == 2)
+                {
+                    requestsDetailsById.MedicalEntity = medicalDetails.Name_AR;
+                }
             }
             requestsDetailsById.medicalPurpose = Request.MedicalRequest.MedicalPurpose;
+            if (langCode == 2)
+            {
+                if(Request.MedicalRequest.MedicalPurpose== "checkup")
+                {
+                    requestsDetailsById.medicalPurpose = "فحص طبي";
+                }
+                else if (Request.MedicalRequest.MedicalPurpose == "hospital Admission")
+                {
+                    requestsDetailsById.medicalPurpose = "اجراء عملية";
+                }
+                
+            }
             requestsDetailsById.comment = Request.MedicalRequest.RequestComment;
             if (relative != null)
             {
@@ -430,6 +460,10 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                     requestsDetailsById.relativeCoverage = relative.CoverPercentage;
                     requestsDetailsById.relation = relative.Relation;
                     requestsDetailsById.order = relative.Order.ToString();
+                    if (langCode == 2)
+                    {
+                        requestsDetailsById.relation = relative.ArabicRelation;
+                    }
                 }
                 else
                 {
@@ -438,6 +472,10 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                     requestsDetailsById.relativeCoverage = relative.CoverPercentage;
                     requestsDetailsById.relation = relative.Relation;
                     requestsDetailsById.order = relative.Order.ToString();
+                    if (langCode == 2)
+                    {
+                        requestsDetailsById.relation = relative.ArabicRelation;
+                    }
                 }
             }
             else
@@ -458,12 +496,19 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             medicalRequestDetailsModel.RequestStatus = Request.Status;
             medicalRequestDetailsModel.MedicalRequest = GetMedicalRequestsDetailsById(MedicalRequestId, langCode);
             EmployeeModel result = _employeeService.GetEmployee(EmployeeNumber).Result;
+            EmployeeModel result2 = _employeeService.GetEmployee(Convert.ToInt64(medicalRequestDetailsModel.MedicalRequest.requestedByNumber)).Result;
+            if (result2 != null)
+            {
+                medicalRequestDetailsModel.MedicalRequest.employeeDepartment = result2.Department.Name;
+                medicalRequestDetailsModel.MedicalRequest.employeePhoneNumber = result2.PhoneNumber;
+            }
             if (result != null)
             {
-                 if (_userManager.GetRolesAsync(await _userManager.FindByIdAsync(result.UserId)).Result.ToList<string>().Contains("Doctor"))
-                    medicalRequestDetailsModel.MedicalResponse = GetMedicalResponseForDoctor(MedicalRequestId, langCode);
-                else if (Request.Status != "Pending")
+                 if (Request.Status != "Pending")
                     medicalRequestDetailsModel.MedicalResponse = GetMedicalResponseForEmployee(MedicalRequestId, langCode);
+                else if (_userManager.GetRolesAsync(await _userManager.FindByIdAsync(result.UserId)).Result.ToList<string>().Contains("Doctor"))
+                    medicalRequestDetailsModel.MedicalResponse = GetMedicalResponseForDoctor(MedicalRequestId, langCode);
+                
                 
                
             }
@@ -514,6 +559,10 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             if (Request.MedicalRequest.ResponseMedicalEntity.HasValue && Request.MedicalRequest.ResponseMedicalEntity!=0)
             {
                 responseForEmployee.medicalEntity = _context.MedicalDetails.Where<MedicalDetails>((Expression<Func<MedicalDetails, bool>>)(t => (long?)t.Id == (long?)Request.MedicalRequest.ResponseMedicalEntity)).FirstOrDefault<MedicalDetails>().Name_EN;
+                if (langCode == 2)
+                {
+                    responseForEmployee.medicalEntity = _context.MedicalDetails.Where<MedicalDetails>((Expression<Func<MedicalDetails, bool>>)(t => (long?)t.Id == (long?)Request.MedicalRequest.ResponseMedicalEntity)).FirstOrDefault<MedicalDetails>().Name_AR;
+                }
                 List<MedicalDetailsModel> list = _medicalDetailsService.GetMedicalDetailsForCountry("Assuit").Result.Where<MedicalDetailsModel>((Func<MedicalDetailsModel, bool>)(t =>
                 {
                     long id = t.Id;
@@ -595,9 +644,21 @@ namespace MoreForYou.Services.Implementation.MedicalServices
           "Finished"
         };
                 responseForDoctor.feedbackCollection = stringList;
-                if (Request.MedicalRequest.MedicalRequestTypeId == 1)
+              //  var medicalCategories =  _subRepository.Find(s => s.IsVisible == true, false, s => s.MedicalCategory).ToListAsync();
+                var categories = _medicalSubCategoryService.GetAllMedicalSubCategories().Result;
+                string catId = "";
+                if (categories != null && categories.Count > 0)
                 {
-                    var itemList = _itemsRepository.Find(t => t.IsVisible == true).ToList();
+                    var category = categories.Where(t => t.Id == lineID).FirstOrDefault();
+                    if(category != null)
+                    {
+                        catId=category.MedicalCategory.Name_EN;
+                    }
+                }
+                
+                if (Request.MedicalRequest.MedicalRequestTypeId == 1 || catId== "Laboratories" || catId== "Diagnostic Radiology")
+                {
+                    var itemList = _itemsRepository.Find(t => t.IsVisible == true).Take(5).ToList();
                     responseForDoctor.medicalItems = new List<MedicalItemsAPIModel>();
                     if (itemList.Count > 0)
                     {
@@ -842,7 +903,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             if (list == null || list.Count <= 0)
                 return (PendingRequestApiModel)null;
             if (list != null && list.Count > 20)
-                list = list.Take<MedicalRequestLog>(20).ToList<MedicalRequestLog>();
+                list = list.OrderByDescending(t=>t.CreatedDate).Take<MedicalRequestLog>(20).ToList<MedicalRequestLog>();
             foreach (MedicalRequestLog medicalRequestLog in list)
             {
                 MedicalRequestLog pendingRequest = medicalRequestLog;
@@ -871,6 +932,43 @@ namespace MoreForYou.Services.Implementation.MedicalServices
         public PendingRequestApiModel GetAllMedicalRequestsByAdmin(long EmployeeNumber, int langCode)
         {
             throw new NotImplementedException();
+        }
+
+        public List<MedicalItemsAPIModel> MedicalItemsByPattern(string type, string text)
+        {
+            List<MedicalItemsAPIModel> medicalItems = new List<MedicalItemsAPIModel>();
+            if(string.IsNullOrEmpty(text))
+            {
+                return medicalItems;
+            }
+            string category = "";
+            if(type == "1")
+            {
+                category = "Medication";
+            }
+            else if (type == "2")
+            {
+                category = "CheckUp";
+            }
+            var itemList = _itemsRepository.Find(t => t.IsVisible == true && t.Category==category && t.DrugName.Contains(text)).Take(100).ToList();
+         
+            if (itemList.Count > 0)
+            {
+                foreach (var item in itemList)
+                {
+                    MedicalItemsAPIModel medical = new MedicalItemsAPIModel()
+                    {
+                        itemId = item.Id.ToString(),
+                        itemName = item.DrugName+","+item.Dose,
+                        itemType = item.Type,
+                        itemQuantity = "0", //item.Quantity,
+                        itemDose = item.Dose
+                    };
+                    medicalItems.Add(medical);
+                }
+            }
+            return medicalItems;
+           // throw new NotImplementedException();
         }
     }
 }

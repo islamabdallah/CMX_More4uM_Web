@@ -8,9 +8,8 @@ namespace MoreForYou.Models.Models.MasterModels
 {
    public class Notification: EntityWithIdentityId<long>
     {
-        [Required]
-        public long BenefitRequestId { get; set; }
-        [Required]
+        public long? MedicalRequestId { get; set; }
+        public long? BenefitRequestId { get; set; }
         public BenefitRequest BenefitRequest { get; set; }
         [Required]
         public string Message { get; set; }

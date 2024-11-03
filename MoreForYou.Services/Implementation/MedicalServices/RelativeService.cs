@@ -110,7 +110,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                             {
                                 relativesApiModel.RelativeId = relative.Id;
                                 relativesApiModel.CemexId = (int)relative.EmployeeNumber;
-                                relativesApiModel.EmployeeName = relative.ArabicRelatives;
+                                relativesApiModel.EmployeeName = relative.Relatives;
                                 relativesApiModel.BirthDate = relative.BDate;
                                 relativesApiModel.MedicalCoverage = relative.CoverPercentage;
                             }
@@ -237,11 +237,26 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             return relativesApiModel;
         }
 
+        public async Task<List<Relative>> GetPendingRelative()
+        {
+            try
+            {
+                List<Relative> listAsync = await this._repository.Find((Expression<Func<Relative, bool>>)(i => i.IsVisible == false && i.IsDelted == false)).ToListAsync<Relative>();
+                if (listAsync != null)
+                    return listAsync;
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError(ex.ToString());
+            }
+            return null;
+        }
+
         public async Task<int> GetPendingRelativeCountAsync()
         {
             try
             {
-                List<Relative> listAsync = await this._repository.Find((Expression<Func<Relative, bool>>)(i => i.IsVisible == true && i.IsDelted == true)).ToListAsync<Relative>();
+                List<Relative> listAsync = await this._repository.Find((Expression<Func<Relative, bool>>)(i => i.IsVisible == false && i.IsDelted == false)).ToListAsync<Relative>();
                 if (listAsync != null)
                     return listAsync.Count;
             }
