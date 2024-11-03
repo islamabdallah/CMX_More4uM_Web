@@ -69,7 +69,9 @@ namespace MoreForYou.Controllers
                     if(result1.HasMedicalService==true)
                     {
                         EmployeeRelativesApi result2 = _relativeService.GetEmployeeRelativesApi(result1.EmployeeNumber, 1, 1, result1.Country).Result;
-                        var result3 = _relativeService.GetEmployeeRelatives(result1.EmployeeNumber).Result;
+                       // var result3 = _relativeService.GetEmployeeRelatives(result1.EmployeeNumber).Result;
+                        var result3 = await this._repository.Find((Expression<Func<Relative, bool>>)(i => i.IsVisible == true  && i.EmployeeNumber == result1.EmployeeNumber)).ToListAsync();
+
                         if (result2 != null)
                         {
                             result2.RelativesApiModel.ProfilePicture = CommanData.Url + CommanData.ProfileFolder + result1.ProfilePicture;

@@ -3,8 +3,8 @@
 @{
     ViewData["Title"] = "Home";
     ViewData["SubTitle"] = "My Benefits";
-    ViewData["activ"] = "lmBenefits";
-    Layout = "~/Views/Shared/_More4ULayoutDashboard.cshtml";
+    ViewData["activ"] = "MRequest";
+    Layout = "~/Views/Shared/_More4ULayout.cshtml";
     var type = "";
 }
 <link href="~/css/newStyleSheet.css" rel="stylesheet" />
@@ -22,6 +22,49 @@ else
 {
     type = "SickLeave";
 }
+
+<div class="modal fade" id="ImageSlider" tabindex="-1" role="dialog" aria-labelledby="exampleModalMessageTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Request Attachment </h5>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Slides with controls -->
+                <div class="row pt-3">
+                    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="~/assets/img/slides-1.jpg" class="d-block w-100" alt="..." height="600" id="ViolationImageID">
+                            </div>
+                            <input type="hidden" id="violationImgs" value="" />
+
+                            <input id="currentViolationImgsNumber" type="hidden" />
+                        </div>
+
+                        <button class="carousel-control-prev" type="button" onclick="changeImage('down')">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" onclick="changeImage('up')">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+
+                    </div><!-- End Slides with controls -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                    @*  <button type="button" class="btn bg-gradient-danger" onclick="getReject()">Reject </button> *@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @if (Model != null)
 {
     <div class="row">
@@ -85,20 +128,19 @@ else
                                             <br /><b>Medical Entity:</b>@Model.MedicalRequest.MedicalEntity
                                             <br /><b>Medical Purpose :</b>@Model.MedicalRequest.medicalPurpose
                                             <br /><b>Comment :</b>@Model.MedicalRequest.comment
-                                            <br /><b>Attachments :</b>
+                                            <br /><b>Attachments :</b>&nbsp;&nbsp;
                                             @if (Model.MedicalRequest.attachment != null)
                                             {
                                                 if (Model.MedicalRequest.attachment.Count>0)
                                                 {
-                                                    @foreach (var item in Model.MedicalRequest.attachment)
-                                                    {
-                                                           <div class="bg-gradient-primary border-radius-lg h-100 w-50">
-                                                                <div class="position-relative d-flex h-100">
-                                                                         <img class="w-100 position-relative z-index-2 border-radius-lg p-1" src="@item" alt="rocket">
-                                                                 </div>
-                                                            </div>
-                                                    }
+                                                    <a onclick="showAttachment(@JsonSerializer.Serialize(Model.MedicalRequest.attachment));">
+                                                        <i class="fa fa-paperclip"></i>
+                                                    </a>
                                                 }
+                                            }
+                                            else
+                                            {
+                                                <span>No attachment</span>
                                             }
                                         </p>
 
@@ -294,6 +336,57 @@ else
 <script src="~/js/mybenefitsjs.js"></script>
 <script src="~/SoftUI/assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="~/SoftUI/assets/js/plugins/smooth-scrollbar.min.js"></script>
+
+<script>
+    function showAttachment(images) {
+ 
+        document.getElementById("violationImgs").innerText = images;
+        //  alert(document.getElementById("violationImgs").innerText);
+        document.getElementById("currentViolationImgsNumber").innerText = 0;
+        // alert(document.getElementById("currentViolationImgsNumber").innerText);
+        document.getElementById("ViolationImageID").src = images[0];
+        $('#ImageSlider').modal('show');
+    }
+
+    function changeImage(status) {
+
+        var currentImgIndex = parseInt(document.getElementById("currentViolationImgsNumber").innerText);
+        var newIndex = 0;
+        var images = document.getElementById("violationImgs").innerText.split(",");
+        //  alert(images);
+        //  alert(images.length);
+        //  alert(document.getElementById("violationImgs").innerText);
+        // var probabilities = document.getElementById("violationProbabilities").innerText.split(",");
+        if (status == "up") {
+            if (currentImgIndex == images.length - 1) {
+                document.getElementById("ViolationImageID").src = images[currentImgIndex];
+                // document.getElementById("Confidence").innerText = probabilities[newIndex];
+            }
+            else {
+                newIndex = currentImgIndex + 1;
+                document.getElementById("ViolationImageID").src = images[newIndex];
+                // document.getElementById("Confidence").innerText = probabilities[newIndex];
+                document.getElementById("currentViolationImgsNumber").innerText = newIndex;
+
+            }
+        }
+        else if (status == "down") {
+            if (currentImgIndex == 0) {
+                document.getElementById("ViolationImageID").src = images[currentImgIndex];
+                // document.getElementById("Confidence").innerText = probabilities[images.length - 1];
+            }
+            else {
+                newIndex = currentImgIndex - 1;
+                document.getElementById("ViolationImageID").src = images[newIndex];
+                // document.getElementById("Confidence").innerText = probabilities[newIndex];
+                document.getElementById("currentViolationImgsNumber").innerText = newIndex;
+            }
+        }
+    }
+
+
+</script>
+
 <script>
     function getBenefitDetails(id) {
         $(".TimeInfo").remove();
