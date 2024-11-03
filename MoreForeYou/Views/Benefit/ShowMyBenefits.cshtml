@@ -253,10 +253,10 @@ else if (ViewBag.Error != null)
             <div class="col-xl-12" >@*  style="max-height: 35rem; overflow-y: auto; background-attachment: local, local, scroll, scroll;"> *@
                 @if (Model.myBenefits.Count > 0)
                 {
-                    <select class="form-select" id="RequestNumber"
+                   @*  <select class="form-select" id="RequestNumber"
                     asp-items="@(new SelectList(ViewBag.giftt,"Name","Name"," "))" onchange="myFunction(this.value,@JsonSerializer.Serialize(Model.myBenefits))">
                         <option value="">Select Benefit</option>
-                    </select>
+                    </select> *@
                     foreach (var benefit in Model.myBenefits)
                     {
                         <div class="col-lg-12 mb-lg-0 mb-4 mt-3" id="@benefit.Id">

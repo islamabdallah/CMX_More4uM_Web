@@ -7,10 +7,12 @@ using MoreForYou.Services.Contracts;
 using MoreForYou.Services.Models.API.Medical;
 using MoreForYou.Services.Models.MaterModels;
 using MoreForYou.Services.Models.Message;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace More4UWebAPI.Controllers.MedicalRequest
 {
+   
     [Route("api/[controller]")]
     [ApiController]
     public class MedicalRequestApiController : ControllerBase
@@ -46,7 +48,7 @@ namespace More4UWebAPI.Controllers.MedicalRequest
             _medicalRequest = medicalRequest;
             _medicalResponse = medicalResponse;
         }
-
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("MedicalRequests")]
         public async Task<ActionResult> MedicalRequests([FromForm] MedicalRequestApiModel model)
         {
@@ -90,6 +92,7 @@ namespace More4UWebAPI.Controllers.MedicalRequest
             });
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("PendingRequestSummey")]
         public async Task<ActionResult> PendingRequestSummey(string RequestTypeID, string LanguageId)
         {
@@ -135,6 +138,7 @@ namespace More4UWebAPI.Controllers.MedicalRequest
             });
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("MyMedicalRequests")]
         public async Task<ActionResult> MyMedicalRequests(string employeeNumber, string LanguageId)
         {
@@ -180,6 +184,8 @@ namespace More4UWebAPI.Controllers.MedicalRequest
             });
         }
 
+
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("MedicalRequestsSearch")]
         public async Task<ActionResult> MedicalRequestsSearch(MedicalRequestSearch requestSearch)
         {
@@ -250,6 +256,7 @@ namespace More4UWebAPI.Controllers.MedicalRequest
             }
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("MedicalRequestDetails")]
         public async Task<ActionResult> MedicalRequestDetails(string MedicalRequestId, string employeeNumber, string LanguageId)
         {
@@ -285,6 +292,8 @@ namespace More4UWebAPI.Controllers.MedicalRequest
             });
         }
 
+
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("MedicalResponse")]
         public async Task<ActionResult> MedicalResponse([FromForm] MedicalResponseApiModel model)
         {
@@ -318,6 +327,38 @@ namespace More4UWebAPI.Controllers.MedicalRequest
                 Flag = false,
                 Message = "Invalid User",
                 Data = 0
+            });
+        }
+
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("MedicalItemsSearch")]
+        public async Task<ActionResult> MedicalItemsSearch(string searchText, string LanguageId, string? requestType)
+        {
+            int int32_1 = Convert.ToInt32(LanguageId);
+            if (string.IsNullOrEmpty(requestType))
+                return (ActionResult)Ok((object)new
+                {
+                    Flag = true,
+                    Message = UserMessage.SuccessfulProcess[int32_1],
+                    Data = new List<MedicalItemsAPIModel>()
+        });
+          
+            var medicalRequestsBy = _medicalRequest.MedicalItemsByPattern(requestType, searchText);
+            if (medicalRequestsBy != null)
+                return (ActionResult)Ok((object)new
+                {
+                    Flag = true,
+                    Message = UserMessage.SuccessfulProcess[int32_1],
+                    Data = medicalRequestsBy
+                });
+           
+            List<MedicalItemsAPIModel> items = new List<MedicalItemsAPIModel>();
+            
+            return (ActionResult)Ok((object)new
+            {
+                Flag = true,
+                Message = UserMessage.SuccessfulProcess[int32_1],
+                Data = items
             });
         }
     }

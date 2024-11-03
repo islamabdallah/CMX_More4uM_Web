@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.VariantTypes;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Irony.Parsing;
 using Microsoft.AspNetCore.Authorization;
@@ -39,6 +40,7 @@ namespace More4UWebAPI.APIController
     [Route("api/LoginAPI")]
     [ApiController]
     [Produces("application/json")]
+  //  [Produces("application/json", new string[] { })]
     public class LoginAPIController : ControllerBase
     {
         private readonly IBenefitService _BenefitService;
@@ -95,6 +97,7 @@ namespace More4UWebAPI.APIController
         //}
 
         [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost("getHomeData")]
         public async Task<ActionResult> getHomeData(long userNumber, int languageId)
         {
@@ -157,6 +160,7 @@ namespace More4UWebAPI.APIController
                 }
             }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("getCurrentUser")]
         public async Task<ActionResult> getCurrentUser(long userNumber, int languageId)
         {
@@ -228,7 +232,25 @@ namespace More4UWebAPI.APIController
                 homeModel.user.IsDoctor = false;
                 homeModel.user.IsMedicalAdmin = false;
             }
-            homeModel.PendingRequestMedicalCount = loginApiController._medicalRequest.GetAllMedicalRequestsByType(4, 1).requests.Where<PendingRequestSummeyModel>((Func<PendingRequestSummeyModel, bool>)(t => t.requestStatus == "Pending")).ToList<PendingRequestSummeyModel>().Count<PendingRequestSummeyModel>();
+            //homeModel.PendingRequestMedicalCount = loginApiController._medicalRequest.GetAllMedicalRequestsByType(4, 1).requests.Where<PendingRequestSummeyModel>((Func<PendingRequestSummeyModel, bool>)(t => t.requestStatus == "Pending")).ToList<PendingRequestSummeyModel>().Count<PendingRequestSummeyModel>();
+            PendingRequestApiModel test = new PendingRequestApiModel();
+            if (list.Contains("Doctor") || list.Contains("MedicalAdmin"))
+            {
+                test = _medicalRequest.GetAllMedicalRequestsByType(4, 1);
+            }
+            else
+            {
+                test = _medicalRequest.GetEmployeeMedicalRequestsBy(userNumber, languageId);
+            }
+           
+            if (test != null)
+            {
+                homeModel.PendingRequestMedicalCount = test.requests.Where<PendingRequestSummeyModel>((Func<PendingRequestSummeyModel, bool>)(t => t.requestStatus == "Pending")).ToList<PendingRequestSummeyModel>().Count<PendingRequestSummeyModel>();
+            }
+            else
+            {
+                homeModel.PendingRequestMedicalCount = 0;
+            }
             EmployeeRelativesApiModel result2 = loginApiController._relativeService.GetEmployeeRelativesApiModel(userNumber, languageId).Result;
 
             if (result2 != null)
@@ -439,6 +461,7 @@ namespace More4UWebAPI.APIController
             if (tokenModel is null)
             {
                 return Unauthorized(new { Message = UserMessage.WrongToken[languageId], Data = 0 });
+               // return Unauthorized(new { Message = "emptyModel", Data = 0 });
             }
 
             string? accessToken = tokenModel.AccessToken;

@@ -185,13 +185,25 @@ else if (ViewBag.Error != null)
                                         <div class="col-md-4">
 
                                             <label class="form-label text-nowrap" for="val-username">
-                                                FullName <span class="text-danger">*</span>
+                                                FullName_English <span class="text-danger">*</span>
                                             </label>
                                             <input type="text" class="form-control" asp-for="FullName" placeholder="Enter FullName..">
                                             <span asp-validation-for="FullName" class="text-danger"></span>
 
 
                                         </div>
+
+                                        <div class="col-md-4">
+
+                                            <label class="form-label text-nowrap" for="val">
+                                                FullName_Arabic <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" class="form-control" name="ArabicName" placeholder="Enter FullName..">
+                                            <span asp-validation-for="FullName" class="text-danger"></span>
+
+
+                                        </div>
+
                                         <div class="col-md-4">
                                             <label class="form-label text-nowrap" for="val-email">
                                                 Employee Number <span class="text-danger">*</span>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Data.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +9,8 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using MoreForYou.Models.Auth;
 using MoreForYou.Models.Models;
+using MoreForYou.Models.Models.MasterModels;
+using MoreForYou.Models.Models.MedicalModels;
 using MoreForYou.Service.Contracts.Auth;
 using MoreForYou.Services.Contracts;
 using MoreForYou.Services.Contracts.Email;
@@ -41,6 +44,7 @@ namespace MoreForYou.Controllers
         private readonly IConfiguration _configuration;
         private readonly IExcelService _excelService;
         private readonly IEmailSender _emailSender;
+        private readonly IRepository<Relative, long> _repository;
 
         List<GenderModel> genderList = new List<GenderModel>()
             {
@@ -85,7 +89,7 @@ namespace MoreForYou.Controllers
             IWebHostEnvironment environment,
             IConfiguration configuration,
             IExcelService excelService,
-            IEmailSender emailSender)
+            IEmailSender emailSender, IRepository<Relative, long> repository)
         {
             _EmployeeService = EmployeeService;
             _DepartmentService = DepartmentService;
@@ -101,6 +105,7 @@ namespace MoreForYou.Controllers
             _environment = environment;
             _excelService = excelService;
             _emailSender = emailSender;
+            _repository = repository;
         }
 
         public JsonResult DepartmentFilter(long id)
@@ -365,7 +370,7 @@ namespace MoreForYou.Controllers
         // POST: EmployeeController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(EmployeeModel Model)
+        public async Task<ActionResult> Create(EmployeeModel Model, string ArabicName)
         {
             try
             {
@@ -391,7 +396,28 @@ namespace MoreForYou.Controllers
                     var response = _EmployeeService.CreateEmployee(Model);
                     if (response.Result == true)
                     {
-                        ViewBag.Message = "Employee Added Successfully";
+                        Relative relative = new Relative();
+                        relative.EmployeeNumber=Model.EmployeeNumber;
+                        relative.Relatives = Model.FullName;
+                        relative.ArabicRelatives = ArabicName;
+                        relative.Relation = "Self";
+                        relative.ArabicRelation = "نفسه";
+                        relative.CoverPercentage = "100%";
+                        relative.CreatedDate= DateTime.Now;
+                        relative.UpdatedDate= DateTime.Now;
+                        relative.IsVisible = false;
+                        relative.IsActive = false;
+                        relative.IsDelted= false;
+                        var addedEmployee = _repository.Add(relative);
+                        if(addedEmployee != null)
+                        {
+                            ViewBag.Message = "Employee Added Successfully";
+                        }
+                        else
+                        {
+                            ViewBag.Error = "Problem Occurred while add your employee's Medical Data, contact your support";
+                        }
+                      
                     }
                     else
                     {

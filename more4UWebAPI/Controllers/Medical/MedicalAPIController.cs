@@ -32,6 +32,7 @@ namespace MoreForYou.APIController.Medical
             _medicalDetailsService = medicalDetailsService;
             _employeeService = employeeService;
         }
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("MedicalDataTest")]
         public async Task<ActionResult> GetMedicalData()
         {
@@ -92,7 +93,7 @@ namespace MoreForYou.APIController.Medical
 
         }
 
-        
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("MedicalData")]
         public async Task<ActionResult> GetAllMedicalData(MedicalUserAPIModel medicalUserAPIModel)
         {

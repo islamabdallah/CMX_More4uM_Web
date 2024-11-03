@@ -11,9 +11,11 @@ using MoreForYou.Services.Models.API.Medical;
 using MoreForYou.Services.Contracts.Medical;
 using MoreForYou.Services.Implementation;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Microsoft.AspNetCore.Authorization;
 
 namespace More4UWebAPI.Controllers.MedicalRequest
 {
+    //[Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeeApiController : ControllerBase
@@ -43,7 +45,7 @@ namespace More4UWebAPI.Controllers.MedicalRequest
             _privilegeService = privilegeService;
             _relativeService = relativeService;
         }
-
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("EmployeeRelatives")]
         public async Task<ActionResult> EmployeeRelatives(
           string userNumber,
@@ -94,6 +96,17 @@ namespace More4UWebAPI.Controllers.MedicalRequest
                         });
                     result2.RelativesApiModel.ProfilePicture = CommanData.Url + CommanData.ProfileFolder + result1.ProfilePicture;
                     result2.RelativesApiModel.EmployeeDepartment = result1.Department.Name;
+                    List<string>purpose= new List<string>();
+                    if(int32_1 == 1)
+                    {
+                        purpose.Add("checkup");
+                        purpose.Add("hospital Admission");
+                    }
+                    else if (int32_1 == 2)
+                    {
+                        purpose.Add("فحص طبي");
+                        purpose.Add("اجراء عملية");
+                    }
                     return (ActionResult)employeeApiController.Ok((object)new
                     {
                         Flag = true,
@@ -102,7 +115,7 @@ namespace More4UWebAPI.Controllers.MedicalRequest
                         Category = result2.medicalCategoryAPIModels,
                         SubCategory = result2.medicalSubCategoryAPIModels,
                         MedicalDetails = result2.medicalDetailsAPIModels,
-                        requestPurposes = new List<string> { "checkup", "hospital Admission" }
+                        requestPurposes = purpose
                         //data = result1.HasMedicalService
                     });
                 case 3:
@@ -136,6 +149,7 @@ namespace More4UWebAPI.Controllers.MedicalRequest
             }
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("AllEmployee")]
         public async Task<ActionResult> AllEmployee(int userNumber, int languageCode)
         {
@@ -191,14 +205,18 @@ namespace More4UWebAPI.Controllers.MedicalRequest
         {
             try
             {
+               // var uniqueFileName = string.Format(@"{0}", Guid.NewGuid());
                 string uniqueFileName = null;
                 string filePath = null;
 
                 if (file != null)
                 {
                     string uploadsFolder = Path.Combine(@"C:\inetpub\wwwroot\_testMore4u\wwwroot/", "");
-                    uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                   // uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                    uniqueFileName= DateTime.Now.ToString("yyyy-MM-dd HHmmtt") + "_PPE" + "_" + 1.ToString() + ".jpg";
                     uniqueFileName = uniqueFileName.Replace(" ", "");
+                   // uniqueFileName = uniqueFileName.Replace("/ ", "-");
+                   // uniqueFileName = uniqueFileName.Replace("\\ ", "-");
                     filePath = Path.Combine(uploadsFolder, uniqueFileName);
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {

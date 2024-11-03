@@ -33,6 +33,11 @@ using MoreForYou.Services.Contracts.Medical;
 using MoreForYou.Services.Models.Medical;
 using MoreForYou.Models.Models.MasterModels;
 using MoreForYou.Services.Models.Message;
+using DocumentFormat.OpenXml.Wordprocessing;
+using MoreForYou.Services.Models.API.Medical;
+using MoreForYou.Services;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace MoreForYou.Controllers
 {
@@ -67,6 +72,8 @@ namespace MoreForYou.Controllers
         private readonly IMedicalCategoryService _medicalCategoryService;
         private readonly IMedicalSubCategoryService _medicalSubCategoryService;
         private readonly IMedicalDetailsService _medicalDetailsService;
+        private readonly IRelativeService _relativeService;
+        private readonly IMedicalRequestService _medicalRequest;
         //private readonly IWebHostEnvironment _environment;
         //private readonly IConfiguration _configuration;
         //private readonly IExcelService _excelService;
@@ -76,11 +83,11 @@ namespace MoreForYou.Controllers
             IUserService userService,
             IRoleService roleService,
             ILogger<BenefitController> logger,
-            UserManager<AspNetUser> userManager,
+            UserManager<AspNetUser> userManager, 
             IEmployeeService EmployeeService,
             IBenefitRequestService benefitRequestService,
-            IRequestWorkflowService requestWorkflowService,
-            IDepartmentService departmentService,
+            IRequestWorkflowService requestWorkflowService, IRelativeService relativeService,
+            IDepartmentService departmentService, IMedicalRequestService medicalRequest,
             IBenefitTypeService benefitTypeService,
             IRequestStatusService requestStatusService,
             IGroupService groupService,
@@ -129,6 +136,8 @@ namespace MoreForYou.Controllers
             _medicalCategoryService = medicalCategoryService;
             _medicalSubCategoryService = medicalSubCategoryService;
             _medicalDetailsService = medicalDetailsService;
+            _relativeService = relativeService;
+            _medicalRequest=medicalRequest;
         }
 
         List<GenderModel> genderList = new List<GenderModel>()
@@ -290,8 +299,15 @@ namespace MoreForYou.Controllers
             return View();
         }
 
-        public ActionResult test()
+        public async Task<ActionResult> testAsync()
         {
+            LoginModel loginModel = new LoginModel();
+            loginModel.UserNumber = 45627068;
+            loginModel.Password = "12345Mu$";
+            loginModel.RememberMe = true;
+            loginModel.Email = "string";
+            loginModel.LanguageId = 2;
+
             return View();
         }
         public async Task<ActionResult> RequestDetails(long id)

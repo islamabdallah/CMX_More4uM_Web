@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace MoreForYou.APIController
 {
-    [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
+   // [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/BenefitAPI")]
     [ApiController]
     [Produces("application/json")]
@@ -79,6 +79,7 @@ namespace MoreForYou.APIController
             _benefitMailService = benefitMailService;
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("GetBenefitDetails")]
         public async Task<ActionResult> GetBenefitDetails(long userNumber, long benefitId, int languageId)
         {
@@ -103,6 +104,7 @@ namespace MoreForYou.APIController
             }
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("WhoCanRedeemThisGroupBenefit")]
         public async Task<ActionResult> WhoCanRedeemThisGroupBenefit(long userNumber, long benefitId, int languageId)
         {
@@ -120,7 +122,7 @@ namespace MoreForYou.APIController
             }
         }
 
-
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("WhoCanIGiveThisBenefit")]
         public async Task<ActionResult> WhoCanIGiveThisBenefit(long userNumber, long benefitId, int languageId)
         {
@@ -135,7 +137,7 @@ namespace MoreForYou.APIController
             }
         }
 
-
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("ShowMyBenefits")]
         public async Task<ActionResult> ShowMyBenefits(int UserNumber, int languageId)
         {
@@ -166,7 +168,7 @@ namespace MoreForYou.APIController
             }
         }
 
-
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("ShowMyBenefitRequests")]
         public async Task<ActionResult> ShowMyBenefitRequests(long BenefitId, long userNumber, long requestNumber, int languageId)
         {
@@ -208,6 +210,7 @@ namespace MoreForYou.APIController
 
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("ShowRequestsDefault")]
         public async Task<ActionResult> ShowRequests(long userNumber, long requestNumber, int languageId)
         {
@@ -307,6 +310,7 @@ namespace MoreForYou.APIController
 
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("ShowRequests")]
         public async Task<ActionResult> ShowRequests(RequestSearch requestSearch)
         {
@@ -428,6 +432,7 @@ namespace MoreForYou.APIController
             }
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("ShowTenNotifications")]
         public async Task<ActionResult> ShowTenNotifications(long userNumber, long index, int languageId)
         {
@@ -458,6 +463,7 @@ namespace MoreForYou.APIController
 
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("ShowFiftyNotifications")]
         public async Task<ActionResult> ShowFiftyNotifications(long userNumber, int languageId)
         {
@@ -493,7 +499,7 @@ namespace MoreForYou.APIController
 
         }
 
-
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("ConfirmRequest")]
         public async Task<ActionResult> ConfirmRequest(RequestAPI request1)
         {
@@ -546,6 +552,7 @@ namespace MoreForYou.APIController
             }
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("UploadRequestDocuments")]
         public async Task<IActionResult> UploadRequestDocuments(long requestNumber, List<IFormFile> files, int languageId)
         {
@@ -561,6 +568,7 @@ namespace MoreForYou.APIController
             }
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("RequestCancel")]
         public async Task<ActionResult> RequestCancel(long id, long benefitId, long userNumber, int languageId)
         {
@@ -579,6 +587,7 @@ namespace MoreForYou.APIController
             }
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("updateProfilePicture")]
         public async Task<IActionResult> updateProfilePicture(long userNumber, UpdateProfile updateProfile, int languageId)
         {
@@ -628,6 +637,7 @@ namespace MoreForYou.APIController
             }
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("AddResponse")]
         public async Task<IActionResult> AddResponse(long requestWorkflowId, int status, string message, long userNumber, int languageId)
         {
@@ -736,7 +746,7 @@ namespace MoreForYou.APIController
                                                 ////////////////////////////////////Send mail to MailList//////////
                                                 if (benefitRequestModel.Benefit.HasMails == true)
                                                 {
-                                                    //  _benefitMailService.SendToMailList(benefitRequestModel);
+                                                      _benefitMailService.SendToMailList(benefitRequestModel);
                                                 }
 
                                             }
@@ -819,6 +829,7 @@ namespace MoreForYou.APIController
 
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("ShowMyGifts")]
         public async Task<IActionResult> ShowMyGifts(long userNumber, long requestNumber, int languageId)
         {
@@ -853,6 +864,7 @@ namespace MoreForYou.APIController
             }
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("GetProfilePictureAndRequestDocuments")]  
         public async Task<IActionResult> GetProfilePictureAndRequestDocuments(long userNumber, long requestNumber, int languageId)
         {
@@ -887,6 +899,7 @@ namespace MoreForYou.APIController
 
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("GetUserProfilePicture")]   
         public async Task<ActionResult> GetEmployeeProfileData(long userNumber, int languageId)
         {
@@ -910,6 +923,7 @@ namespace MoreForYou.APIController
             }
         }
 
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("GetEmployeeProfilePicture")]
         public async Task<ActionResult> GetEmployeeProfilePicture(long userNumber, int languageId)
         {

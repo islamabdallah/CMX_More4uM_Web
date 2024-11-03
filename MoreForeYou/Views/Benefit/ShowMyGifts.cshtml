@@ -35,7 +35,7 @@
 
 @if (Model != null)
 {
-    @* <div class="confetti">
+    <div class="confetti">
         <div class="confetti-piece"></div>
         <div class="confetti-piece"></div>
         <div class="confetti-piece"></div>
@@ -47,10 +47,10 @@
         <div class="confetti-piece"></div>
         <div class="confetti-piece"></div>
         <div class="confetti-piece"></div>
-    </div> *@
+    </div>
 
   
-     <label for="cars">Choose a car:</label>
+    @*  <label for="cars">Choose a car:</label> *@
 
 
 }
@@ -62,10 +62,10 @@
           @*   <select class="form-control form-select col-md-1" placeholder="Select UserName" 
             name="UserName" id="select-users" value="Gift.UserName" asp-items="@(new SelectList(ViewBag.giftt, nameof(Gift.RequestNumber), nameof(Gift.UserName),""))" 
             onchange="getfilter(this.value,@JsonSerializer.Serialize(Model));"> <option value="">Select User</option></select> *@
-            <select class="form-select" id="RequestNumber"
+          @*   <select class="form-select" id="RequestNumber"
                     asp-items="@(new SelectList(ViewBag.giftt,"UserName","UserName"," "))" onchange="myFunction(this.value,@JsonSerializer.Serialize(Model))">
                 <option value="">Select User</option>
-                </select>
+                </select> *@
   
             @foreach (var item in Model)
             {
