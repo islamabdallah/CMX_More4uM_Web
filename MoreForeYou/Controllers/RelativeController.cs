@@ -103,9 +103,6 @@ namespace MoreForYou.Controllers
 
         public async Task<IActionResult> Create()
         {
-            //EmployeeRelativesApiModel employeeModel = new EmployeeRelativesApiModel();
-            //RelativeFilterModel filterModel = new RelativeFilterModel();
-            //var result3 = await _repository.Find(i => i.Id == id).FirstOrDefaultAsync();
             Relative relative = new Relative();
             return View(relative);
         }
@@ -115,10 +112,11 @@ namespace MoreForYou.Controllers
         public async Task<IActionResult> Create(Relative model)
         {
             model.UpdatedDate = DateTime.Now;
+            model.CreatedDate = DateTime.Now;
             model.IsActive = true;
             model.IsVisible = true;
             model.IsDelted = false;
-            var result3 = _repository.Update(model);
+            var result3 = _repository.Add(model);
             return RedirectToAction("Index");
         }
 

@@ -218,6 +218,8 @@ else if (ViewBag.Error != null)
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Submit Data</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestType</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestStatus</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">relation</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestedfor</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -307,6 +309,16 @@ else if (ViewBag.Error != null)
                                                 {
                                                     <span class="badge badge-sm bg-gradient-danger pr-5">@item.requestStatus</span>
                                                 }
+                                            </td>
+                                             <td class="text-center">
+                                                <div class="avatar-group mt-2">
+                                                    @item.relation
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="avatar-group mt-2">
+                                                    @item.requestedFor
+                                                </div>
                                             </td>
                                             <td>
                                                 <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" asp-action="Details" asp-route-id="@item.requestID">

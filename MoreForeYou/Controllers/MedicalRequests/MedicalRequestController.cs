@@ -92,6 +92,19 @@ namespace MoreForYou.Controllers.MedicalRequests
                 }
                 PendingRequestVModel model = new PendingRequestVModel();
                 model.pendingRequest = _medicalRequest.GetEmployeeMedicalRequestsBy(employeeModel.EmployeeNumber, 1);
+                if (model.pendingRequest == null)
+                {
+                    PendingRequestApiModel pendingRequestApiModel2 = new PendingRequestApiModel();
+                    PendingRequestCount pendingRequestCount = new PendingRequestCount();
+                    pendingRequestCount.totalRequest = "0";
+                    pendingRequestCount.sickleave = "0";
+                    pendingRequestCount.checkups = "0";
+                    pendingRequestCount.medications = "0";
+                    List<PendingRequestSummeyModel> requestSummeyModelList = new List<PendingRequestSummeyModel>();
+                    pendingRequestApiModel2.requestsCount = pendingRequestCount;
+                    pendingRequestApiModel2.requests = requestSummeyModelList;
+                    model.pendingRequest = pendingRequestApiModel2;
+                }
                 return View(model);
             }
             //  return View();
@@ -185,11 +198,11 @@ namespace MoreForYou.Controllers.MedicalRequests
                     pendingRequestApiModel2.requests = requestSummeyModelList;
                     model.pendingRequest = pendingRequestApiModel2;
                 }
-                //else
-                //{
+                else
+                {
                     PendingRequestApiModel medicalRequestsBy = _medicalRequest.GetEmployeeMedicalRequestsBy(employeeModel.EmployeeNumber, 1);
                     model.pendingRequest.requestsCount = medicalRequestsBy.requestsCount;
-               // }
+                }
                 model.searchModel = searchModel;
                 return View(model);
             }
@@ -225,6 +238,19 @@ namespace MoreForYou.Controllers.MedicalRequests
                     employeeNumber = allDirectEmployee.EmployeeNumber.ToString()
                 });
             model.pendingRequest = _medicalRequest.GetEmployeeMedicalRequestsBy(employeeModel.EmployeeNumber, 1);
+            if (model.pendingRequest == null)
+            {
+                PendingRequestApiModel pendingRequestApiModel2 = new PendingRequestApiModel();
+                PendingRequestCount pendingRequestCount = new PendingRequestCount();
+                pendingRequestCount.totalRequest = "0";
+                pendingRequestCount.sickleave = "0";
+                pendingRequestCount.checkups = "0";
+                pendingRequestCount.medications = "0";
+                List<PendingRequestSummeyModel> requestSummeyModelList = new List<PendingRequestSummeyModel>();
+                pendingRequestApiModel2.requestsCount = pendingRequestCount;
+                pendingRequestApiModel2.requests = requestSummeyModelList;
+                model.pendingRequest = pendingRequestApiModel2;
+            }
             return View("MedicalAdmin",model);
         }
 

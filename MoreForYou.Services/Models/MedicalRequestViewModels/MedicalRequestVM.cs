@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using MoreForYou.Models.Models.MasterModels.MedicalModels;
 using MoreForYou.Services.Models.API.Medical;
 using MoreForYou.Services.Models.Medical;
 using System;
@@ -21,6 +22,18 @@ namespace MoreForYou.Services.Models.MedicalRequestViewModels
         public List<MedicalDetailsAPIModel> CheckupDetailsAPIModels { get; set; }
         public List<MedicalDetailsAPIModel>? medicationEntities { get; set; }
      
+    }
+
+    public class MedicalNetworkVM
+    {
+        public List<MedicalCategoryModel> medicalCategories { get; set; }
+
+        public long SelectedSubCategory {  get; set; }
+        public long SelectedCategory { get; set; }
+        public long SubCategoryId { get; set; }
+
+        public List<MedicalDetails>? medicationEntities { get; set; }
+
     }
 
 }

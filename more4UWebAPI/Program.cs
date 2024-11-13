@@ -105,6 +105,10 @@ builder.Services.AddScoped<IMedicalSubCategoryService, MedicalSubCategoryService
 builder.Services.AddScoped<IMedicalDetailsService, MedicalDetailsService>();
 builder.Services.AddScoped<IMGraphMailService, MGraphMailService>();
 builder.Services.AddScoped<ITermsConditionsService, TermsConditionsService>();
+builder.Services.AddScoped<IMedicalRequestService, MedicalRequestService>();
+builder.Services.AddScoped<IMedicalResponseService, MedicalResponseService>();
+builder.Services.AddScoped<IRelativeService, RelativeService>();
+builder.Services.AddScoped<IMedicalMailService, MedicalMailService>();
 
 builder.Services.Configure<MailKitEmailSenderOptions>(options =>
 {
@@ -118,10 +122,10 @@ builder.Services.Configure<MailKitEmailSenderOptions>(options =>
     options.Host_Username = builder.Configuration["ExternalProviders:MailKit:SMTP:Host_Username"];
 
 });
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "More4UWebAPI", Version = "v1" });
-});
+//builder.Services.AddSwaggerGen(c =>
+//{
+//    c.SwaggerDoc("v1", new OpenApiInfo { Title = "More4UWebAPI", Version = "v1" });
+//});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -146,10 +150,10 @@ app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
 
-app.UseCors(x => x
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader());
+//app.UseCors(x => x
+//        .AllowAnyOrigin()
+//        .AllowAnyMethod()
+//        .AllowAnyHeader());
 //app.UseEndpoints(endpoints =>
 //{
 //    endpoints.MapControllers();

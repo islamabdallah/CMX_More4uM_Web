@@ -21,7 +21,7 @@ namespace MoreForYou.Services.Implementation
             {
                 app = FirebaseApp.Create(new AppOptions()
                 {
-                    Credential = GoogleCredential.FromFile("cemex-prd-gbl-firebase-adminsdk-vtcd1-d2c74f09c9.json").
+                    Credential = GoogleCredential.FromFile("cemex-prd-gbl-firebase-adminsdk-vtcd1-e090127fa4.json").
                     CreateScoped("https://www.googleapis.com/auth/firebase.messaging")
                 });
             }
@@ -38,6 +38,7 @@ namespace MoreForYou.Services.Implementation
                 {
                     Body = notificationBody,
                     Title = title,
+
                 }
             };
 
@@ -48,9 +49,9 @@ namespace MoreForYou.Services.Implementation
 
         public async Task SendNotification(string token, string title, string body)
         {
-            //System.Net.ServicePointManager.Expect100Continue = false;
-            //System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-              //  await messaging.SendAsync(CreateNotification(title, body, token));
+            System.Net.ServicePointManager.Expect100Continue = false;
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+            await messaging.SendAsync(CreateNotification(title, body, token));
         }
     }
 }

@@ -341,12 +341,7 @@
 
 <div class="row mt-4">
     <div class="col-lg-8 mb-lg-0 mb-4">
-        @*   <select class="form-control form-select col-md-1" placeholder="Select UserName"
-        name="UserName" id="select-users" value="Gift.UserName" asp-items="@(new SelectList(ViewBag.giftt, nameof(Gift.RequestNumber), nameof(Gift.UserName),""))"
-        onchange="getfilter(this.value,@JsonSerializer.Serialize(Model));"> <option value="">Select User</option></select> *@
-
-
-
+ 
         <div class="card p-4" id="RequestNumber">
             <div class="card-body">
                 <div class="row">
@@ -354,13 +349,10 @@
                         <div class="d-flex flex-column">
 
                             <p class="mb-1 pt-2 text-bold">Medical Request</p>
-                            @* <h5 class="font-weight-bolder"><span class="font-weight-bolder text-gradient text-primary">@item.BenefitName</span></h5> *@
                             <h5 class="font-weight-bolder text-gradient text-info">
                                 Add Request
                             </h5>
                             <hr class="horizontal dark my-sm-4">
-                           @*   <form asp-action="addAdminRequest" asp-controller="MedicalRequest"> *@
-
                             <div class="row">
                                 <div class="form-group col-lg-6" style="margin-bottom:15px">
                                     <p class="mb-5">

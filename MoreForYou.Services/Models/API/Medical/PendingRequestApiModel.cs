@@ -56,6 +56,9 @@ namespace MoreForYou.Services.Models.API.Medical
         public string? requestStatus { get; set; }
 
         public string? requestMedicalEntity { get; set; }
+        public string? relation { get; set; }
+
+        public string? requestedFor { get; set; }
     }
 
     public class PendingRequestVModel

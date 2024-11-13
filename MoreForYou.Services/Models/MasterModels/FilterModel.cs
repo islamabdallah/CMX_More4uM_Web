@@ -57,4 +57,11 @@ namespace MoreForYou.Services.Models.MasterModels
 
         public long EmployeeNumber { get; set; }
     }
+    public class MedicalItemsFilterModel
+    {
+        public List<MedicalItem> items { get; set; }
+        public string text { get; set; }
+        public string type { get; set; }
+
+    }
 }

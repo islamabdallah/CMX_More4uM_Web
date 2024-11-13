@@ -271,6 +271,11 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                     requestSummeyModel1.requestComment = pendingRequest.MedicalRequest.RequestComment;
                     Relative relative = _employeeRepository.Find((Expression<Func<Relative, bool>>)(i => i.Id == pendingRequest.MedicalRequest.RequestedFor)).FirstOrDefault<Relative>();
                     requestSummeyModel1.selfRequest = relative != null && relative.Relation == "Self";
+                    if (relative != null)
+                    {
+                        requestSummeyModel1.relation = relative.Relation;
+                        requestSummeyModel1.requestedFor = relative.Relatives;
+                    }
                     requestSummeyModelList.Add(requestSummeyModel1);
                 }
                 medicalRequestsByType.requestsCount = pendingRequestCount1;
@@ -330,7 +335,7 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                             {
                                 foreach (string connectionId in stringList)
                                 {
-                                    if (str1 == "Request")
+                                    if (str1 == "MedicalAction")
                                     {
                                       //  IClientProxy clientProxy = _hub.Clients.Client(connectionId);
                                         string str4 = str1;
@@ -835,6 +840,12 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                     requestSummeyModel1.selfRequest = relative != null && relative.Relation == "Self";
                     MedicalDetailsModel result2 = _medicalDetailsService.GetMedicalEntityById(pendingRequest.MedicalRequest.RequestMedicalEntity).Result;
                     requestSummeyModel1.requestMedicalEntity = langCode != 1 ? result2.Name_AR : result2.Name_EN;
+                    if(relative != null)
+                    {
+                        requestSummeyModel1.relation = relative.Relation;
+                        requestSummeyModel1.requestedFor = relative.Relatives;
+                    }
+                    
                     requestSummeyModelList.Add(requestSummeyModel1);
                 }
                 medicalRequestsBy.requestsCount = pendingRequestCount1;
@@ -922,6 +933,11 @@ namespace MoreForYou.Services.Implementation.MedicalServices
                 requestSummeyModel.selfRequest = relative != null && relative.Relation == "Self";
                 MedicalDetailsModel result2 = _medicalDetailsService.GetMedicalEntityById(pendingRequest.MedicalRequest.RequestMedicalEntity).Result;
                 requestSummeyModel.requestMedicalEntity = Convert.ToInt32(searchModel.languageId) != 1 ? result2.Name_AR : result2.Name_EN;
+                if(relative != null)
+                {
+                    requestSummeyModel.relation = relative.Relation;
+                    requestSummeyModel.requestedFor = relative.Relatives;
+                }
                 requestSummeyModelList.Add(requestSummeyModel);
             }
             employeeMedicalRequests.requestsCount = pendingRequestCount;
@@ -969,6 +985,28 @@ namespace MoreForYou.Services.Implementation.MedicalServices
             }
             return medicalItems;
            // throw new NotImplementedException();
+        }
+
+        public List<MedicalItem> MedicalItemsSearchPattern(string type, string text)
+        {
+            List<MedicalItem> itemList = new List<MedicalItem>();
+            if (string.IsNullOrEmpty(text))
+            {
+                return itemList;
+            }
+            string category = "";
+            if (type == "1")
+            {
+                category = "Medication";
+            }
+            else if (type == "2")
+            {
+                category = "CheckUp";
+            }
+             itemList = _itemsRepository.Find(t => t.Category == category && t.DrugName.Contains(text)).Take(100).ToList();
+
+            return itemList;
+            // throw new NotImplementedException();
         }
     }
 }

@@ -11,10 +11,10 @@ namespace MoreForYou.Models.Models.MedicalModels
     {
         public string DrugName { get; set; }
 
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
-        public string Quantity { get; set; }
-        public string Dose { get; set; }
+        public string? Quantity { get; set; }
+        public string? Dose { get; set; }
         public string? Category { get; set; }
     }
 }

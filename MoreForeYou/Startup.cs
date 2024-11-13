@@ -101,6 +101,7 @@ namespace MoreForeYou
             services.AddScoped<IMedicalRequestService, MedicalRequestService>();
             services.AddScoped<IMedicalResponseService, MedicalResponseService>();
             services.AddScoped<IRelativeService, RelativeService>();
+            services.AddScoped<IMedicalMailService, MedicalMailService>();
             services.Configure<MailKitEmailSenderOptions>(options =>
             {
                 options.Host_Address = _Configuration["ExternalProviders:MailKit:SMTP:Address"];
@@ -176,13 +177,11 @@ namespace MoreForeYou
             app.UseMvc();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-       name: "default",
-       pattern: "{More4U}/{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
-
-                endpoints.MapHub<NotificationHub>("/NotificationHub");
-
+               endpoints.MapControllerRoute(
+               name: "default",
+               pattern: "{More4U}/{controller=Home}/{action=Index}/{id?}");
+               endpoints.MapRazorPages();
+               endpoints.MapHub<NotificationHub>("/NotificationHub");
             });
         }
     }

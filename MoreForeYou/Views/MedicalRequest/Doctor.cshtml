@@ -220,6 +220,8 @@
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">employeeNumber </th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">employeeName </th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Requested For </th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Requested For Name </th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Requested For Relation </th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Submit Data</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestType</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">requestStatus</th>
@@ -266,6 +268,16 @@
                                                     {
                                                         <span>Family Insurance</span>
                                                     }
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="avatar-group mt-2">
+                                                    @item.relation
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="avatar-group mt-2">
+                                                    @item.requestedFor
                                                 </div>
                                             </td>
                                             <td class="text-center">
@@ -357,14 +369,6 @@
             return template;
         }
     }
-    //function matchStart(params, data) {
-    //    // If there are no search terms, return all of the data
-    //    if ($.trim(params.term) === '') {
-    //        return null;
-    //    }
-    //    // Return `null` if the term should not be displayed
-    //    return null;
-    //}
     var options =
     {
         'templateSelection': custom_template,
@@ -415,11 +419,8 @@
     function validateForm() {
          let x = document.getElementById("ReqId").value;
          let y = document.getElementById("EmpNum").value;
-       // alert(x);
-       // alert(y);
 
         if (x == "" && y == "") {
-            //alert(q + y);
             document.getElementById("sum").innerHTML = " You have to add Request Id or Employee Number";
             return false;
         }
